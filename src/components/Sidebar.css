@@ -1,0 +1,77 @@
+
+.Sidebar {
+    width: 20%;
+    height: 100vh; 
+    background-color: #FFFFFF;
+    border-right: 1px solid #000000; 
+    position: fixed; 
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; 
+}
+
+.SidebarList {
+    height: 100%;
+    width: 100%;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.SidebarList .row {
+    width: 95%;
+    height: 50px;
+    margin: 10px auto;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #837979;
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    border-radius: 10px;
+}
+
+.SidebarList .row:hover {
+    background-color: #D5D7E8;
+    color: #2F3B8D;
+    cursor: pointer;
+}
+
+.row #icon {
+    flex: 0 0 60px;
+    display: grid;
+    place-items: center;
+}
+
+.row #title {
+    flex: 1;
+}
+
+.Sidebar h2 {
+    color: #767272;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    margin: 100px 5px 5px 20px;
+}
+
+.SidebarLogo {
+    padding: 20px;
+    text-align: center;
+}
+
+.SidebarLogo h4 {
+    margin-bottom: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.SidebarLogo img {
+    max-width: 60%;
+    height: auto;
+}

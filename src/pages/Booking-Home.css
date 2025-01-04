@@ -1,0 +1,23 @@
+.Homepage {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
+}
+
+.main-content {
+    display: flex;
+    flex: 1; /* Take up the remaining space */
+}
+
+.sidebar-placeholder {
+    width: 20%; /* Adjust the width as needed */
+}
+
+.content-placeholder {
+    flex: 1;
+    display: flex;
+}
