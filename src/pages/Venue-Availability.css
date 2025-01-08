@@ -1,0 +1,86 @@
+.Venue-Availability {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
+}
+
+.main-content {
+    display: flex;
+    flex: 1; /* Take up the remaining space */
+}
+
+.sidebar-placeholder {
+    width: 20%; /* Adjust the width as needed */
+}
+
+.calendar-placeholder {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    padding-top: 90px;
+    padding-left: 30px;
+    background-color: #FFFFFF; 
+}
+
+.calendar-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 98%;
+    padding: 0 10px;
+    box-sizing: border-box;;
+}
+
+.calendar-header .calendar-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prev-month, .next-month {
+    color: #2F3B8D;
+    margin-left: 20px;
+    margin-top: 5px;
+}
+
+.calendar-header h2 {
+    color: #2F3B8D;
+    font-size: 36px;
+    font-weight: 500;
+    margin: 5px 30px 0;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+}
+
+.dropdown {
+    margin-left: 10px;
+    background-color: #2F3B8D;
+}
+
+.add-booking-button {
+    background-color: #2F3B8D;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 30px;
+    margin-right: 20px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+}
+
+.calendar-body {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    box-sizing: border-box;
+    border: 1px solid #2F3B8D;
+    margin-top: 50px;
+    width: 98%;
+    height: 85%;
+}

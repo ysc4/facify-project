@@ -1,0 +1,22 @@
+.progress-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.step-label {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #1F1D1D;
+}
+
+.step-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 9rem; 
+}
+
