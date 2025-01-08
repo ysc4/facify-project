@@ -1,6 +1,7 @@
 import Previous from '@mui/icons-material/ArrowBackIos';
 import Next from '@mui/icons-material/ArrowForwardIos';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
@@ -26,7 +27,9 @@ function Venue() {
                     </div>
                 </div>
                 <div className="add-booking">
-                    <button className="add-booking-button">Add a Booking</button>
+                    <Link to="/venue-booking">
+                        <button className="add-booking-button">Add a Booking</button>
+                    </Link>
                 </div>
             </div>
             <div className="calendar-body">
