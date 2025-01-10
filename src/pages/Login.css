@@ -140,7 +140,19 @@ input {
     border-radius: 10px;
 }
 
-button:hover {
+.login-button {
+    background-color: #2F3B8D;
+    color: #FFFFFF;
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #2F3B8D;
+    width: 100%;
+    padding: 10px 20px;
+    margin-top: 20px;
+    border-radius: 15px;
+}
+
+.login-button:hover {
     background-color: #FFFFFF;
     color: #2F3B8D;
     cursor: pointer;

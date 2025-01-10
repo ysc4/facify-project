@@ -19,7 +19,7 @@ const Login = () => {
         event.preventDefault();
         // Perform login logic here
         setIsLoggedIn(true);
-        navigate('/homepage');
+        navigate('/bookings');
     };
 
     const togglePasswordVisibility = () => {
@@ -58,7 +58,7 @@ const Login = () => {
                             {passwordVisible ? <VisibilityOff /> : <Visibility />}
                         </span>
                     </div>
-                    <button type="submit">Login</button>
+                    <button type="submit" className="login-button">Login</button>
                 </form>
                 <div className="footer">
                     <div className="footer-links">
