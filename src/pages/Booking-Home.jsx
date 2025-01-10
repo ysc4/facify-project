@@ -80,14 +80,14 @@ function Homepage() {
                         faciCode="FACI00001"
                         status="Approved"
                     />
-                    <BookingItem
+            <BookingItem
                         title="CCIT Month 2025 Opening Ceremony"
                         location="Gym, 8th Floor, Main Building"
                         date="January 10, 2025 10:00 AM - 2:00 PM"
                         organizer="CCIT Student Council"
                         faciCode="FACI00002"
                         status="For Assessing"
-                    />
+            />
             </div>
         </div>
       </div>
