@@ -87,7 +87,7 @@ function VenueBooking() {
                     <AddMinusButton />
                   </div>
                 </div>
-                </div>
+              </div>
             </div>
             <div className="requirement-input">
               <h3>Requirement Status</h3>
@@ -103,6 +103,13 @@ function VenueBooking() {
                   </label>    
                 </div>
               </div>
+            </div>
+            <div className="confirm-booking">
+              <label className="agree-checkbox">
+                <input type="checkbox" id="agree-checkbox" name="agree-checkbox"></input>
+                By submitting this reservation, I agree and abide by the rules setforth by the Facilities Management Team.
+              </label>
+              <button className="submit-booking">Submit Booking</button>
             </div>
           </div>
         </div>

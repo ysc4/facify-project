@@ -7,6 +7,10 @@
     --radio-checked-color: #2F3B8D;
     --radio-hover-color: #bcc3f0;
     --radio-disabled-bg-color: #d9d9d9;
+    --checkbox-border-color: #000000;
+    --checkbox-checked-color: #2F3B8D;
+    --checkbox-hover-color: #bcc3f0;
+    --checkbox-disabled-bg-color: #d9d9d9;
   }
 
 .VenueBooking {
@@ -217,5 +221,87 @@ input[type="radio"]:focus-visible {
     background-color: var(--radio-hover-color);
     outline: 6px solid var(--radio-hover-color);
 }
+
+.confirm-booking {
+    width: 100%;
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.agree-checkbox {
+    display: flex;
+    align-items: center;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.confirm-booking button {
+    width: 150px;
+    height: 50px;
+    padding: 10px 10px;
+    background-color: #2F3B8D;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-family: 'Poppins', sans-serif;
+    border: 1px solid #2F3B8D;
+    border-radius: 10px;
+    margin-right: 20px;
+}
+
+.confirm-booking button:hover {
+    background-color: #FFFFFF;
+    color: #2F3B8D;
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    margin: 6px;
+    margin-right: 20px;
+    padding: 10;
+    border: 2px solid var(--checkbox-border-color);
+    appearance: none;
+    background-color: transparent;
+    outline: none;
+    transition: outline 0.1s;
+  }
+  
+  input[type="checkbox"]:checked {
+    background-size: cover;
+    padding: 2px;
+  }
+  
+  input[type="checkbox"]:not(:disabled):checked {
+    border-color: var(--checkbox-checked-color);
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 32 32" xml:space="preserve"><path style="fill: %23274c77" d="M11.941,28.877l-11.941-11.942l5.695-5.696l6.246,6.246l14.364-14.364L32,8.818"/></svg>');
+  }
+  
+  input[type="checkbox"]:disabled {
+    background-color: var(--checkbox-disabled-bg-color);
+  }
+  
+  input[type="checkbox"]:disabled:checked {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 32 32" xml:space="preserve"><path style="fill: %238b8c89" d="M11.941,28.877l-11.941-11.942l5.695-5.696l6.246,6.246l14.364-14.364L32,8.818"/></svg>');
+  }
+  
+  @media (hover: hover) {
+    input[type="checkbox"]:not(:disabled):hover {
+      background-color: var(--checkbox-hover-color);
+      outline: 6px solid var(--checkbox-hover-color);
+      transform: scale(1.05);
+    }
+  }
+  
+  input[type="checkbox"]:focus-visible {
+    outline: 6px solid var(--checkbox-hover-color);
+    transform: scale(1.05);
+  }
+  
 
 
