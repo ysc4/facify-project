@@ -81,7 +81,7 @@
     margin-top: 5px;
 }
 
-form {
+.loginForm form {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -110,14 +110,14 @@ form {
     color: #1F1D1D;
 }
 
-label {
+.loginForm label {
     text-align: left;
     font-size: 20px;
     color: #1F1D1D;
     font-family: 'Poppins', sans-serif;
 }
 
-input {
+.loginForm input {
     width: 100%;
     height: 50px;
     margin-top: 5px;
