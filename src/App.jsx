@@ -6,7 +6,7 @@ import Login from './pages/Login';
 import Venue from './pages/Venue-Availability';
 import VenueBooking from './pages/Venue-Booking';
 
-function App() {
+export default function  App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
     <Router>
@@ -22,5 +22,3 @@ function App() {
     </Router>
   );
 };
-
-export default App;
