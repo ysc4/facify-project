@@ -2,7 +2,14 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.BookingInfo {
+:root {
+    --radio-border-color: #000000;
+    --radio-checked-color: #2F3B8D;
+    --radio-hover-color: #bcc3f0;
+    --radio-disabled-bg-color: #d9d9d9;
+  }
+
+.VenueBooking {
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -48,8 +55,14 @@
 .booking h2 {
     margin-left: 20px;
     font-size: 36px;
-    font-weight: 500;
+    font-weight: 700;
     font-family: 'Poppins', sans-serif;
+}
+
+.booking h3 {
+    font-size: 20px;
+    font-weight: 400;
+    margin-left: 20px;
 }
 
 .back-icon {
@@ -60,67 +73,23 @@
     cursor: pointer;
 }
 
-.booking-buttons {
-    display: flex;
-    width: 40%;
-}
-
-.submit-button, .edit-button {
-    width: 300px;
-    margin-left: 20px; 
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 17px;
-    font-weight: 500;
-    cursor: pointer;
-    background-color: #2F3B8D;
-    color: white;
-    border: none;
-}
-
-.submit-button {
-    background-color: #FFFFFF;
-    color: #1F1D1D;
-    border: 1px solid #FFD80C;
-}
-
-.edit-button:hover {
-    background-color: #F5F5F5;
-}
-
-.submit-button:hover {
-    background-color: #FFD80C;
-    color: #FFFFFF;
-}
-
-.edit-button:active {
-    background-color: #F5F5F5;
-}
-
-.submit-button:active {
-    background-color: #FFD80C;
-    color: #FFFFFF;
-}
-
-.booking-progress {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-    width: 100%;
-    height: 100px;
-    background-color: #1F1D1D;
-}
-
-.event-info, .other-info {
+.venue-input {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 20px 40px;
+    margin-top: 20px;
+    padding: 10px 20px;
     box-sizing: border-box;
 }
 
-.event-info h3, .other-info h3 {
+.other-input, .requirement-input {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.venue-input h3, .other-input h3, .requirement-input h3 {
     font-size: 32px;
     font-weight: 1000;
     font-family: 'Poppins', sans-serif;
@@ -130,30 +99,123 @@
     padding: 5px 10px;
 }
 
-.event-info .content {
+.venue-input .content, .other-input .content, .requirement-input .content {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    font-size: 24px;
     padding: 10px 10px;
+    width: 100%;
 }
 
-.other-info .content, .items-column, .equipment-column {
+.venueInfo {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.venueInfo form {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 10px;
+    width: 100%;
+    height: 100%;
+}
+
+.venueInfo label {
+    font-size: 16px;
+    text-align: left;
+    margin-bottom: 5px;
+}
+
+.venueInfo input {
+    width: 100%;
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-size: 16px;
+}
+
+.other-input .content, .items-column, .equipment-column, .status-column {
     width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     font-size: 24px;
     padding: 5px 10px;
+    margin-right: 20px;
 }
 
-.labels {
+.labels, .pencil-booking, .official-booking {
     text-align: left;
     font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 26px;
 }
 
-.values {
+.values, .official-booking, .pencil-booking {
     text-align: right;
     font-weight: 400;
 }
+
+.form-control {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    position: relative;
+}
+
+input[type="radio"] {
+    width: 24px;
+    height: 24px;
+    margin: 6px;
+    margin-right: 20px;
+    padding: 10px;
+    border: 2px solid var(--radio-border-color);
+    border-radius: 50%;
+    appearance: none;
+    background-color: transparent;
+    outline: none;
+}
+
+input[type="radio"]:not(:disabled):checked {
+    border-color: var(--radio-checked-color);
+    background-color: var(--radio-checked-color);
+    background-clip: content-box;
+    padding: 2px;
+    background-image: radial-gradient(
+      circle,
+      var(--radio-checked-color) 0%,
+      var(--radio-checked-color) 50%,
+      transparent 60%,
+      transparent 100%
+    );
+}
+
+input[type="radio"]:disabled {
+    background-color: var(--radio-disabled-bg-color);
+}
+  
+input[type="radio"]:disabled:checked {
+    background-image: radial-gradient(
+      circle,
+      var(--radio-border-color) 0%,
+      var(--radio-border-color) 50%,
+      transparent 50%,
+      transparent 100%
+    );
+}
+
+@media (hover: hover) {
+    input[type="radio"]:not(:disabled):hover {
+      background-color: var(--radio-hover-color);
+      outline: 6px solid var(--radio-hover-color);
+    }
+}
+
+input[type="radio"]:focus-visible {
+    background-color: var(--radio-hover-color);
+    outline: 6px solid var(--radio-hover-color);
+}
+
 
