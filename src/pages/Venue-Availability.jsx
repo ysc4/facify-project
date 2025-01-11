@@ -2,6 +2,8 @@ import Previous from '@mui/icons-material/ArrowBackIos';
 import Next from '@mui/icons-material/ArrowForwardIos';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import '../components/Calendar.css';
+import Calendar from '../components/Calendar.jsx';
 import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
@@ -33,7 +35,7 @@ function Venue() {
                 </div>
             </div>
             <div className="calendar-body">
-
+              <Calendar />
             </div>
         </div>
       </div>
