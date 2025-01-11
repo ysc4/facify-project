@@ -1,0 +1,92 @@
+.Calendar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+}
+
+.venue-titles {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.venue-titles h2 {
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.mph, .amphitheater, .e-library, .multimedia, .pe-area {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    border: 1px solid #1F1D1D;
+    padding: 10px 10px;
+    border-radius: 10px;
+}
+
+.venue-calendar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #1F1D1D;
+    border-radius: 10px;
+}
+
+.week-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    width: 100%;
+    padding: 20px 50px;
+    font-size: 20px;
+}
+
+.week-days {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: center;
+    width: 100%;
+    font-size: 20px;
+}
+
+.day-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 0 10px;
+    text-align: center;
+    width: 150px;
+    height: 150px;
+    border: 1px solid #1F1D1D;
+}
+
+.day-container:hover {
+    background-color: #D5D7E8;
+    cursor: pointer;
+}
+
+.day-container.active {
+    background-color: #D5D7E8;
+}
+
+.day-title {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid #1F1D1D;
+}
+
+.day-title h3 {
+    font-size: 20px;
+    text-align: center;
+}
