@@ -10,7 +10,7 @@ function Sidebar() {
         <ul className='SidebarList'>
         {SidebarData.map((val, key)=> {
         return <li key={key} 
-        className='row'
+        className={window.location.pathname === val.path ? "row active" : "row"}
         onClick={() => {window.location.pathname = val.path}}>
             {" "} 
             <div id="icon">{val.icon}</div>{" "}
