@@ -1,6 +1,8 @@
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import '../components/Dropdown.css';
+import Dropdown from '../components/Dropdown.jsx';
 import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
@@ -54,6 +56,8 @@ const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
 }
 
 function Homepage() {
+    const venues = ["Multipurpose Hall", "Amphitheater", "E-Library", "Multimedia Room", "PE Area"];
+
   return (
     <div className="Homepage">
       <Header />
@@ -68,7 +72,7 @@ function Homepage() {
                     <input type="text" placeholder="Search for " />
                 </div>
                 <div className="filters">
-                    <label className="filter-label">Filter by:</label>
+                    <Dropdown items={venues}/>
                 </div>
             </div>
             <div className="overview-content">

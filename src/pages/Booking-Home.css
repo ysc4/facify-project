@@ -24,11 +24,12 @@
     padding-top: 90px;
     padding-left: 20px;
     background-color: #FFFFFF; 
+    overflow-y: auto;
 }
 
 .overview-header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: flex-start;
     align-items: flex-start;
     width: 98%;
@@ -39,7 +40,7 @@
     position: relative;
     display: flex;
     align-items: center;
-    width: 100%;
+    width: 80%;
 }
 
 .search-bar input {
@@ -59,9 +60,11 @@
 
 .filters {
     display: flex;
-    align-items: flex-start;
-    width: 100%;
-    margin: 20px 0 20px 10px;
+    align-items: center;
+    width: 250px;
+    height: 40px;
+    margin-top: 5px;
+    margin-left: 30px;
 }
 
 .filter-label {
@@ -71,9 +74,6 @@
     margin-right: 10px; 
 }
 
-.filter-checkbox {
-    margin-right: 10px; 
-}
 
 .booking-item {
     display: flex;
