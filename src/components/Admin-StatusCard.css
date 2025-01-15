@@ -1,0 +1,84 @@
+.status-card-container {
+  display: flex;
+  flex-wrap: wrap;  /* Allow cards to wrap to the next line */
+  gap: 10px;  /* Space between the cards */
+  justify-content: flex-start;  /* Align cards to the left */
+}
+
+.status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 275px; /* Adjust as needed */
+  padding: 10px;
+  border: 1px solid #D9D9D9;
+  border-radius: 8px;
+  background-color: #FFFFFF;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  border-bottom: 7px solid #FF5733; /* Default color, will be overridden */
+}
+
+.status-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.status-card-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.status-card-count {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  color: #4A4A4A;
+}
+
+.status-card-status {
+  font-size: 16px;
+  color: #6B6B6B;
+  margin: 0;
+}
+
+.status-card-divider {
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  right: 10px;
+  height: 4px;
+  background-color: #6B6B6B; /* Matches the pencil icon color */
+  border-radius: 2px;
+}
+
+/* Custom classes for different bottom-border colors */
+.card-pencil-booked {
+  border-bottom: 7px solid #837878;
+}
+
+.card-complete-requirements {
+  border-bottom: 7px solid #236AD4; 
+}
+
+.card-for-assessing {
+  border-bottom: 7px solid #FFDC5E;
+}
+
+.card-approved {
+  border-bottom: 7px solid #44D852; 
+}
+
+.card-denied {
+  border-bottom: 7px solid #B71919;
+}
+
+.card-total-bookings {
+  border-bottom: 7px solid #262323; 
+}
+
+.card-scheduled-today {
+  border-bottom: 7px solid #CFCFCF;
+}
