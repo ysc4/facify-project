@@ -23,9 +23,9 @@ export default function  App() {
           <Route path="/venue-availability" element={<Venue />} />
           <Route path="/venue-booking" element={<VenueBooking />} />
           <Route path="/admin-home" element={<AdminHome />} />
-          <Route path="/admin-home" element={<AdminBookings />} />
-          <Route path="/admin-home" element={<AdminBookingDetails />} />
-          <Route path="/admin-home" element={<AdminCalendar />} />
+          <Route path="/admin-bookings" element={<AdminBookings />} />
+          <Route path="/admin-bookingdetails" element={<AdminBookingDetails />} />
+          <Route path="/admin-calendar" element={<AdminCalendar />} />
 
         </Routes>
       </div>
