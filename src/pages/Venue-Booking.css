@@ -150,14 +150,14 @@
     margin-right: 20px;
 }
 
-.labels, .pencil-booking, .official-booking {
+.venueInfo .labels, .pencil-booking, .official-booking {
     text-align: left;
     font-weight: 600;
     margin-bottom: 10px;
     font-size: 26px;
 }
 
-.values, .official-booking, .pencil-booking {
+.venueInfo .values, .official-booking, .pencil-booking {
     text-align: right;
     font-weight: 400;
 }

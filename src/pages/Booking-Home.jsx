@@ -1,6 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import data from '../components/data.jsx';
 import '../components/Dropdown.css';
 import Dropdown from '../components/Dropdown.jsx';
 import '../components/Navbar.css';
@@ -56,7 +57,6 @@ const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
 }
 
 function Homepage() {
-    const venues = ["Multipurpose Hall", "Amphitheater", "E-Library", "Multimedia Room", "PE Area"];
 
   return (
     <div className="Homepage">
@@ -72,7 +72,9 @@ function Homepage() {
                     <input type="text" placeholder="Search for " />
                 </div>
                 <div className="filters">
-                    <Dropdown items={venues}/>
+                    {data.map((options, index) => (
+                        <Dropdown key={index} options={options} />
+                    ))}
                 </div>
             </div>
             <div className="overview-content">

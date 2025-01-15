@@ -87,6 +87,9 @@ function BookingInfo() {
               </div>
             </div>
           </div>
+          <div className="cancel-booking">
+            <button className="cancel-button">Cancel Booking</button>
+          </div>
         </div>
       </div>
     </div>
