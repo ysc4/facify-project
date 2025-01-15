@@ -19,7 +19,7 @@ function AdminHome() {
       <Header />
       <Sidebar />
       <div className="content">
-        <div className="status-cards">
+        <div className="status-card-container">
           <StatusCard status="Pencil Booked" count={4} icon={<PencilIcon />} className="card-pencil-booked" />
           <StatusCard status="Complete Requirements" count={10} icon={<CheckCircleIcon />} className="card-complete-requirements" />
           <StatusCard status="For Assessing" count={7} icon={<ReportIcon />} className="card-for-assessing" />

@@ -1,21 +1,33 @@
+/* Main container for the status cards */
+/* Main container for the status cards */
 .status-card-container {
   display: flex;
   flex-wrap: wrap;  /* Allow cards to wrap to the next line */
   gap: 10px;  /* Space between the cards */
   justify-content: flex-start;  /* Align cards to the left */
+  max-width: calc(3 * 275px + 2 * 10px); /* 3 cards max per row, with 2 gaps between them */
 }
 
+
+/* Each card */
 .status-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 275px; /* Adjust as needed */
+  width: 275px;  /* Fixed width for each card */
   padding: 10px;
   border: 1px solid #D9D9D9;
   border-radius: 8px;
   background-color: #FFFFFF;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   border-bottom: 7px solid #FF5733; /* Default color, will be overridden */
+}
+
+/* Make cards responsive on smaller screens */
+@media (max-width: 900px) {
+  .status-card {
+    width: 100%; /* Allow full width for small screens */
+  }
 }
 
 .status-card-icon {
@@ -60,7 +72,7 @@
 }
 
 .card-complete-requirements {
-  border-bottom: 7px solid #236AD4; 
+  border-bottom: 7px solid #236AD4;
 }
 
 .card-for-assessing {
@@ -68,7 +80,7 @@
 }
 
 .card-approved {
-  border-bottom: 7px solid #44D852; 
+  border-bottom: 7px solid #44D852;
 }
 
 .card-denied {
@@ -76,7 +88,7 @@
 }
 
 .card-total-bookings {
-  border-bottom: 7px solid #262323; 
+  border-bottom: 7px solid #262323;
 }
 
 .card-scheduled-today {
