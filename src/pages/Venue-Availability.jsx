@@ -25,8 +25,6 @@ function Venue() {
                     <Previous className="prev-month" style={{ fontSize: 25 }}></Previous>
                     <Next className="next-month" style={{ fontSize: 25 }}></Next>
                     <h2>December 2024</h2>
-                    <div className="dropdown">
-                    </div>
                 </div>
                 <div className="add-booking">
                     <Link to="/venue-booking">
