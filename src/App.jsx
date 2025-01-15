@@ -6,6 +6,10 @@ import Login from './pages/Login';
 import Venue from './pages/Venue-Availability';
 import VenueBooking from './pages/Venue-Booking';
 import AdminHome from './admin_pages/Admin-Home';
+import AdminBookings from './admin_pages/Admin-Bookings';
+import AdminBookingDetails from './admin_pages/Admin-BookingDetails';
+import AdminCalendar from './admin_pages/Admin-Calendar';
+
 
 export default function  App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,6 +23,10 @@ export default function  App() {
           <Route path="/venue-availability" element={<Venue />} />
           <Route path="/venue-booking" element={<VenueBooking />} />
           <Route path="/admin-home" element={<AdminHome />} />
+          <Route path="/admin-home" element={<AdminBookings />} />
+          <Route path="/admin-home" element={<AdminBookingDetails />} />
+          <Route path="/admin-home" element={<AdminCalendar />} />
+
         </Routes>
       </div>
     </Router>
