@@ -5,6 +5,7 @@ import BookingInfo from './pages/Booking-Info';
 import Login from './pages/Login';
 import Venue from './pages/Venue-Availability';
 import VenueBooking from './pages/Venue-Booking';
+import AdminHome from './admin_pages/Admin-Home';
 
 export default function  App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,6 +18,7 @@ export default function  App() {
           <Route path="/booking-info" element={<BookingInfo />} />
           <Route path="/venue-availability" element={<Venue />} />
           <Route path="/venue-booking" element={<VenueBooking />} />
+          <Route path="/admin-home" element={<AdminHome />} />
         </Routes>
       </div>
     </Router>
