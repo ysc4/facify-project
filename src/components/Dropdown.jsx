@@ -1,21 +1,29 @@
-import React from 'react';
-
-import ArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import React, { useState } from 'react';
 import './Dropdown.css';
+import Select from './Select';
 
-const Dropdown = ({items}) => {
+function Dropdown({options}) {
+    const [menuShow, setMenuShow] = useState(false)
+    const [selected, setSelected] = useState(options[0])
+
+    const selectOption = e => {
+        setSelected(e.target.innerText);
+        setMenuShow(!menuShow);
+    }
+
+    const dropdownList = options.map((option,index) =>
+        <li key={index} onClick={selectOption}>{option}</li> )
+
     return (
         <div className="dropdown">
-            <div className="dropdown-button">
-                <ArrowDown className="arrow-down" style={{ fontSize: 20 }} />
-            </div>
-            <div className="dropdown-content">
-                {items.map((item, index) => (
-                    <div key={index} className="dropdown-item">
-                        {item}
-                    </div>
-                ))}
-            </div>
+            <Select
+                menuShow={menuShow}
+                setMenuShow={setMenuShow}
+                selected={selected}
+            />
+            <ul className={`menu ${menuShow && 'menu-open'}`}>
+                {dropdownList}
+            </ul>
         </div>
     );
 }
