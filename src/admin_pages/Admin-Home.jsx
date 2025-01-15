@@ -1,13 +1,18 @@
-import React from "react";
-import "./Admin-Home.css";
+import React from 'react';
+import '../components/Navbar.css';
+import Header from '../components/Navbar.jsx';
+import '../components/Sidebar.css';
+import Sidebar from '../components/AdminSidebar.jsx';
 
-const AdminHome = () => {
-    return (
-        <div className="admin-home">
-            <h1>Welcome to Admin Home</h1>
-            <p>This is the admin home page.</p>
-        </div>
-    );
-};
+import './Admin-Home.css';
+
+function AdminHome() {
+  return (
+    <div className="AdminHome">
+        <Header />
+      <Sidebar />
+    </div>
+  );
+}
 
 export default AdminHome;
