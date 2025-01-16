@@ -1,11 +1,9 @@
-/* Main container for the status cards */
-/* Main container for the status cards */
 .status-card-container {
   display: flex;
-  flex-wrap: wrap;  /* Allow cards to wrap to the next line */
-  gap: 10px;  /* Space between the cards */
-  justify-content: flex-start;  /* Align cards to the left */
-  max-width: calc(3 * 275px + 2 * 10px); /* 3 cards max per row, with 2 gaps between them */
+  flex-wrap: wrap;
+  gap: 20px;
+  flex-grow: 1;  /* Allow status cards to take up available space */
+  max-width: calc(100% - 320px); /* Leaves space for the right panel */
 }
 
 
@@ -35,6 +33,7 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  font-size: 50px;  /* Set icon size here */
 }
 
 .status-card-details {
@@ -94,3 +93,4 @@
 .card-scheduled-today {
   border-bottom: 7px solid #CFCFCF;
 }
+

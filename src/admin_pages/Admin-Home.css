@@ -8,6 +8,7 @@
     flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
 }
 
+
 .main-content {
     display: flex;
     flex: 1; /* Take up the remaining space */
@@ -142,9 +143,54 @@
     margin-top: 100px; /* Adjust this based on your Sidebar width */
     padding: 20px;
   }
+
+  h1 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin: 20px 0;
+  }
+
   
   .status-cards {
     display: flex;
     gap: 20px; /* Space between cards */
     flex-wrap: wrap; /* Make cards wrap to the next row if needed */
   }
+
+  .dashboard-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px; /* Reduce space between status cards and right panel */
+    width: 100%;
+}
+
+/* Status Cards Panel */
+.status-panel-container {
+    flex: 2; /* Allows more space for status cards */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Status Cards Layout */
+.status-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 20px 50px; /* Reduced gap to avoid large spaces */
+    max-width: 800px;
+    margin: 0; 
+    padding: 0;
+}
+
+/* Right Panel */
+.right-panel {
+    width: 300px;
+    height: auto;
+    border: 1px solid #ccc;
+    padding: 15px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    flex-shrink: 0;
+}
+
