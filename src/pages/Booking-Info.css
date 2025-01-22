@@ -62,12 +62,13 @@
 
 .booking-buttons {
     display: flex;
+    justify-content: flex-end;
+    gap: 10px;
     width: 40%;
 }
 
-.submit-button, .edit-button {
-    width: 300px;
-    margin-left: 20px; 
+.cancel-button, .edit-button {
+    width: 200px;
     padding: 10px 20px;
     border-radius: 10px;
     font-size: 17px;
@@ -78,18 +79,19 @@
     border: none;
 }
 
-.submit-button {
+.cancel-button {
     background-color: #FFFFFF;
-    color: #1F1D1D;
-    border: 1px solid #FFD80C;
+    color: #FF0000;
+    border: 1px solid #FF0000;
 }
 
 .edit-button:hover {
     background-color: #F5F5F5;
+    color: #2F3B8D;
 }
 
-.submit-button:hover {
-    background-color: #FFD80C;
+.cancel-button:hover {
+    background-color: #FF0000;
     color: #FFFFFF;
 }
 
@@ -97,8 +99,8 @@
     background-color: #F5F5F5;
 }
 
-.submit-button:active {
-    background-color: #FFD80C;
+.cancel-button:active {
+    background-color: #FF0000;
     color: #FFFFFF;
 }
 
@@ -109,18 +111,17 @@
     margin-top: 20px;
     width: 100%;
     height: 100px;
-    background-color: #1F1D1D;
 }
 
-.event-info, .other-info {
+.event-info, .other-info, .submit-reqs, .update-logs {
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 20px 40px;
+    padding: 15px 40px;
     box-sizing: border-box;
 }
 
-.event-info h3, .other-info h3 {
+.event-info h3, .other-info h3, .submit-reqs h3, .update-logs h3 {
     font-size: 32px;
     font-weight: 1000;
     font-family: 'Poppins', sans-serif;
@@ -162,24 +163,128 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
+    padding: 10px 20px;
 }
 
-.cancel-button {
+.logs {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    margin: 0 20px 0 20px;
+    box-sizing: border-box;
+}
+
+.log {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 26px;
+    padding: 15px 15px;
+    border: 1px solid #ccc;
+}
+
+.logs h5 {
+    font-size: 18px;
+    border-radius: 5px;
+    right: 0;
+}
+
+.logs p {
+    font-size: 16px;
+    text-align: right;
+}
+
+.reqs .table-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 24px;
+    font-weight: 800;
+    padding: 15px 15px;
+    color: #837118;
+}
+
+.reqs .table-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.table-header div {
+    flex: 1;
+    margin-right: 300px;
+}
+
+.table-content .req {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    padding: 15px 15px;
+    border: 1px solid #ccc;
+}
+
+.req div {
+    flex: 1;
+    margin-right: 330px;
+}
+
+.req div:last-child, .table-header div:last-child {
+    margin-right: 0;
+}
+
+.req .file {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    border: 1px solid #ccc;
+    max-width: 200px;
+    background-color: #F5F5F5;
+    line-height: 1.3;
+}
+
+.upload-button {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
     padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 17px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
-    background-color: #FFFFFF;
-    color: #000000;
-    border: 1px solid #FF0000;
+    background-color: #ffffff;
+    color: #191A1B;
+    border: 1px solid #191A1B;
 }
 
-.cancel-button:hover {
-    background-color: #FF0000;
-    color: #FFFFFF;
+.file .file-icon {
+    width: 20px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+    border: 1px solid #ccc;
 }
 
+.file .file-item {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 5px;
+}
+
+.file-item h4 {
+    font-size: 16px;
+    font-weight: 400;
+    color: #445CFF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.file-item p {
+    font-size: 10px;
+    font-weight: 400;
+}
