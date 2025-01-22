@@ -1,25 +1,36 @@
 import VisibilityOff from '@mui/icons-material/VisibilityOffOutlined';
 import Visibility from '@mui/icons-material/VisibilityOutlined';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/facify-white.png';
 import girlypops from '../assets/girlypops-pink.png';
 import './Login.css';
 
-const Login = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+const Login = ({ setIsLoggedIn }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         setIsLoggedIn(false);
-    }, []);
+    }, [setIsLoggedIn]);
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        // Perform login logic here
-        setIsLoggedIn(true);
-        navigate('/bookings');
+        try {
+            const response = await axios.post('/facify/login', { email, password });
+            if (response.data.success) {
+                setIsLoggedIn(true);
+                navigate('/bookings');
+            } else {
+                setError('Invalid credentials');
+            }
+        } catch (err) {
+            setError('An error occurred');
+        }
     };
 
     const togglePasswordVisibility = () => {
@@ -42,22 +53,31 @@ const Login = () => {
                 <h2>Enter your credentials.</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="username">NU Email:</label>
-                        <input type="text" id="username" name="username" placeholder="Enter your email" required/>
+                        <label htmlFor="email">Email:</label>
+                        <input
+                            type="text"
+                            id="email"
+                            value={email}
+                            placeholder="Enter your email"
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
                     </div>
                     <div className="form-group password-group">
                         <label htmlFor="password">Password:</label>
                         <input
                             type={passwordVisible ? "text" : "password"}
                             id="password"
-                            name="password"
+                            value={password}
                             placeholder="Enter your password"
+                            onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                         <span className="password-toggle" onClick={togglePasswordVisibility}>
                             {passwordVisible ? <VisibilityOff /> : <Visibility />}
                         </span>
                     </div>
+                    {error && <p className="error">{error}</p>}
                     <button type="submit" className="login-button">Login</button>
                 </form>
                 <div className="footer">
