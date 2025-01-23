@@ -18,7 +18,7 @@ function App() {
       errorElement: <NotFound />
     },
     {
-      path: '/bookings',
+      path: '/bookings/:orgID',
       element: <Booking />,
       errorElement: <NotFound />
     },
@@ -39,7 +39,7 @@ function App() {
     }
   ]);
 
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} basename='facify' />;
 }
 
 export default App;
