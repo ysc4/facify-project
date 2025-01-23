@@ -1,6 +1,7 @@
 import SearchIcon from '@mui/icons-material/Search';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import data from '../components/data.jsx';
 import '../components/Dropdown.css';
 import Dropdown from '../components/Dropdown.jsx';
@@ -23,6 +24,15 @@ const getStatusColor = (status) => {
         default:
             return "#FFFFFF"; 
     }
+};
+
+
+const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
 };
 
 const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
@@ -56,7 +66,29 @@ const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
     );
 }
 
+
 function Homepage() {
+    const { orgID } = useParams();
+    const[bookings, setBookings] = useState([]);
+    const[error, setError] = useState('');
+
+    useEffect(() => {
+        const fetchBookings = async () => {
+            try {
+                const response = await axios.post(`/facify/bookings/${orgID}`);
+                console.log(orgID);
+                if(response.data.success) {
+                    setBookings(response.data.bookings);
+                } else {
+                    setError('No bookings found');
+                }
+            } catch (err) {
+                console.log(err);
+                setError('An error occurred while fetching bookings');
+            }
+        };
+        fetchBookings();
+    }, [orgID]);
 
   return (
     <div className="Homepage">
@@ -78,22 +110,18 @@ function Homepage() {
                 </div>
             </div>
             <div className="overview-content">
-            <BookingItem
-                        title="Tagbik: General Assembly & Infosession 2024"
-                        location="Multipurpose Hall, 12th Floor, Main Building"
-                        date="December 5, 2024 12:00 NN - 4:00 PM"
-                        organizer="GDSC National University - Manila"
-                        faciCode="FACI00001"
-                        status="Approved"
-                    />
-            <BookingItem
-                        title="CCIT Month 2025 Opening Ceremony"
-                        location="Gym, 8th Floor, Main Building"
-                        date="January 10, 2025 10:00 AM - 2:00 PM"
-                        organizer="CCIT Student Council"
-                        faciCode="FACI00002"
-                        status="For Assessing"
-            />
+            {error && <p className="error">{error}</p>}
+                        {bookings.map((booking, index) => (
+                            <BookingItem
+                                key={index}
+                                title={booking.activity_title}
+                                location={booking.facility_name}
+                                date={`${formatDate(booking.event_date)} ${booking.event_start} - ${booking.event_end}`}
+                                organizer={booking.org_name}
+                                faciCode={booking.booking_id}
+                                status={booking.status_name}
+                            />
+                        ))}
             </div>
         </div>
       </div>
