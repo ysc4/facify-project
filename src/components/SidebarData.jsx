@@ -5,7 +5,7 @@ import React from 'react';
 export const SidebarData = [
     {
         title: 'Bookings',
-        path: '/bookings',
+        path: '/bookings/:orgID',
         icon: <BookIcon style={{ fontSize: 30 }} />,
         cName: 'nav-text'
     },
