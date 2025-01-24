@@ -11,14 +11,19 @@
 }
 
 .container {
-    width: 1200px;
+    width: 100%;
     padding: 2rem 2rem;
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .progress-container {
-    width: 100%;
+    width: 90%;
     display: flex;
+    align-items: center;
     justify-content: space-between;
     margin: 1rem 0;
     position: relative;
@@ -47,11 +52,18 @@
     transition: all 0.8s ease-in;
 }
 
-.progress-labels {
+.step-labels {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-align: center;
+    font-size: 16px;
+}
 
+.step-labels div { 
+    width: 200px;
+    position: relative;
 }
 
 .circle {
@@ -59,10 +71,12 @@
     height: 30px;
     width: 30px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
     z-index: 1;
+    color: #ccc;
 }
 
 .circle.active {
@@ -70,5 +84,17 @@
     color: #FFFFFF;
     background-color: var(--line-border-fill);
 }
+
+.step-label {
+    background-color: #FFFFFF;
+    color: #ccc;
+}
+
+.step-label.active {
+    background-color: #FFFFFF;
+    font-weight: 500;
+    color: #000;
+}
+
 
 
