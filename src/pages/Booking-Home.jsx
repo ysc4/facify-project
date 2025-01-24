@@ -37,9 +37,10 @@ const formatDate = (dateString) => {
 
 const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
     const navigate = useNavigate();
-
-    const handleClick = () => {
-        navigate('/booking-info');
+    const bookingID = faciCode;
+    
+    const handleClick = async () => {
+        navigate(`/booking-info/${bookingID}`);
     };
 
     return (
@@ -110,7 +111,7 @@ function Homepage() {
                 </div>
             </div>
             <div className="overview-content">
-            {error && <p className="error">{error}</p>}
+            {error && <p className="error" style={{ fontSize: 20 }}>{error}</p>}
                         {bookings.map((booking, index) => (
                             <BookingItem
                                 key={index}
