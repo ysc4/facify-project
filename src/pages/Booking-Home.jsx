@@ -68,10 +68,14 @@ const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
 }
 
 
+
 function Homepage() {
     const { orgID } = useParams();
     const[bookings, setBookings] = useState([]);
     const[error, setError] = useState('');
+    const[filter, setFilter] = useState('All Facilities');
+    const [facilities, setFacilities] = useState([]);
+
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -80,6 +84,8 @@ function Homepage() {
                 console.log(orgID);
                 if(response.data.success) {
                     setBookings(response.data.bookings);
+                    const uniqueFacilities = ['All Facilities', ...new Set(response.data.bookings.map(booking => booking.facility_name))];
+                    setFacilities(uniqueFacilities);
                 } else {
                     setError('No bookings found');
                 }
@@ -90,6 +96,15 @@ function Homepage() {
         };
         fetchBookings();
     }, [orgID]);
+
+    const handleFilterChange = (selectedOption) => {
+        setFilter(selectedOption);
+    };
+
+    const filteredBookingInfo = bookings.filter((booking) => {
+        if (filter === 'All Facilities') return true;
+        return booking.facility_name === filter;
+    });
 
   return (
     <div className="Homepage">
@@ -106,22 +121,24 @@ function Homepage() {
                 </div>
                 <div className="filters">
                     {data.map((options, index) => (
-                        <Dropdown key={index} options={options} />
+                        <Dropdown key={index} options={options} onSelect={handleFilterChange}/>
                     ))}
                 </div>
             </div>
             <div className="overview-content">
             {error && <p className="error" style={{ fontSize: 20 }}>{error}</p>}
-                        {bookings.map((booking, index) => (
-                            <BookingItem
-                                key={index}
-                                title={booking.activity_title}
-                                location={booking.facility_name}
-                                date={`${formatDate(booking.event_date)} ${booking.event_start} - ${booking.event_end}`}
-                                organizer={booking.org_name}
-                                faciCode={booking.booking_id}
-                                status={booking.status_name}
-                            />
+                        {filteredBookingInfo.map((booking, index) => (
+                            (filter === 'All Facilities' || filter === booking.facility_name) && (
+                                <BookingItem
+                                    key={index}
+                                    title={booking.activity_title}
+                                    location={booking.facility_name}
+                                    date={`${formatDate(booking.event_date)} ${booking.event_start} - ${booking.event_end}`}
+                                    organizer={booking.org_name}
+                                    faciCode={booking.booking_id}
+                                    status={booking.status_name}
+                                />
+                            )
                         ))}
             </div>
         </div>
