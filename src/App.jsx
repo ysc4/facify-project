@@ -23,7 +23,7 @@ function App() {
       errorElement: <NotFound />
     },
     {
-      path: '/booking-info',
+      path: '/booking-info/:bookingID',
       element: <BookingInfo />,
       errorElement: <NotFound />
     },
