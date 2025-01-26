@@ -4,7 +4,7 @@ export default [
         'Multipurpose Hall',
         'PE Area',
         'Multimedia Room',
-        'Amphitheatre',
+        'Ampitheater',
         'E-Library'
     ]
 ]
