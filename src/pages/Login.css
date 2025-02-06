@@ -13,7 +13,7 @@
     height: 100%;
     background-image: url('../assets/nu-image.png'); /* Use the background image */
     background-size: cover;
-    background-position: center;
+    background-position: center; /* yo */
 }
 
 .title {
