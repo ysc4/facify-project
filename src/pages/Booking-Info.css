@@ -88,6 +88,7 @@
 .edit-button:hover {
     background-color: #F5F5F5;
     color: #2F3B8D;
+    border: 1px solid #2F3B8D;
 }
 
 .cancel-button:hover {

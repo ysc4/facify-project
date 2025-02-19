@@ -55,13 +55,28 @@
     font-size: 17px;
     font-weight: 500;
     cursor: pointer;
-    background-color: #2F3B8D;
-    color: white;
     border: none;
     margin-top: 10px;
 }
 
-.modal-buttons .yes-button:hover, .modal-buttons .no-button:hover {
+.modal-buttons .yes-button {
+    background-color: #2F3B8D;
+    color: white;
+}
+
+.modal-buttons .no-button {
+    background-color: #F5F5F5;
+    color: #FF0000;
+    border: 1px solid #FF0000;
+}
+
+.modal-buttons .yes-button:hover {
     background-color: #F5F5F5;
     color: #2F3B8D;
+    border: 1px solid #2F3B8D;
+}
+
+.modal-buttons .no-button:hover {
+    background-color: #FF0000;
+    color: white;
 }
