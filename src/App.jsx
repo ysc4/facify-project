@@ -28,12 +28,12 @@ function App() {
       errorElement: <NotFound />
     },
     {
-      path: '/venue-availability',
+      path: '/venue-availability/:orgID',
       element: <Venue />,
       errorElement: <NotFound />
     },
     {
-      path: '/venue-booking',
+      path: '/venue-booking/:orgID/:facilityID',
       element: <VenueBooking />,
       errorElement: <NotFound />
     }
