@@ -44,9 +44,29 @@ function BookingInfo() {
                 const response = await axios.get(`/facify/booking-info/${bookingID}`);
                 if (response.data.success) {
                     setBookingInfo(response.data.bookingInfo);
-                    if (response.data.bookingInfo.status_name === 'Complete Requirements') {
-                        setCurrentStep(2);
+                    
+                    let step = 1; // Default step
+    
+                    switch (response.data.bookingInfo.status_name) {
+                        case 'Pencil Booked':
+                            step = 1;
+                            break;
+                        case 'Complete Requirements':
+                            step = 2;
+                            break;
+                        case 'For Assessing':
+                            step = 3;
+                            break;
+                        case 'Approved':
+                            step = 4;
+                            break;
+                        case 'Denied':
+                            step = 0; // If denied, set step to 0
+                            break;
+                        default:
+                            step = 1; // Default to step 1 if status is unrecognized
                     }
+                    setCurrentStep(step);
                 } else {
                     setError('No booking information found');
                 }
@@ -75,7 +95,7 @@ function BookingInfo() {
                 if (response.data.success) {
                     const requirements = response.data.requirements;
                     if (requirements.length === 3) {
-                        setCurrentStep(3);
+                        setCurrentStep(2);
                     }
                 } else {
                     console.error('Error fetching requirements:', response.data.message);
