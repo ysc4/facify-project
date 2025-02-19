@@ -189,7 +189,7 @@ function VenueBooking() {
                   </label>
                   <label className="form-control">
                   <input type="radio" id="complete-reqs" name="status" value="complete" onChange={handleStatusChange}></input>
-                  Complete Requirements
+                  Official Booking
                   </label>    
                 </div>
               </div>

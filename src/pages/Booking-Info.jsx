@@ -51,7 +51,7 @@ function BookingInfo() {
                         case 'Pencil Booked':
                             step = 1;
                             break;
-                        case 'Complete Requirements':
+                        case 'Officially Booked':
                             step = 2;
                             break;
                         case 'For Assessing':

@@ -15,7 +15,7 @@ const getStatusColor = (status) => {
     switch (status) {
         case "Pencil Booked":
             return "#D9D9D9";
-        case "Complete Requirements":
+        case "Officially Booked":
             return "#A6C4FF";
         case "For Assessing":
             return "#FFB951";
