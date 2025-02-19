@@ -17,7 +17,7 @@ const totalSteps = 4;
     </div>
     <div className="step-labels">
       <div className={`${currentStep>=1 ? "step-label active": "step-label"}`}>Pencil Booked</div>
-      <div className={`${currentStep>=2 ? "step-label active": "step-label"}`}>Complete Requirements</div>
+      <div className={`${currentStep>=2 ? "step-label active": "step-label"}`}>Officially Booked</div>
       <div className={`${currentStep>=3 ? "step-label active": "step-label"}`}>For Assessing</div>
       <div className={`${currentStep>=4 ? "step-label active": "step-label"}`}>Approved</div>
     </div>
