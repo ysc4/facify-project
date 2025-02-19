@@ -7,11 +7,6 @@ const ProgressBar = () => {
 const [step, setStep] = React.useState(1);
 const totalSteps = 4;
 
-function nextStep() {
-  if (step < 4) setStep((step) => step + 1);
-  // Logic for updating progress
-}
-
   return (
     <div className="container">
     <div className="progress-container">
@@ -27,7 +22,6 @@ function nextStep() {
       <div className={`${step>=3 ? "step-label active": "step-label"}`}>For Assessing</div>
       <div className={`${step>=4 ? "step-label active": "step-label"}`}>Approved</div>
     </div>
-    <button onClick={nextStep}>Next Step</button> 
   </div>
   );
 }
