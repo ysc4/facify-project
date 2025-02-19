@@ -80,7 +80,7 @@ function Homepage() {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.post(`/facify/bookings/${orgID}`);
+                const response = await axios.get(`/facify/bookings/${orgID}`);
                 console.log(orgID);
                 if(response.data.success) {
                     setBookings(response.data.bookings);
