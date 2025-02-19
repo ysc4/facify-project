@@ -71,10 +71,135 @@
 
 .calendar-body {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
     margin-top: 40px;
     width: 98%;
     height: 85%;
+}
+
+.venue-titles {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.venue-titles h2 {
+    font-size: 20px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.venue-name {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    border: 1px solid #1F1D1D;
+    padding: 10px 10px;
+    border-radius: 10px 10px 0 0;
+    transition: background-color 0.3s ease;
+}
+
+.venue-name:hover {
+    background-color: #FFF3B4;
+    cursor: pointer;
+}
+
+.venue-name.active {
+    background-color: #FFF3B4;
+    cursor: pointer;
+}
+
+.venue-calendar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border: 1px solid #1F1D1D;
+    border-radius: 0 0 10px 10px;
+}
+
+.week-container {
+    display: flex;
+    gap: 5px;
+    text-align: center;
+    justify-content: space-around;
+    width: 100%;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.week-days {
+    display: grid;
+    flex-direction: row;
+    justify-content: space-around;
+    text-align: center;
+    width: 100%;
+    font-size: 25px;
+    margin-top: 15px;
+    grid-template-columns: repeat(7, 1fr);
+    font-weight: 700;
+}
+
+.day-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    width: 160px;
+    height: 120px;
+    border: 1px solid #1F1D1D;
+    overflow: auto;
+}
+
+.day-title {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.day-title h3 {
+    font-size: 20px;
+    text-align: center;
+}
+
+.day-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    gap: 2px;
+}
+
+.event-day {
+    width: 90%; 
+    height: 24px; 
+    margin: 3px auto; 
+    padding: 3px;
+    border-radius: 5px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #000; 
+}
+
+.event-id {
+    padding: 5px 10px;
+}
+
+.event {
+    border-radius: 5px;
+    font-weight: 400;
+}
+
+.empty {
+    background-color: #f0f0f0; 
+    opacity: 0.5;
 }
