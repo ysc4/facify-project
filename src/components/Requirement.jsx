@@ -9,7 +9,7 @@ import './Requirement.css';
 
 Modal.setAppElement('#root');
 
-const Requirement = ({ booking_id, requirement_name }) => {
+const Requirement = ({ org_id, booking_id, requirement_name }) => {
   const inputRef = React.useRef();
 
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -34,7 +34,7 @@ const Requirement = ({ booking_id, requirement_name }) => {
   useEffect(() => {
     const fetchFileDetails = async () => {
       try {
-        const response = await axios.get(`/facify/booking-info/${booking_id}/${requirement_name}`);
+        const response = await axios.get(`/facify/booking-info/${org_id}/${booking_id}/${requirement_name}`);
         console.log(response.data);
         if (response.data.success) {
           setUploadedFile(response.data.file);
@@ -45,7 +45,7 @@ const Requirement = ({ booking_id, requirement_name }) => {
     };
 
     fetchFileDetails();
-  }, [booking_id, requirement_name]);
+  }, [org_id, booking_id, requirement_name]);
 
   const handleFileChange = (event) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -101,25 +101,11 @@ const Requirement = ({ booking_id, requirement_name }) => {
   return (
     <div className="req">
       <div className="file-name">{requirement_name}</div>
-      {uploadedFile === null ? (
-        <>
           <div className="date"></div>
           <div className="file" onClick={handleOpenFileUploader}>
             Upload File
           </div>
-        </>
-      ) : (
-        <>
-          <div className="date">{formatDateTime(uploadedFile?.date_time_submitted)}</div>
-          <div className="file">
-              <PdfIcon />
-            <div className="file-details">
-              <h4>{uploadedFile?.file_name}</h4>
-              <p>{(uploadedFile?.file_size / 1024).toFixed(2)} KB</p>
-              </div>
-            </div>
-        </>
-      )}
+
 
       <Modal
         isOpen={isFileUploaderOpen}

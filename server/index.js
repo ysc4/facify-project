@@ -92,13 +92,14 @@ app.get('/facify/bookings/:orgID', (req, res) => {
     });
 });
 
-app.get('/facify/booking-info/:bookingID', (req, res) => {
-    const { bookingID } = req.params;
-    if (!bookingID) {
-        return res.status(400).send({ success: false, message: 'No bookingID provided' });
+app.get('/facify/booking-info/:orgID/:bookingID', (req, res) => {
+    const { orgID, bookingID } = req.params;
+    if (!bookingID || !orgID) {
+        return res.status(400).send({ success: false, message: 'No bookingID or orgID provided' });
     }
+    
     const query = `
-            SELECT 
+        SELECT 
             event_information.*, 
             facilities.facility_name, 
             status.status_name, 
@@ -118,8 +119,9 @@ app.get('/facify/booking-info/:bookingID', (req, res) => {
         JOIN status ON latest_bs.status_id = status.status_id 
         JOIN user ON event_information.org_id = user.org_id
         JOIN event_equipment ON event_information.booking_id = event_equipment.booking_id
-        WHERE event_information.booking_id = ?`;
-    db.query(query, [bookingID], (err, result) => {
+        WHERE event_information.booking_id = ? AND event_information.org_id = ?`;
+    
+    db.query(query, [bookingID, orgID], (err, result) => {
         if (err) {
             console.error('Database query error:', err);
             return res.status(500).send({ success: false, message: 'Database error' });
@@ -187,13 +189,14 @@ app.post('/facify/booking-info/upload', upload.single('file'), (req, res) => {
     });
 });
 
-app.get('/facify/booking-info/:bookingID/requirements', (req, res) => {
-    const { bookingID } = req.params;
-    if (!bookingID) {
-        return res.status(400).send({ success: false, message: 'No bookingID provided' });
+app.get('/facify/booking-info/:orgID/:bookingID/requirements', (req, res) => {
+    const { orgID, bookingID } = req.params;
+    if (!bookingID || !orgID) {
+        return res.status(400).send({ success: false, message: 'No bookingID or orgID provided' });
     }
-    const query = 'SELECT * FROM requirement WHERE booking_id = ?';
-    db.query(query, [bookingID], (err, result) => {
+    
+    const query = 'SELECT * FROM requirement WHERE booking_id = ? AND EXISTS (SELECT 1 FROM event_information WHERE booking_id = ? AND org_id = ?)';
+    db.query(query, [bookingID, bookingID, orgID], (err, result) => {
         if (err) {
             console.error('Database query error:', err);
             return res.status(500).send({ success: false, message: 'Database error' });
@@ -202,19 +205,21 @@ app.get('/facify/booking-info/:bookingID/requirements', (req, res) => {
     });
 });
 
-
-
-app.get('/facify/booking-info/:bookingID/logs', (req, res) => {
-    const { bookingID } = req.params;
+app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
+    const { orgID, bookingID } = req.params;
+    if (!bookingID || !orgID) {
+        return res.status(400).send({ success: false, message: 'No bookingID or orgID provided' });
+    }
 
     const query = `
         SELECT booking_status.*, status.remarks
         FROM booking_status 
         JOIN status ON booking_status.status_id = status.status_id 
         WHERE booking_status.booking_id = ? 
+        AND EXISTS (SELECT 1 FROM event_information WHERE booking_id = ? AND org_id = ?)
         ORDER BY booking_status.date_time DESC`;
 
-    db.query(query, [bookingID], (err, result) => {
+    db.query(query, [bookingID, bookingID, orgID], (err, result) => {
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }

@@ -35,12 +35,12 @@ const formatDate = (dateString) => {
     return `${month}/${day}/${year}`;
 };
 
-const BookingItem = ({ title, location, date, organizer, faciCode, status}) => {
+const BookingItem = ({ title, location, date, organizer, faciCode, status, orgID}) => {
     const navigate = useNavigate();
     const bookingID = faciCode;
     
     const handleClick = async () => {
-        navigate(`/booking-info/${bookingID}`);
+        navigate(`/booking-info/${orgID}/${bookingID}`);
     };
 
     return (
@@ -137,6 +137,7 @@ function Homepage() {
                                     organizer={booking.org_name}
                                     faciCode={booking.booking_id}
                                     status={booking.status_name}
+                                    orgID={orgID}
                                 />
                             )
                         ))}
