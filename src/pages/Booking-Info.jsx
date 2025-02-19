@@ -1,14 +1,12 @@
-// filepath: /Users/yscalify/facify-project/src/pages/Booking-Info.jsx
 import BackIcon from '@mui/icons-material/ArrowBack';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import CancelModal from '../components/CancelModal';
 import Header from '../components/Navbar';
 import ProgressBar from '../components/ProgressBar';
 import Requirement from '../components/Requirement';
 import Sidebar from '../components/Sidebar';
-import FileUploader from '../components/FileUploader';
 import './Booking-Info.css';
 
 const formatDate = (dateString) => {
@@ -19,13 +17,26 @@ const formatDate = (dateString) => {
     return `${month}/${day}/${year}`;
 };
 
+const formatDateTime = (dateTimeString) => {
+    const date = new Date(dateTimeString);
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    const formattedDate = date.toLocaleDateString("en-US", options);
+    
+    const hours = date.getHours();
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHours = hours % 12 || 12;
+    return `${formattedDate} ${formattedHours}:${minutes} ${ampm}`;
+};
+
 function BookingInfo() {
-    const { bookingID } = useParams();
+    const { bookingID, orgID } = useParams();
+    const navigate = useNavigate();
     const [bookingInfo, setBookingInfo] = useState([]);
     const [error, setError] = useState('');
+    const [logs, setLogs] = useState([]);
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-    const [isFileUploaderOpen, setIsFileUploaderOpen] = useState(false);
-    const [currentRequirement, setCurrentRequirement] = useState(null);
+    const [currentStep, setCurrentStep] = useState(1);
 
     useEffect(() => {
         const fetchBookingInfo = async () => {
@@ -33,6 +44,9 @@ function BookingInfo() {
                 const response = await axios.get(`/facify/booking-info/${bookingID}`);
                 if (response.data.success) {
                     setBookingInfo(response.data.bookingInfo);
+                    if (response.data.bookingInfo.status_name === 'Complete Requirements') {
+                        setCurrentStep(2);
+                    }
                 } else {
                     setError('No booking information found');
                 }
@@ -41,8 +55,46 @@ function BookingInfo() {
                 setError('An error occurred while fetching booking information');
             }
         };
+
+        const fetchLogs = async () => {
+            try {
+                const response = await axios.get(`/facify/booking-info/${bookingID}/logs`);
+                if (response.data.success) {
+                    setLogs(response.data.logs);
+                } else {
+                    console.error('Error fetching logs:', response.data.message);
+                }
+            } catch (err) {
+                console.error('Error fetching logs:', err);
+            }
+        };
+
+        const fetchRequirements = async () => {
+            try {
+                const response = await axios.get(`/facify/booking-info/${bookingID}/requirements`);
+                if (response.data.success) {
+                    const requirements = response.data.requirements;
+                    if (requirements.length === 3) {
+                        setCurrentStep(3);
+                    }
+                } else {
+                    console.error('Error fetching requirements:', response.data.message);
+                }
+            } catch (err) {
+                console.error('Error fetching requirements:', err);
+            }
+        };
+
+        fetchRequirements();
+        fetchLogs();
         fetchBookingInfo();
     }, [bookingID]);
+
+    const requirementNames = [
+        "Letter of Intent",
+        "Activity Reservation Form",
+        "Event Proposal"
+    ];
 
     const handleOpenCancelModal = () => {
         setIsCancelModalOpen(true);
@@ -52,18 +104,12 @@ function BookingInfo() {
         setIsCancelModalOpen(false);
     };
 
-    const handleOpenFileUploader = (requirement) => {
-        setCurrentRequirement(requirement);
-        setIsFileUploaderOpen(true);
-    };
-
-    const handleCloseFileUploader = () => {
-        setIsFileUploaderOpen(false);
-        setCurrentRequirement(null);
-    };
-
     const handleFileUpload = (file) => {
         console.log('File uploaded:', file);
+    };
+
+    const handleBackButtonClick = () => {
+        navigate(-1);
     };
 
     return (
@@ -82,7 +128,7 @@ function BookingInfo() {
                             <div key={booking.booking_id}>
                                 <div className="booking-details_header">
                                     <div className="booking">
-                                        <BackIcon className="back-icon" style={{ fontSize: 40 }} />
+                                        <BackIcon className="back-icon" style={{ fontSize: 40 }} onClick={handleBackButtonClick} />
                                         <h2>Booking Information - {booking.booking_id}</h2>
                                     </div>
                                     <div className="booking-buttons">
@@ -93,7 +139,7 @@ function BookingInfo() {
                                     </div>
                                 </div>
                                 <div className="booking-progress">
-                                    <ProgressBar />
+                                    <ProgressBar currentStep={currentStep} />
                                 </div>
                                 <div className="event-info">
                                     <h3>Event Information</h3>
@@ -161,37 +207,42 @@ function BookingInfo() {
                                             <div className="date-title">Date Submitted</div>
                                             <div className="file-title">File</div>
                                         </div>
-                                        <div className="table-content">
-                                            <div className="file" onClick={() => handleOpenFileUploader("Letter of Intent")}>
-                                                <Requirement className = "requirement" requirement_name="Letter of Intent" date_submitted={booking.date_submitted} file_name={booking.file_name} file_size={booking.file_size} file={booking.file} />
+                                        <div className="table-content"> 
+                                        {requirementNames.map((requirementName) => (
+                                            <div className="file" key={requirementName}>
+                                                <Requirement
+                                                    booking_id={booking.booking_id}
+                                                    requirement_name={requirementName}
+                                                    onUpload={handleFileUpload}
+                                                />
                                             </div>
-                                            <div className="file" onClick={() => handleOpenFileUploader("Activity Reservation Form")}>
-                                                <Requirement className = "requirement" requirement_name="Activity Reservation Form" date_submitted={booking.date_submitted} file_name={booking.file_name} file_size={booking.file_size} file={booking.file} />
-                                            </div>
-                                            <div className="file" onClick={() => handleOpenFileUploader("Event Proposal")}>
-                                                <Requirement className = "requirement" requirement_name="Event Proposal" date_submitted={booking.date_submitted} file_name={booking.file_name} file_size={booking.file_size} file={booking.file} />
-                                            </div>
+                                        ))}
                                         </div>
                                     </div>
                                 </div>
                                 <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} />
-                                <FileUploader isOpen={isFileUploaderOpen} onRequestClose={handleCloseFileUploader} onFileUpload={handleFileUpload} requirementName={currentRequirement} bookingID={bookingID} />
                             </div>
                         ))
                     )}             
-          {/* <div className="update-logs">
+          <div className="update-logs">
             <h3>Update Logs</h3>
             <div className="logs">
-              <div className="log">
-                <div className="log-entry">
-                  <p>Booking was created. <b>FACI0001</b> by ORGANIZATION NAME</p>
-                </div>
-                <div className="log-date">
-                  <p>January 05, 2024 11:00AM</p>
-                </div>
-              </div>
+                {logs.length > 0 ? (
+                logs.map((log, index) => (
+                    <div className="log" key={index}>
+                    <div className="log-entry">
+                        <p>{log.remarks}</p>
+                    </div>
+                    <div className="log-date">
+                        <p>{formatDateTime(log.date_time)}</p>
+                    </div>
+                    </div>
+                ))
+                ) : (
+                <p>No logs available.</p>
+                )}
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
