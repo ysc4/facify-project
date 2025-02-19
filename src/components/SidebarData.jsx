@@ -4,13 +4,13 @@ import React from 'react';
 
 export const SidebarData = [
     {
-        title: 'Bookings',
+        title: 'Facility Reservation',
         path: '/bookings',
         icon: <BookIcon style={{ fontSize: 30 }} />,
         cName: 'nav-text'
     },
     {
-        title: 'Venue Availability',
+        title: 'Facility Availability',
         path: '/venue-availability',
         icon: <EventIcon style={{ fontSize: 30 }} />,
         cName: 'nav-text'
