@@ -17,6 +17,15 @@ function VenueBooking() {
   const existingData = location.state || {};
   const [status, setStatus] = useState("");
   const [bookingID, setBookingID] = useState("");
+
+  const facilityNames = {
+    1: "Amphitheater",
+    2: "E-Library",
+    3: "Multimedia Room",
+    4: "Multipurpose Hall",
+    5: "PE Area"
+  };
+
   const [formData, setFormData] = useState({
     orgID: orgID,
     eventDate: "",
@@ -120,7 +129,6 @@ function VenueBooking() {
       
       if (bookingID) {
           response = await axios.put(`/facify/booking-info/${bookingID}/update`, finalFormData);
-          console.log('Update Response:', response.data);
           if (response.data.success) {
               alert('Booking updated successfully');
               navigate(`/booking-info/${orgID}/${bookingID}`);
@@ -129,7 +137,6 @@ function VenueBooking() {
           }
       } else {
           response = await axios.post(`/facify/venue-booking/${orgID}/${facilityID}/create`, finalFormData);
-          console.log('Create Response:', response.data);
           if (response.data.success) {
               alert('Booking created successfully');
               setBookingID(response.data.bookingID); // Save new booking ID for future updates
@@ -160,7 +167,7 @@ function VenueBooking() {
             <div className="booking-details_header">
                 <div className="booking">
                     <BackIcon className="back-icon" style={{  fontSize: 40  }} onClick={handleBackButtonClick}/>
-                    <h2>Multipurpose Hall</h2>
+                    <h2>{facilityNames[facilityID]}</h2>
                 </div>
             </div>
             <div className="venue-input">

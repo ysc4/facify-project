@@ -8,7 +8,7 @@ import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import './Venue-Availability.css';
-import Tooltip from '../components/Tooltip.jsx';
+
 
 function Venue() {
   const { orgID } = useParams();
@@ -40,6 +40,7 @@ function Venue() {
         status: event.status_name, 
         startTime: event.event_start, 
         endTime: event.event_end, 
+        organizer: event.org_name
       }));
   
       setEvents(formattedEvents);
@@ -106,6 +107,7 @@ function Venue() {
         <p className="tooltip-venue">{event.venue}</p>
         <p className="tooltip-date">{formatDate(event.eventDate)}</p>
         <p className="tooltip-time">{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+        <p className="tooltip-organizer">{event.organizer}</p>
       </div>
     );
   };
@@ -135,7 +137,6 @@ function Venue() {
 
   const handleVenueClick = (facilityID) => {
     setFacilityID(facilityID);
-    console.log(facilityID);
   };
 
   const handleMouseEnter = (event, e) => {
