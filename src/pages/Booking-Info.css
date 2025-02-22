@@ -24,7 +24,7 @@
 .booking-details {
     flex: 1; 
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     padding-top: 90px;
     background-color: #FFFFFF; 
 }
@@ -67,8 +67,8 @@
     width: 40%;
 }
 
-.cancel-button, .edit-button {
-    width: 200px;
+.submitReqs-button, .edit-button {
+    width: 250px;
     padding: 10px 20px;
     border-radius: 10px;
     font-size: 17px;
@@ -79,10 +79,28 @@
     border: none;
 }
 
+.submitReqs-button {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 1px solid #FFD80C;
+}
+
+.submitReqs-button:hover {
+    background-color: #FFD80C;
+    color: #000000;
+    border: 1px solid #FFD80C;
+}
+
 .cancel-button {
     background-color: #FFFFFF;
     color: #FF0000;
     border: 1px solid #FF0000;
+    padding: 10px 20px;
+    margin: 20px 40px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
 }
 
 .edit-button:hover {
@@ -160,13 +178,6 @@
     font-weight: 400;
 }
 
-.cancel-booking {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px 20px;
-}
-
 .logs {
     display: flex;
     flex-direction: column;
@@ -194,28 +205,3 @@
     text-align: right;
 }
 
-.reqs .table-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 24px;
-    font-weight: 800;
-    padding: 15px 15px;
-    color: #837118;
-}
-
-.reqs .table-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 16px;
-}
-
-.table-header div {
-    flex: 1;
-    margin-right: 300px;
-}
-
-.table-header div:last-child {
-    margin-right: 0;
-}

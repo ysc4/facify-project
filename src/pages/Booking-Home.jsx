@@ -59,7 +59,7 @@ const BookingItem = ({ title, location, date, organizer, faciCode, status, orgID
                     <div className="faci-code">
                         <h3>{faciCode}</h3>
                     </div>
-                    <div className="status-label" style={{backgroundColor: getStatusColor(status)}}>
+                    <div className="status-label" style={{ backgroundColor: getStatusColor(status) }}>
                         <p>{status}</p>
                     </div>
                 </div>
