@@ -18,7 +18,7 @@ function Venue() {
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 }); 
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
-  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
   useEffect(() => {
     if (facilityID) {
