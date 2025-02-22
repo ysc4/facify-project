@@ -1,7 +1,7 @@
 import BackIcon from '@mui/icons-material/ArrowBackOutlined';
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import '../components/AddMinusButton.css';
 import AddMinusButton from '../components/AddMinusButton.jsx';
 import '../components/Navbar.css';
@@ -13,6 +13,8 @@ import './Venue-Booking.css';
 function VenueBooking() {
   const { orgID, facilityID } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const existingData = location.state || {};
   const [status, setStatus] = useState("");
   const [bookingID, setBookingID] = useState("");
   const [formData, setFormData] = useState({
@@ -40,6 +42,35 @@ function VenueBooking() {
     bookingDate: new Date().toISOString().split('T')[0],
     bookingTime: new Date().toISOString().split('T')[1].split('.')[0]
   });
+
+  useEffect(() => {
+    if (existingData?.booking_id) { 
+        setBookingID(existingData.booking_id);
+        setFormData({
+            orgID: existingData.orgID,
+            eventDate: new Date(existingData.event_date).toISOString().split('T')[0],
+            eventStart: existingData.event_start || "",
+            eventEnd: existingData.event_end || "",
+            activityTitle: existingData.activity_title || "",
+            facilityID: existingData.facilityID || "",
+            attendance: existingData.expected_attendance || "",
+            speakerName: existingData.speaker_name || "",
+            equipment: {
+                tables: existingData.tables || 0,
+                chairs: existingData.chairs || 0,
+                bulletinBoards: existingData.bulletin_boards || 0,
+                speaker: existingData.speaker || 0,
+                microphone: existingData.microphone || 0,
+                flagpole: existingData.flagpole || 0,
+                podium: existingData.podium || 0,
+                platform: existingData.platform || 0,
+                electrician: existingData.electrician || 0,
+                janitor: existingData.janitor || 0
+            },
+            status: "pencil",
+        });
+    }
+}, [existingData]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,22 +116,33 @@ function VenueBooking() {
     console.log('Server response:', finalFormData);
 
     try {
-      const response = await axios.post(`/facify/venue-booking/${orgID}/${facilityID}/create`, finalFormData);
-      console.log('Server response1:', response.data);
-      if (response.data.success) {
-        alert('Booking created successfully');
-        setBookingID(response.data.bookingID);
-        navigate(`/venue-availability/${orgID}`);
+      let response;
+      
+      if (bookingID) {
+          response = await axios.put(`/facify/booking-info/${bookingID}/update`, finalFormData);
+          console.log('Update Response:', response.data);
+          if (response.data.success) {
+              alert('Booking updated successfully');
+              navigate(`/booking-info/${orgID}/${bookingID}`);
+          } else {
+              alert('Error updating booking');
+          }
       } else {
-        alert('Error creating booking');
+          response = await axios.post(`/facify/venue-booking/${orgID}/${facilityID}/create`, finalFormData);
+          console.log('Create Response:', response.data);
+          if (response.data.success) {
+              alert('Booking created successfully');
+              setBookingID(response.data.bookingID); // Save new booking ID for future updates
+              navigate(`/venue-availability/${orgID}`);
+          } else {
+              alert('Error creating booking');
+          }
       }
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      alert('Error creating booking');
-    }
-
-
-  };
+  } catch (error) {
+      console.error('Error submitting booking:', error);
+      alert(`Error: ${error.response?.data?.message || 'Failed to submit booking'}`);
+  }
+};
 
   const handleBackButtonClick = () => {
     navigate(-1);
@@ -156,11 +198,11 @@ function VenueBooking() {
                     <h4>Microphone</h4>
                   </div>
                   <div className="values">
-                    <AddMinusButton item="tables" onCountChange={handleCountChange} />
-                    <AddMinusButton item="chairs" onCountChange={handleCountChange} />
-                    <AddMinusButton item="bulletinBoards" onCountChange={handleCountChange} />
-                    <AddMinusButton item="speaker" onCountChange={handleCountChange} />
-                    <AddMinusButton item="microphone" onCountChange={handleCountChange} />
+                      <AddMinusButton item="tables" onCountChange={handleCountChange} initialValue={formData.equipment.tables} />
+                      <AddMinusButton item="chairs" onCountChange={handleCountChange} initialValue={formData.equipment.chairs} />
+                      <AddMinusButton item="bulletinBoards" onCountChange={handleCountChange} initialValue={formData.equipment.bulletinBoards} />
+                      <AddMinusButton item="speaker" onCountChange={handleCountChange} initialValue={formData.equipment.speaker} />
+                      <AddMinusButton item="microphone" onCountChange={handleCountChange} initialValue={formData.equipment.microphone} />
                   </div>
                 </div>
                 <div className="equipment-column">
@@ -172,11 +214,11 @@ function VenueBooking() {
                     <h4>Janitor</h4>
                   </div>
                   <div className="values">
-                    <AddMinusButton item="flagpole" onCountChange={handleCountChange} />
-                    <AddMinusButton item="podium" onCountChange={handleCountChange} />
-                    <AddMinusButton item="platform" onCountChange={handleCountChange} />
-                    <AddMinusButton item="electrician" onCountChange={handleCountChange} />
-                    <AddMinusButton item="janitor" onCountChange={handleCountChange} />
+                      <AddMinusButton item="flagpole" onCountChange={handleCountChange} initialValue={formData.equipment.flagpole} />
+                      <AddMinusButton item="podium" onCountChange={handleCountChange} initialValue={formData.equipment.podium} />
+                      <AddMinusButton item="platform" onCountChange={handleCountChange} initialValue={formData.equipment.platform} />
+                      <AddMinusButton item="electrician" onCountChange={handleCountChange} initialValue={formData.equipment.electrician} />
+                      <AddMinusButton item="janitor" onCountChange={handleCountChange} initialValue={formData.equipment.janitor} />
                   </div>
                 </div>
               </div>
@@ -186,11 +228,11 @@ function VenueBooking() {
               <div className="content">
                 <div className="status-column">
                   <label className="form-control">
-                  <input type="radio" id="pencil-booking" name="status" value="pencil" onChange={handleStatusChange}></input>
+                  <input type="radio" id="pencil-booking" name="status" value="pencil" checked={formData.status === "pencil"} onChange={handleStatusChange}></input>
                   Pencil Booking
                   </label>
                   <label className="form-control">
-                  <input type="radio" id="complete-reqs" name="status" value="official" onChange={handleStatusChange}></input>
+                  <input type="radio" id="complete-reqs" name="status" value="official" checked={formData.status === "official"} onChange={handleStatusChange}></input>
                   Official Booking
                   </label>    
                 </div>
@@ -201,8 +243,8 @@ function VenueBooking() {
                 <input type="checkbox" id="agree-checkbox" name="agree-checkbox" required></input>
                 By submitting this reservation, I agree and abide by the rules setforth by the Facilities Management Team.
               </label>
-              <button className="submit-booking" type="submit">Submit Booking</button>
-            </div>
+              <button className="submit-booking" type="submit">{existingData?.booking_id ? "Update Booking" : "Submit Booking"}</button>
+              </div>
             </form>
           </div>
         </div> 

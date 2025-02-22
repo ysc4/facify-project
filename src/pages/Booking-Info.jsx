@@ -104,10 +104,17 @@ function BookingInfo() {
         setIsCancelModalOpen(false);
     };
 
-
     const handleBackButtonClick = () => {
         navigate(-1);
     };
+
+    const handleEdit = () => {
+        navigate(`/venue-booking/${orgID}/${facilityID}`, { state: bookingInfo[0] });
+    };
+
+    const handleSubmit = () => {
+        navigate(`/submit-requirements/${orgID}/${bookingID}`);
+    }
 
     return (
         <div className="BookingInfo">
@@ -129,12 +136,8 @@ function BookingInfo() {
                                         <h2>Booking Information - {booking.booking_id}</h2>
                                     </div>
                                     <div className="booking-buttons">
-                                    <Link to={`/submit-requirements/${orgID}/${bookingID}`}>
-                                        <button className="submitReqs-button" disabled={currentStep === 0} >Submit Requirements</button>
-                                    </Link>
-                                        <Link to={`/venue-booking/${orgID}/${facilityID}`}>
-                                            <button className="edit-button" disabled={currentStep === 0} >Edit Submission</button>
-                                        </Link>
+                                        <button className="submitReqs-button" onClick={handleSubmit} disabled={currentStep === 0} >Submit Requirements</button>
+                                        <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0} >Edit Submission</button>
                                     </div>
                                 </div>
                                 <div className="booking-progress">

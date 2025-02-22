@@ -43,18 +43,15 @@ function Venue() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Pencil Booked":
-        return "#D9D9D9";
-      case "Officially Booked":
-        return "#A6C4FF";
-      case "For Assessing":
-        return "#FFB951";
-      case "Approved":
-        return "#B3FFA6";
-      default:
-        return "#FFFFFF";
+        case "Pencil Booked": return "#FFF3B4";
+        case "Officially Booked": return "#A6C4FF";
+        case "For Assessing": return "#FFB951";
+        case "Approved": return "#B3FFA6";
+        case "Denied": return "#FFA6A6";
+        case "Cancelled": return "#D9D9D9";
+        default: return "#FFFFFF"; 
     }
-  };
+};
 
   const Event = ({ eventID, status }) => {
     return (
@@ -144,7 +141,7 @@ function Venue() {
           </div>
           <div className="calendar-body">
             <div className="venue-titles">
-              {["Amphitheater", "E-Library", "Multipurpose Hall", "Multimedia Room", "PE Area"].map((venue, index) => (
+              {["Amphitheater", "E-Library", "Multimedia Room", "Multipurpose Hall", "PE Area"].map((venue, index) => (
                 <div 
                   key={index} 
                   className={`venue-name ${facilityID === index + 1 ? "active" : ""}`} 
