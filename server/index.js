@@ -23,6 +23,7 @@ app.use(express.static(path.join(__dirname, '../dist')));
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000; // Change the port number here
 
@@ -136,53 +137,60 @@ const storage = multer.diskStorage({
         return cb(null, './public/files');
     },
     filename: function (req, file, cb) {
-        const { requirementName } = req.body;
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const newFilename = `${requirementName}-${uniqueSuffix}-${file.originalname}`;
-        return cb(null, newFilename);
+        const filename = `${file.originalname}`;
+        return cb(null, filename);
     }
 });
 
 const upload = multer({storage: storage })
 
-app.post('/facify/booking-info/upload', upload.single('file'), (req, res) => {
-    const filename = req.file.filename;
-    const { bookingID, requirementName } = req.body;
-    const date_time = new Date().toISOString();
+app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ success: false, message: 'No file uploaded' });
+    }
 
-    const filePath = path.join(__dirname, 'public', 'files', filename);
+    console.log("Received request:", req.body);
+    console.log("File uploaded:", req.file);
 
-    fs.readFile(filePath, (err, data) => {
+    const { bookingID } = req.params;
+    const filePath = req.file.path; // Get the uploaded file path
+    const filename = req.file.filename; // Get the stored file name
+    const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    fs.readFile(filePath, (err, fileData) => {
         if (err) {
             return res.status(500).json({ success: false, message: 'File read error', error: err });
         }
 
         const query = 'INSERT INTO requirement (booking_id, file_name, file, date_time_submitted) VALUES (?, ?, ?, ?)';
-        db.query(query, [bookingID, filename, data, date_time], (err, result) => {
+        
+        db.query(query, [bookingID, filename, fileData, date_time], (err, result) => {
             if (err) {
                 return res.status(500).json({ success: false, message: 'Database error', error: err });
             }
-            res.status(200).json({ success: true, message: 'File uploaded successfully' });
 
+            // Check if all required files are uploaded
             const checkReqQuery = 'SELECT COUNT(*) AS count FROM requirement WHERE booking_id = ?';
+            
             db.query(checkReqQuery, [bookingID], (err, result) => {
                 if (err) {
                     return res.status(500).json({ success: false, message: 'Database error', error: err });
                 }
 
                 const count = result[0].count;
-                const totalReqs = 3;
+                const totalReqs = 4;
 
                 if (count === totalReqs) {
-                    const updateStatusQuery = 'INSERT INTO booking_status (booking_id, status_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE status_id = VALUES(status_id)';
-                    db.query(updateStatusQuery, [bookingID, 2], (err, result) => {
+                    const updateStatusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE status_id = VALUES(status_id)';
+                    
+                    db.query(updateStatusQuery, [bookingID, 2, date_time, 1], (err, result) => { //Update admin_id depending on the logged in admin
                         if (err) {
                             return res.status(500).json({ success: false, message: 'Database error', error: err });
                         }
-                        res.status(200).json({ success: true, message: 'File uploaded and status updated to all requirements uploaded' });
+                        return res.status(200).json({ success: true, message: 'File uploaded and status updated' });
                     });
                 } else {
-                    res.status(200).json({ success: true, message: 'File uploaded successfully' });
+                    return res.status(200).json({ success: true, message: 'File uploaded successfully' });
                 }
             });
         });
@@ -191,15 +199,21 @@ app.post('/facify/booking-info/upload', upload.single('file'), (req, res) => {
 
 app.get('/facify/booking-info/:orgID/:bookingID/requirements', (req, res) => {
     const { orgID, bookingID } = req.params;
-    if (!bookingID || !orgID) {
-        return res.status(400).send({ success: false, message: 'No bookingID or orgID provided' });
+    if (!orgID || !bookingID) {
+        return res.status(400).send({ success: false, message: 'Missing orgID or bookingID' });
     }
-    
-    const query = 'SELECT * FROM requirement WHERE booking_id = ? AND EXISTS (SELECT 1 FROM event_information WHERE booking_id = ? AND org_id = ?)';
-    db.query(query, [bookingID, bookingID, orgID], (err, result) => {
+    const query = `
+        SELECT r.*, OCTET_LENGTH(r.file) AS file_size 
+        FROM requirement r
+        JOIN event_information e ON r.booking_id = e.booking_id
+        WHERE r.booking_id = ? AND e.org_id = ?`;
+    db.query(query, [bookingID, orgID], (err, result) => {
         if (err) {
             console.error('Database query error:', err);
             return res.status(500).send({ success: false, message: 'Database error' });
+        }
+        if (result.length === 0) {
+            return res.status(404).send({ success: false, message: 'No requirements found or unauthorized access' });
         }
         res.send({ success: true, requirements: result });
     });
@@ -212,14 +226,22 @@ app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
     }
 
     const query = `
-        SELECT booking_status.*, status.remarks
-        FROM booking_status 
-        JOIN status ON booking_status.status_id = status.status_id 
-        WHERE booking_status.booking_id = ? 
+        SELECT bs.*, s.remarks
+        FROM booking_status bs
+        JOIN status s ON bs.status_id = s.status_id
+        JOIN (
+            SELECT status_id, MAX(date_time) AS latest_date
+            FROM booking_status
+            WHERE booking_id = ?
+            GROUP BY status_id
+        ) latest_logs 
+        ON bs.status_id = latest_logs.status_id 
+        AND bs.date_time = latest_logs.latest_date
+        WHERE bs.booking_id = ? 
         AND EXISTS (SELECT 1 FROM event_information WHERE booking_id = ? AND org_id = ?)
-        ORDER BY booking_status.date_time DESC`;
+        ORDER BY bs.date_time DESC`;
 
-    db.query(query, [bookingID, bookingID, orgID], (err, result) => {
+    db.query(query, [bookingID, bookingID, bookingID, orgID], (err, result) => {
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }
@@ -227,21 +249,6 @@ app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
             return res.status(404).json({ success: false, message: 'No logs found' });
         }
         res.status(200).json({ success: true, logs: result });
-    });
-});
-
-app.get('/facify/booking-info/:bookingID/:requirementName', (req, res) => {
-    const { bookingID, requirementName } = req.params;
-
-    const query = 'SELECT file_name, OCTET_LENGTH(file) AS file_size, date_time_submitted FROM requirement WHERE booking_id = ? AND file_name LIKE ?';
-    db.query(query, [bookingID, `%${requirementName}%`], (err, result) => {
-        if (err) {
-            return res.status(500).json({ success: false, message: 'Database error', error: err });
-        }
-        if (result.length === 0) {
-            return res.status(404).json({ success: false, message: 'File not found' });
-        }
-        res.status(200).json({ success: true, file: result[0] });
     });
 });
 
@@ -274,7 +281,7 @@ app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
                 if (err) {
                     return res.status(500).json({ success: false, message: 'Database error', error: err });
                 }
-                res.status(200).json({ success: true, message: 'Booking created successfully' });
+                res.status(200).json({ success: true, message: 'Booking created successfully', bookingID: bookingID });
             });
         });
     });
