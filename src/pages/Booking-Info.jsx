@@ -52,7 +52,7 @@ function BookingInfo() {
                         'Approved': 4,
                         'Denied': 0
                     };
-                    setCurrentStep(statusSteps[response.data.bookingInfo[0].status_name] || 1);
+                    setCurrentStep(statusSteps[response.data.bookingInfo[0].status_name] || 0);
                 } else {
                     setError('No booking information found');
                 }
@@ -84,7 +84,7 @@ function BookingInfo() {
             const response = await axios.post(`/facify/booking-info/${bookingID}/cancel`);
             if (response.data.success) {
                 alert('Booking has been successfully cancelled.');
-                setCurrentStep(0); // Update step to reflect cancellation
+                setCurrentStep(0); 
             } else {
                 alert('Failed to cancel the booking. Please try again.');
             }
@@ -130,10 +130,10 @@ function BookingInfo() {
                                     </div>
                                     <div className="booking-buttons">
                                     <Link to={`/submit-requirements/${orgID}/${bookingID}`}>
-                                        <button className="submitReqs-button">Submit Requirements</button>
+                                        <button className="submitReqs-button" disabled={currentStep === 0} >Submit Requirements</button>
                                     </Link>
                                         <Link to={`/venue-booking/${orgID}/${facilityID}`}>
-                                            <button className="edit-button">Edit Submission</button>
+                                            <button className="edit-button" disabled={currentStep === 0} >Edit Submission</button>
                                         </Link>
                                     </div>
                                 </div>
@@ -220,7 +220,7 @@ function BookingInfo() {
                         )}
                     </div>
                 </div>
-                <button className="cancel-button" onClick={handleOpenCancelModal}>Cancel Booking</button>
+                <button className="cancel-button" onClick={handleOpenCancelModal} disabled={currentStep === 0} >Cancel Booking</button>
             </div>
         </div>
     </div>
