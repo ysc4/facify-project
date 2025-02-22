@@ -153,20 +153,6 @@
     line-height: 1;
 }
 
-.file .clear-icon {
-    width: 30px;
-    height: 30px;
-    padding: 5px;
-    color: #706E6E;
-    background-color: #FFFFFF;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: 10px;
-}
-
 .overlay {
     position: fixed;
     top: 0;
@@ -231,21 +217,24 @@
     text-overflow: ellipsis;
 }
 
-.file-card .delete-icon, .file-card .check-circle {
+.file-card .cancel-icon, .file-card .check-icon {
     width: 36px;
     height: 36px;
-    border: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 13px;
     color: #2F3B8D;
     background-color: #D5D7E8;
-    border-radius: 50%;
+    border-radius: 50% ;
+    cursor: pointer;
+}
+
+.file-card .cancel-upload {
     border: none;
 }
 
 .file-info .progress-bar {
+    display: block;
     width: 100%;
     height: 5px;
     background-color: rgba(0, 0, 0, 0.076);
@@ -254,18 +243,20 @@
     overflow: hidden;
 }
 
-.file-info .progress {
+.progress-bar .file-progress {
     height: 5px;
     background-color: #2F3B8D;
     border-radius: 8px;
-    transition: width 0.5s ease;
+    width: 0%;
+    max-width: 100% !important;
+    transition: width 0.3s ease;
 }
 
 .file-card .pdf-icon {
     width: 40px;
     height: 40px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     color: #BD5151;
 }

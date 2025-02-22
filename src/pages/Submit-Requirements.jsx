@@ -1,7 +1,6 @@
 import BackIcon from '@mui/icons-material/ArrowBack';
 import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
-import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PdfIcon from '@mui/icons-material/Description';
 import axios from 'axios';
@@ -79,12 +78,11 @@ const SubmitRequirements = () => {
                 },
             });
     
-            console.log("Upload response:", response.data);  // 🔍 Debugging
             if (response.data.success) {
                 setUploadStatus('done');
                 setRequirements(prev => [
                     ...prev,
-                    { file: selectedFile, file_name: fileName, date_time_submitted: new Date().toISOString(), file_size: selectedFile.size }
+                    { file: selectedFile, file_name: fileName, date_time_submitted: new Date().toISOString(), file_size: selectedFile.size, requirement_id: response.data.requirement_id }
                 ]);
             } else {
                 throw new Error(response.data.message || 'Upload failed');
@@ -97,23 +95,6 @@ const SubmitRequirements = () => {
         }
     };
 
-    const handleDeleteFile = async (requirementID) => {
-        try {
-            const response = await axios.post('/facify/booking-info/delete', {
-                bookingID,
-                requirementID
-            });
-    
-            if (response.data.success) {
-                setRequirements(requirements.filter(req => req.requirement_id !== requirementID)); // Remove from UI
-            } else {
-                alert('Error: ' + response.data.message);
-            }
-        } catch (error) {
-            console.error('Failed to delete file:', error);
-            alert('An error occurred while deleting the file.');
-        }
-    };
     const handleOpenFileUploader = (requirementName) => {
         setCurrentRequirement(requirementName);
         setIsFileUploaderOpen(true);
@@ -164,7 +145,6 @@ const SubmitRequirements = () => {
                                                             <h4>{matchingRequirement.file_name}</h4>
                                                             <p>{(matchingRequirement.file_size / 1024).toFixed(2)} KB</p>
                                                         </div>
-                                                        <ClearIcon className="clear-icon" onClick={() => handleDeleteFile(matchingRequirement.requirement_id)} />
                                                     </div>
                                                 ) : (
                                                     <button className="upload-file" onClick={() => handleOpenFileUploader(requirementName)}>
@@ -211,20 +191,20 @@ const SubmitRequirements = () => {
                         <div className="file-info">
                                 <h4>{selectedFile.name}</h4>
                                 <div className="progress-bar">
-                                    <div className="progress" style={{ width: `${progress}%` }}></div>
+                                    <div className="file-progress" style={{ width: `${progress}%` }}></div>
                                 </div>
                         </div>
 
                         {uploadStatus === 'select' ? (
-                            <button onClick={clearFileInput}>
-                                <span className="delete-icon" style={{fontSize: 18}}><CloseIcon /></span>
+                            <button className="cancel-upload" onClick={clearFileInput}>
+                                <span className="cancel-icon" style={{fontSize: 20}}><ClearIcon /></span>
                             </button>
                             ) : (
                             <div className="check-circle">
                                 {uploadStatus === "uploading" ? (
                                 `${progress}%`
                                 ) : uploadStatus === "done" ? (
-                                <span style={{fontSize: 20}}><CheckIcon /></span>
+                                <span className="check-icon" style={{fontSize: 20}}><CheckIcon /></span>
                                 ) : null }
                             </div>
                             )}
