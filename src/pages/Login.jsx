@@ -24,9 +24,11 @@ const Login = ({ setIsLoggedIn }) => {
             const response = await axios.post('/facify/login', { email, password });
             if (response.data.success) {
                 const orgID = response.data.org_id;
-                console.log(orgID);
+                const orgName = response.data.org_name;
+                console.log(response.data);
                 setIsLoggedIn(true);
                 localStorage.setItem('orgID', orgID);
+                localStorage.setItem('orgName', orgName);
                 navigate(`/bookings/${orgID}`);
             } else {
                 setError('Invalid credentials');
