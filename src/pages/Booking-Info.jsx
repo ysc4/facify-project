@@ -137,7 +137,7 @@ function BookingInfo() {
                                     </div>
                                     <div className="booking-buttons">
                                         <button className="submitReqs-button" onClick={handleSubmit} disabled={currentStep === 0} >Submit Requirements</button>
-                                        <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0} >Edit Submission</button>
+                                        <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0 || 2} >Edit Submission</button>
                                     </div>
                                 </div>
                                 <div className="booking-progress">
