@@ -5,8 +5,8 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import CancelModal from '../components/CancelModal';
 import Header from '../components/Navbar';
 import ProgressBar from '../components/ProgressBar';
-import Requirement from '../components/Requirement';
 import Sidebar from '../components/Sidebar';
+import SubmitRequirements from './Submit-Requirements';
 import './Booking-Info.css';
 
 const formatDate = (dateString) => {
@@ -30,7 +30,7 @@ const formatDateTime = (dateTimeString) => {
 };
 
 function BookingInfo() {
-    const { bookingID, orgID } = useParams();
+    const { bookingID, orgID, facilityID } = useParams();
     const navigate = useNavigate();
     const [bookingInfo, setBookingInfo] = useState([]);
     const [error, setError] = useState('');
@@ -41,32 +41,18 @@ function BookingInfo() {
     useEffect(() => {
         const fetchBookingInfo = async () => {
             try {
-                const response = await axios.get(`/facify/booking-info/${bookingID}`);
+                const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
+
                 if (response.data.success) {
-                    setBookingInfo(response.data.bookingInfo);
-                    
-                    let step = 1; // Default step
-    
-                    switch (response.data.bookingInfo.status_name) {
-                        case 'Pencil Booked':
-                            step = 1;
-                            break;
-                        case 'Officially Booked':
-                            step = 2;
-                            break;
-                        case 'For Assessing':
-                            step = 3;
-                            break;
-                        case 'Approved':
-                            step = 4;
-                            break;
-                        case 'Denied':
-                            step = 0; // If denied, set step to 0
-                            break;
-                        default:
-                            step = 1; // Default to step 1 if status is unrecognized
-                    }
-                    setCurrentStep(step);
+                    setBookingInfo(response.data.bookingInfo[0]);
+                    const statusSteps = {
+                        'Pencil Booked': 1,
+                        'Officially Booked': 2,
+                        'For Assessing': 3,
+                        'Approved': 4,
+                        'Denied': 0
+                    };
+                    setCurrentStep(statusSteps[response.data.bookingInfo[0].status_name] || 1);
                 } else {
                     setError('No booking information found');
                 }
@@ -78,7 +64,7 @@ function BookingInfo() {
 
         const fetchLogs = async () => {
             try {
-                const response = await axios.get(`/facify/booking-info/${bookingID}/logs`);
+                const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}/logs`);
                 if (response.data.success) {
                     setLogs(response.data.logs);
                 } else {
@@ -89,32 +75,9 @@ function BookingInfo() {
             }
         };
 
-        const fetchRequirements = async () => {
-            try {
-                const response = await axios.get(`/facify/booking-info/${bookingID}/requirements`);
-                if (response.data.success) {
-                    const requirements = response.data.requirements;
-                    if (requirements.length === 3) {
-                        setCurrentStep(2);
-                    }
-                } else {
-                    console.error('Error fetching requirements:', response.data.message);
-                }
-            } catch (err) {
-                console.error('Error fetching requirements:', err);
-            }
-        };
-
-        fetchRequirements();
         fetchLogs();
         fetchBookingInfo();
-    }, [bookingID]);
-
-    const requirementNames = [
-        "Letter of Intent",
-        "Activity Reservation Form",
-        "Event Proposal"
-    ];
+    }, [orgID, bookingID]);
 
     const handleOpenCancelModal = () => {
         setIsCancelModalOpen(true);
@@ -124,9 +87,6 @@ function BookingInfo() {
         setIsCancelModalOpen(false);
     };
 
-    const handleFileUpload = (file) => {
-        console.log('File uploaded:', file);
-    };
 
     const handleBackButtonClick = () => {
         navigate(-1);
@@ -152,8 +112,10 @@ function BookingInfo() {
                                         <h2>Booking Information - {booking.booking_id}</h2>
                                     </div>
                                     <div className="booking-buttons">
-                                        <button className="cancel-button" onClick={handleOpenCancelModal}>Cancel Booking</button>
-                                        <Link to="/venue-booking">
+                                    <Link to={`/submit-requirements/${orgID}/${bookingID}`}>
+                                        <button className="submitReqs-button">Submit Requirements</button>
+                                    </Link>
+                                        <Link to={`/venue-booking/${orgID}/${facilityID}`}>
                                             <button className="edit-button">Edit Submission</button>
                                         </Link>
                                     </div>
@@ -219,52 +181,31 @@ function BookingInfo() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="submit-reqs">
-                                    <h3>Submitted Requirements</h3>
-                                    <div className="reqs">
-                                        <div className="table-header">
-                                            <div className="req-title">Requirement</div>
-                                            <div className="date-title">Date Submitted</div>
-                                            <div className="file-title">File</div>
-                                        </div>
-                                        <div className="table-content"> 
-                                        {requirementNames.map((requirementName) => (
-                                            <div className="file" key={requirementName}>
-                                                <Requirement
-                                                    booking_id={booking.booking_id}
-                                                    requirement_name={requirementName}
-                                                    onUpload={handleFileUpload}
-                                                />
-                                            </div>
-                                        ))}
-                                        </div>
-                                    </div>
-                                </div>
                                 <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} />
                             </div>
+                    )))}            
+                <div className="update-logs">
+                    <h3>Update Logs</h3>
+                    <div className="logs">
+                        {logs.length > 0 ? (
+                        logs.map((log, index) => (
+                            <div className="log" key={index}>
+                            <div className="log-entry">
+                                <p>{log.remarks}</p>
+                            </div>
+                            <div className="log-date">
+                                <p>{formatDateTime(log.date_time)}</p>
+                            </div>
+                            </div>
                         ))
-                    )}             
-          <div className="update-logs">
-            <h3>Update Logs</h3>
-            <div className="logs">
-                {logs.length > 0 ? (
-                logs.map((log, index) => (
-                    <div className="log" key={index}>
-                    <div className="log-entry">
-                        <p>{log.remarks}</p>
+                        ) : (
+                        <p>No logs available.</p>
+                        )}
                     </div>
-                    <div className="log-date">
-                        <p>{formatDateTime(log.date_time)}</p>
-                    </div>
-                    </div>
-                ))
-                ) : (
-                <p>No logs available.</p>
-                )}
+                </div>
+                <button className="cancel-button" onClick={handleOpenCancelModal}>Cancel Booking</button>
             </div>
-          </div>
         </div>
-      </div>
     </div>
   );
 }
