@@ -287,6 +287,26 @@ app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
     });
 });
 
+app.put('/facify/booking-info/:bookingID/update', (req, res) => {
+    const { bookingID } = req.params;
+    const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment } = req.body;
+
+    const query = 'UPDATE event_information SET event_date = ?, event_start = ?, event_end = ?, activity_title = ?, expected_attendance = ?, speaker_name = ? WHERE booking_id = ?';
+    db.query(query, [eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, bookingID], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error', error: err });
+        }
+
+        const equipmentQuery = 'UPDATE event_equipment SET tables = ?, chairs = ?, bulletin_boards = ?, speaker = ?, microphone = ?, flagpole = ?, podium = ?, platform = ?, electrician = ?, janitor = ? WHERE booking_id = ?';
+        db.query(equipmentQuery, [...equipment, bookingID], (err, result) => {
+            if (err) {
+                return res.status(500).json({ success: false, message: 'Database error', error: err });
+            }
+            res.status(200).json({ success: true, message: 'Booking updated successfully' });
+        });
+    });
+});
+
 app.get('/facify/venue-availability/:facilityID', (req, res) => {
     const { facilityID } = req.params;
     const { month, year } = req.query;
