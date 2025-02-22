@@ -141,7 +141,7 @@ function BookingInfo() {
                                     </div>
                                 </div>
                                 <div className="booking-progress">
-                                    <ProgressBar currentStep={currentStep} status={bookingInfo.status_name} />
+                                    <ProgressBar currentStep={currentStep} />
                                 </div>
                                 <div className="event-info">
                                     <h3>Event Information</h3>
