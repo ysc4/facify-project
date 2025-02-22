@@ -1,7 +1,7 @@
 import BackIcon from '@mui/icons-material/ArrowBackOutlined';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../components/AddMinusButton.css';
 import AddMinusButton from '../components/AddMinusButton.jsx';
 import '../components/Navbar.css';
@@ -14,6 +14,7 @@ function VenueBooking() {
   const { orgID, facilityID } = useParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState("");
+  const [bookingID, setBookingID] = useState("");
   const [formData, setFormData] = useState({
     orgID: orgID,
     eventDate: "",
@@ -78,7 +79,7 @@ function VenueBooking() {
       formData.equipment.electrician,
       formData.equipment.janitor
   ];
-    
+
     const finalFormData = { ...formData, equipment: equipmentArray };
 
     console.log('Server response:', finalFormData);
@@ -88,6 +89,7 @@ function VenueBooking() {
       console.log('Server response1:', response.data);
       if (response.data.success) {
         alert('Booking created successfully');
+        setBookingID(response.data.bookingID);
         navigate(`/venue-availability/${orgID}`);
       } else {
         alert('Error creating booking');
@@ -188,7 +190,7 @@ function VenueBooking() {
                   Pencil Booking
                   </label>
                   <label className="form-control">
-                  <input type="radio" id="complete-reqs" name="status" value="complete" onChange={handleStatusChange}></input>
+                  <input type="radio" id="complete-reqs" name="status" value="official" onChange={handleStatusChange}></input>
                   Official Booking
                   </label>    
                 </div>
