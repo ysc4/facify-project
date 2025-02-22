@@ -49,7 +49,7 @@ app.post('/facify/login', (req, res) => {
         }
         if (result.length > 0) {
             const user = result[0];
-            res.send({ success: true, org_id: user.org_id });
+            res.send({ success: true, org_id: user.org_id, org_name: user.org_name });
         } else {
             res.send({ success: false, message: 'Invalid credentials' });
         }
