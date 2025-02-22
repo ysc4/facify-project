@@ -44,7 +44,7 @@ function BookingInfo() {
                 const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
 
                 if (response.data.success) {
-                    setBookingInfo(response.data.bookingInfo[0]);
+                    setBookingInfo([response.data.bookingInfo[0]]);
                     const statusSteps = {
                         'Pencil Booked': 1,
                         'Officially Booked': 2,
@@ -78,6 +78,23 @@ function BookingInfo() {
         fetchLogs();
         fetchBookingInfo();
     }, [orgID, bookingID]);
+
+    const handleCancelBooking = async () => {
+        try {
+            const response = await axios.post(`/facify/booking-info/${bookingID}/cancel`);
+            if (response.data.success) {
+                alert('Booking has been successfully cancelled.');
+                setCurrentStep(0); // Update step to reflect cancellation
+            } else {
+                alert('Failed to cancel the booking. Please try again.');
+            }
+        } catch (err) {
+            console.error('Error cancelling booking:', err);
+            alert('An error occurred while cancelling the booking.');
+        }
+        setIsCancelModalOpen(false);
+        fetchLogs();
+    };
 
     const handleOpenCancelModal = () => {
         setIsCancelModalOpen(true);
@@ -121,7 +138,7 @@ function BookingInfo() {
                                     </div>
                                 </div>
                                 <div className="booking-progress">
-                                    <ProgressBar currentStep={currentStep} />
+                                    <ProgressBar currentStep={currentStep} status={bookingInfo.status_name} />
                                 </div>
                                 <div className="event-info">
                                     <h3>Event Information</h3>
@@ -181,7 +198,7 @@ function BookingInfo() {
                                         </div>
                                     </div>
                                 </div>
-                                <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} />
+                                <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} handleCancel={handleCancelBooking}/>
                             </div>
                     )))}            
                 <div className="update-logs">

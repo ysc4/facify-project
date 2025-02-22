@@ -4,7 +4,7 @@ import './CancelModal.css';
 
 Modal.setAppElement('#root'); // Set the root element for accessibility
 
-export default function CancelModal({ isOpen, onRequestClose }) {
+export default function CancelModal({ isOpen, onRequestClose, handleCancel }) {
     return (
         <Modal
             isOpen={isOpen}
@@ -17,7 +17,7 @@ export default function CancelModal({ isOpen, onRequestClose }) {
             <p>Are you sure you want to cancel this booking? This action cannot be undone, and the reserved slot will become available for others.</p>
             <div className="modal-buttons">
                 <button className="no-button" onClick={onRequestClose}>No</button>
-                <button className="yes-button" onClick={onRequestClose}>Yes</button>
+                <button className="yes-button" onClick={handleCancel}>Yes</button>
             </div>
         </Modal>
     );
