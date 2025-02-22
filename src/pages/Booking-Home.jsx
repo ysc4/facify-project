@@ -124,7 +124,7 @@ function Homepage() {
                 </div>
                 <div className="filters">
                     {data.map((options, index) => (
-                        <Dropdown key={index} options={options} onSelect={handleFilterChange}/>
+                        <Dropdown key={index} options={options} onSelect={handleFilterChange} defaultValue="All Facilities"/>
                     ))}
                 </div>
             </div>

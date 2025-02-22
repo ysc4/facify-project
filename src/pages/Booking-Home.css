@@ -61,10 +61,10 @@
 .filters {
     display: flex;
     align-items: center;
-    width: 250px;
+    width: 20%;
     height: 40px;
     margin-top: 5px;
-    margin-left: 10px;
+    margin-left: 20px;
 }
 
 .filter-label {
