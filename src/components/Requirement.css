@@ -1,33 +1,4 @@
-.table-content .req {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    padding: 15px 15px;
-    border: 1px solid #ccc;
-}
 
-.req div {
-    flex: 1;
-    margin-right: 330px;
-}
-
-.req div:last-child, .table-header div:last-child {
-    margin-right: 0;
-}
-
-.req .file {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    height: 50px;
-    max-width: 200px;
-    background-color: #F5F5F5;
-    line-height: 1.3;
-    cursor: pointer;
-}
 
 .overlay {
     position: fixed;

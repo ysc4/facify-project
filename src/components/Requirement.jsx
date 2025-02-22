@@ -1,7 +1,6 @@
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import PdfIcon from '@mui/icons-material/PictureAsPdf';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
@@ -11,7 +10,6 @@ Modal.setAppElement('#root');
 
 const Requirement = ({ org_id, booking_id, requirement_name }) => {
   const inputRef = React.useRef();
-
   const [uploadedFile, setUploadedFile] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [progress, setProgress] = useState(0);
