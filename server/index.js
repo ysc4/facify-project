@@ -315,4 +315,17 @@ app.get('/facify/venue-availability/:facilityID', (req, res) => {
     });
 });
 
+app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
+    const { bookingID } = req.params;
+    const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    const query = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?)';
+    db.query(query, [bookingID, 6, date_time, 1], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error', error: err });
+        }
+        res.status(200).json({ success: true, message: 'Booking cancelled successfully' });
+    });
+});
+
 
