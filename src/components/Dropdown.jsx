@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import './Dropdown.css';
 import Select from './Select';
 
-function Dropdown({ options, onSelect }) {
+function Dropdown({ options, onSelect, defaultValue }) {
     const [menuShow, setMenuShow] = useState(false)
-    const [selected, setSelected] = useState('All Facilities')
+    const [selected, setSelected] = useState(defaultValue)
 
     const selectOption = e => {
         const selectedOption = e.target.innerText;
