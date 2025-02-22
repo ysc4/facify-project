@@ -312,7 +312,7 @@ app.get('/facify/venue-availability/:facilityID', (req, res) => {
     const { month, year } = req.query;
 
     const query = `
-        SELECT ei.*, s.status_name
+        SELECT ei.*, s.status_name, f.facility_name, o.org_name
         FROM event_information ei
         JOIN (
             SELECT bs.booking_id, bs.status_id, bs.date_time
@@ -321,10 +321,19 @@ app.get('/facify/venue-availability/:facilityID', (req, res) => {
                 SELECT booking_id, MAX(date_time) AS max_date_time
                 FROM booking_status
                 GROUP BY booking_id
-            ) latest_status ON bs.booking_id = latest_status.booking_id AND bs.date_time = latest_status.max_date_time
-        ) latest_bs ON ei.booking_id = latest_bs.booking_id
-        JOIN status s ON latest_bs.status_id = s.status_id
-        WHERE ei.facility_id = ? AND MONTH(ei.event_date) = ? AND YEAR(ei.event_date) = ?`;
+            ) latest_status 
+            ON bs.booking_id = latest_status.booking_id AND bs.date_time = latest_status.max_date_time
+        ) latest_bs 
+        ON ei.booking_id = latest_bs.booking_id
+        JOIN status s 
+        ON latest_bs.status_id = s.status_id
+        JOIN facilities f 
+        ON ei.facility_id = f.facility_id
+        JOIN user o 
+        ON ei.org_ID = o.org_ID
+        WHERE ei.facility_id = ? 
+        AND MONTH(ei.event_date) = ? 
+        AND YEAR(ei.event_date) = ?`;
 
     db.query(query, [facilityID, month, year], (err, result) => {
         if (err) {
