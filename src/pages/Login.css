@@ -86,7 +86,7 @@
     flex-direction: column;
     align-items: center;
     width: 70%; /* Adjust the width as needed */
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .form-group {
@@ -115,17 +115,22 @@
     font-size: 20px;
     color: #1F1D1D;
     font-family: 'Poppins', sans-serif;
+    margin-bottom: 5px;
 }
 
 .loginForm input {
     width: 100%;
     height: 50px;
-    margin-top: 5px;
     padding: 10px;
     font-size: 16px;
     font-family: 'Poppins', sans-serif;
     border: 1px solid #1F1D1D;
     border-radius: 5px;
+}
+
+.user-type-dropdown {
+    width: 100%;
+    margin-top: 5px;
 }
 
 .submit {
