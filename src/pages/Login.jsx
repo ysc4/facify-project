@@ -6,12 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/facify-white.png';
 import girlypops from '../assets/girlypops-pink.png';
 import './Login.css';
+import Dropdown from '../components/Dropdown';
 
 const Login = ({ setIsLoggedIn }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [userType, setUserType] = useState('Organization'); 
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,16 +22,19 @@ const Login = ({ setIsLoggedIn }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(''); // Clear previous errors
+    
         try {
-            const response = await axios.post('/facify/login', { email, password });
+            const response = await axios.post(`/facify/login/${userType}`, { email, password });
+    
             if (response.data.success) {
-                const orgID = response.data.org_id;
-                const orgName = response.data.org_name;
+                const { org_id, org_name, admin_name } = response.data;
                 console.log(response.data);
                 setIsLoggedIn(true);
-                localStorage.setItem('orgID', orgID);
-                localStorage.setItem('orgName', orgName);
-                navigate(`/bookings/${orgID}`);
+                localStorage.setItem('orgID', org_id);
+                localStorage.setItem('orgName', org_name);
+                localStorage.setItem('adminName', admin_name);
+                navigate(`/bookings/${org_id}`);
             } else {
                 setError('Invalid credentials');
             }
@@ -57,6 +62,15 @@ const Login = ({ setIsLoggedIn }) => {
                 <h1>Login</h1>
                 <h2>Enter your credentials.</h2>
                 <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                    <label htmlFor="user-type">User Type:</label>
+                        <Dropdown 
+                            className="user-type-dropdown"
+                            options={['Organization', 'Admin']} 
+                            defaultValue={'Organization'}
+                            onSelect={(value) => setUserType(value)} 
+                        />
+                    </div>
                     <div className="form-group">
                         <label htmlFor="email">Email:</label>
                         <input
