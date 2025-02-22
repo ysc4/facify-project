@@ -1,0 +1,335 @@
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.SubmitReqs {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
+}
+
+.main-content {
+    display: flex;
+    flex: 1; /* Take up the remaining space */
+}
+
+.sidebar-placeholder {
+    width: 20%; /* Adjust the width as needed */
+}
+
+.main-content .submit-reqs {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    padding-top: 90px;
+    background-color: #FFFFFF; 
+}
+
+.submit-reqs .submit-reqs_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.submit-reqs_header .booking-id {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.submit-reqs_header .booking-id h2 {
+    margin-left: 20px;
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+}
+
+.back-icon {
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.upload-file {
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+    padding: 10px 30px;
+    border: 1px solid #ccc;
+    background-color: #F5F5F5;
+    color: #191A1B;
+}
+
+.reqs .table-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 24px;
+    font-weight: 800;
+    padding: 15px 15px;
+    background-color: #B0B6DA;
+    margin-top: 20px;
+}
+
+.req-title, .date-title, .file-title {
+    color: #2C356E;
+}
+
+.reqs .table-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.table-header div {
+    flex-grow: 1;
+}
+
+.table-header div:last-child {
+    margin-right: 0;
+}
+
+.table-content .req {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    padding: 15px 15px;
+    border: 1px solid #ccc;
+}
+
+.file .file-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+    color: #BD5151;
+}
+
+.file-item {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    background: #E4E2E2;
+    padding: 10px;
+    border-radius: 2px;
+}
+
+.file-info {
+    display: flex;
+    flex-grow: 1; 
+    min-width: 0; 
+    flex-direction: column;
+}
+
+.file-info h4 {
+    font-size: 16px;
+    font-weight: 400;
+    color: #445CFF;
+    white-space: nowrap;
+    max-width: 150px; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+.file-info p {
+    font-size: 10px;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1;
+}
+
+.file .clear-icon {
+    width: 30px;
+    height: 30px;
+    padding: 5px;
+    color: #706E6E;
+    background-color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.file-btn {
+    width: 100%;
+    height: 300px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #2F3B8D;
+    background-color: #F5F5F5;
+    border: 2px dashed #2F3B8D;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.file-card {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: #000000;
+    background-color: #F5F5F5;
+    padding: 8px 15px;
+}
+
+.file-card .file-info {
+    flex: 1;
+    display: flex;
+    flex-direction: flex-start;
+    gap: 5px;
+}
+
+.file-card .file-info h4 {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 400;
+    color: #2F3B8D;
+    text-overflow: ellipsis;
+}
+
+.file-card .delete-icon, .file-card .check-circle {
+    width: 36px;
+    height: 36px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    color: #2F3B8D;
+    background-color: #D5D7E8;
+    border-radius: 50%;
+    border: none;
+}
+
+.file-info .progress-bar {
+    width: 100%;
+    height: 5px;
+    background-color: rgba(0, 0, 0, 0.076);
+    border-radius: 8px;
+    margin-top: 3px;
+    overflow: hidden;
+}
+
+.file-info .progress {
+    height: 5px;
+    background-color: #2F3B8D;
+    border-radius: 8px;
+    transition: width 0.5s ease;
+}
+
+.file-card .pdf-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #BD5151;
+}
+
+.upload-btn {
+    width: 100%;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: #2F3B8D;
+    color: white;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.upload-btn:hover {
+    background-color: #F5F5F5;
+    color: #2F3B8D;
+
+}
+
+.file svg {
+    margin-left: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+    color: #BD5151;
+}
+
+.file .file-details {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 5px;
+}
+
+.file-details h4 {
+    font-size: 16px;
+    font-weight: 400;
+    color: #445CFF;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+.file-details p {
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.upload-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #2F3B8D;
+}
+
+
+
+
+
