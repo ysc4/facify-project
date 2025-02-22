@@ -1,5 +1,5 @@
 import BackIcon from '@mui/icons-material/ArrowBack';
-import CheckIcon from '@mui/icons-material/CheckCircle';
+import CheckIcon from '@mui/icons-material/Check';
 import ClearIcon from '@mui/icons-material/Clear';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -27,17 +27,6 @@ const SubmitRequirements = () => {
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
     useEffect(() => {
-        const fetchBookingInfo = async () => {
-            try {
-                const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
-                if (response.data.success) {
-                    setEventName(response.data.activity_title); 
-                }
-            } catch (error) {
-                console.error('Error fetching booking info:', error);
-            }
-        };
-
         const fetchRequirements = async () => {
             try {
                 const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}/requirements`);
@@ -49,7 +38,6 @@ const SubmitRequirements = () => {
             }
         };
 
-        fetchBookingInfo(); 
         fetchRequirements(); 
     }, [orgID, bookingID]);
 
@@ -96,7 +84,7 @@ const SubmitRequirements = () => {
                 setUploadStatus('done');
                 setRequirements(prev => [
                     ...prev,
-                    { file: selectedFile, file_name: fileName, date_time_submitted: new Date().toISOString() }
+                    { file: selectedFile, file_name: fileName, date_time_submitted: new Date().toISOString(), file_size: selectedFile.size }
                 ]);
             } else {
                 throw new Error(response.data.message || 'Upload failed');

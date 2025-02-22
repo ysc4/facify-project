@@ -5,6 +5,7 @@ import BookingInfo from './pages/Booking-Info';
 import Login from './pages/Login';
 import Venue from './pages/Venue-Availability';
 import VenueBooking from './pages/Venue-Booking';
+import SubmitRequirements from './pages/Submit-Requirements';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,7 +37,13 @@ function App() {
       path: '/venue-booking/:orgID/:facilityID',
       element: <VenueBooking />,
       errorElement: <NotFound />
+    },
+    {
+      path: '/submit-requirements/:orgID/:bookingID',
+      element: <SubmitRequirements />,
+      errorElement: <NotFound />
     }
+
   ]);
 
   return <RouterProvider router={router} basename='facify' />;
