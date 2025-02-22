@@ -194,11 +194,13 @@ function Venue() {
         </div>
         <div className="calendar-placeholder">
           <div className="calendar-header">
-            <div className="calendar-title">
-              <Previous className="prev-month" style={{ fontSize: 25 }} onClick={() => setCurrentMonth(currentMonth === 0 ? 11 : currentMonth - 1)} />
-              <h2>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
-              <Next className="next-month" style={{ fontSize: 25 }} onClick={() => setCurrentMonth(currentMonth === 11 ? 0 : currentMonth + 1)} />
+          <div className="calendar-title">
+            <div className="nav-arrows">
+              <Previous className="prev-month" onClick={() => setCurrentMonth(currentMonth === 0 ? 11 : currentMonth - 1)} />
+              <Next className="next-month" onClick={() => setCurrentMonth(currentMonth === 11 ? 0 : currentMonth + 1)} />
             </div>
+            <h2>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+          </div>
             <div className="add-booking">
               <Link to={`/venue-booking/${orgID}/${facilityID}`}>
                 <button className="add-booking-button">Add a Booking</button>

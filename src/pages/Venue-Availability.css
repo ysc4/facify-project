@@ -40,12 +40,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+}
+
+.calendar-header .nav-arrows {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
 }
 
 .prev-month, .next-month {
     color: #2F3B8D;
     margin-left: 20px;
     margin-top: 5px;
+    cursor: pointer;
 }
 
 .calendar-header h2 {
@@ -272,4 +280,5 @@
     font-weight: 500;
     margin-right: 5px;
     color: #685D5D;
+
 }
