@@ -1,28 +1,32 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../App.css';
 import './AddMinusButton.css';
 
-function AddMinusButton({ item, onCountChange }) {
-    const [count, setCount] = useState(0);
+function AddMinusButton({ item, onCountChange, initialValue = 0 }) {
+    const [count, setCount] = useState(initialValue);
+
+    useEffect(() => {
+        setCount(initialValue);
+    }, [initialValue]); 
 
     const increment = () => {
         const newCount = count + 1;
         setCount(newCount);
         onCountChange(item, newCount);
-    }
+    };
 
     const decrement = () => {
-        const newCount = count > 0 ? count - 1 : 0;
+        if (count === 0) return; 
+        const newCount = count - 1;
         setCount(newCount);
         onCountChange(item, newCount);
-    }
+    };
 
     return (
         <div className="AddMinusButton">
-            <span className="minus" onClick={decrement}>-</span>
-            <span className="count">{count}</span>
-            <span className="plus" onClick={increment}>+</span>
+            <span className="minus" onClick={decrement} aria-label="Decrease count">-</span>
+            <span className="count" aria-live="polite">{count}</span>
+            <span className="plus" onClick={increment} aria-label="Increase count">+</span>
         </div>
     );
 }
