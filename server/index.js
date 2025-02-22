@@ -34,14 +34,25 @@ app.listen(PORT, () => {
 app.get('/', (req, res) => {
      res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
-    
 
-app.post('/facify/login', (req, res) => {
+app.post('/facify/login/:type', (req, res) => {
     const { email, password } = req.body;
+    const { type } = req.params;
+
     if (!email || !password) {
         return res.status(400).send({ success: false, message: 'Email and password are required' });
     }
-    const query = 'SELECT * FROM user WHERE email = ? AND password = ?';
+
+    // Determine the correct table based on the login type
+    let query;
+    if (type === 'Admin') {
+        query = 'SELECT * FROM admin WHERE email = ? AND password = ?';
+    } else if (type === 'Organization') {
+        query = 'SELECT * FROM user WHERE email = ? AND password = ?';
+    } else {
+        return res.status(400).send({ success: false, message: 'Invalid login type' });
+    }
+
     db.query(query, [email, password], (err, result) => {
         if (err) {
             console.error('Database query error:', err);
@@ -49,9 +60,16 @@ app.post('/facify/login', (req, res) => {
         }
         if (result.length > 0) {
             const user = result[0];
-            res.send({ success: true, org_id: user.org_id, org_name: user.org_name });
+
+            return res.send({
+                success: true,
+                org_id: user.org_id || null,
+                org_name: user.org_name || null,
+                admin_name: user.first_name + ' ' + user.last_name || null,
+                role: type  
+            });
         } else {
-            res.send({ success: false, message: 'Invalid credentials' });
+            return res.status(401).send({ success: false, message: 'Invalid credentials' });
         }
     });
 });
