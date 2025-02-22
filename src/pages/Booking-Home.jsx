@@ -13,19 +13,13 @@ import './Booking-Home.css';
 
 const getStatusColor = (status) => {
     switch (status) {
-        case "Pencil Booked":
-            return "#D9D9D9";
-        case "Officially Booked":
-            return "#A6C4FF";
-        case "For Assessing":
-            return "#FFB951";
-        case "Approved":
-            return "#B3FFA6";
-        default:
-            return "#FFFFFF"; 
+        case "Pencil Booked": return "#D9D9D9";
+        case "Officially Booked": return "#A6C4FF";
+        case "For Assessing": return "#FFB951";
+        case "Approved": return "#B3FFA6";
+        default: return "#FFFFFF"; 
     }
 };
-
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -75,6 +69,7 @@ function Homepage() {
     const[error, setError] = useState('');
     const[filter, setFilter] = useState('All Facilities');
     const [facilities, setFacilities] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
 
     useEffect(() => {
@@ -102,8 +97,9 @@ function Homepage() {
     };
 
     const filteredBookingInfo = bookings.filter((booking) => {
-        if (filter === 'All Facilities') return true;
-        return booking.facility_name === filter;
+        const matchesFacility = filter === 'All Facilities' || booking.facility_name === filter;
+        const matchesSearch = booking.activity_title.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesFacility && matchesSearch;
     });
 
   return (
@@ -117,7 +113,12 @@ function Homepage() {
           <div className="overview-header">
               <div className="search-bar">
                     <SearchIcon className="search-icon" />
-                    <input type="text" placeholder="Search for " />
+                    <input 
+                        type="text" 
+                        placeholder="Search for" 
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
                 </div>
                 <div className="filters">
                     {data.map((options, index) => (
