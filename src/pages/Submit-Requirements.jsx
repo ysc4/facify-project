@@ -56,6 +56,7 @@ const SubmitRequirements = () => {
 
     const handleUpload = async () => {
         if (uploadStatus === 'done') {
+            handleCloseFileUploader();
             clearFileInput();
             return;
         }
