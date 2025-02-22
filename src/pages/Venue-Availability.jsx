@@ -8,11 +8,14 @@ import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import './Venue-Availability.css';
+import Tooltip from '../components/Tooltip.jsx';
 
 function Venue() {
   const { orgID } = useParams();
   const [facilityID, setFacilityID] = useState(1);
   const [events, setEvents] = useState([]);
+  const [hoveredEvent, setHoveredEvent] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 }); 
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -31,7 +34,12 @@ function Venue() {
   
       const formattedEvents = response.data.events.map(event => ({
         ...event,
-        event_date: new Date(event.event_date) // Ensure all dates are in `Date` format
+        bookingID: event.booking_id,
+        venue: event.facility_name, 
+        eventDate: new Date(event.event_date), 
+        status: event.status_name, 
+        startTime: event.event_start, 
+        endTime: event.event_end, 
       }));
   
       setEvents(formattedEvents);
@@ -61,16 +69,64 @@ function Venue() {
     );
   };
 
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  };
+
+  const formatTime = (time) => {
+    const [hours, minutes] = time.split(':');
+    const date = new Date();
+    date.setHours(hours, minutes);
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
+  const EventTooltip = ({ event, position }) => {
+    if (!event) return null; 
+    
+    return (
+      <div 
+        className="tooltip-box" 
+        style={{ top: position.y, left: position.x }}
+      >
+        <div className="tooltip-header">
+          <p className="tooltip-title">{event.bookingID}</p>
+          <div className="tooltip-status">
+            <span className="status-dot" style={{ backgroundColor: getStatusColor(event.status) }}></span>
+            <p className="tooltip-status-name">{event.status}</p>
+          </div>
+        </div>
+        <p className="tooltip-venue">{event.venue}</p>
+        <p className="tooltip-date">{formatDate(event.eventDate)}</p>
+        <p className="tooltip-time">{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+      </div>
+    );
+  };
+
   const DayContainer = ({ day, events }) => {
     const dayStatus = events.length > 0 ? events[0].status_name : null;
     return (
-      <div className="day-container">
+      <div className="day-container" onMouseLeave={handleMouseLeave}>
         <div className="day-title">
           <h3>{day}</h3>
         </div>
         <div className="day-content">
           {events.map((event, index) => (
-            <div className="event-day" style={{ backgroundColor: getStatusColor(dayStatus) }} ><Event key={index} eventID={event.booking_id} status={event.status_name} /></div>
+            <div 
+            key={index} 
+            className="event-day" 
+            style={{ backgroundColor: getStatusColor(event.status) }}
+            onMouseEnter={(e) => handleMouseEnter(event, e)}
+          >
+            {event.bookingID}
+          </div>
           ))}
         </div>
       </div>
@@ -80,6 +136,15 @@ function Venue() {
   const handleVenueClick = (facilityID) => {
     setFacilityID(facilityID);
     console.log(facilityID);
+  };
+
+  const handleMouseEnter = (event, e) => {
+    setHoveredEvent(event);
+    setTooltipPosition({ x: e.clientX + 10, y: e.clientY - 50 }); // Adjust position
+  };
+  
+  const handleMouseLeave = () => {
+    setHoveredEvent(null);
   };
 
   const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
@@ -163,6 +228,7 @@ function Venue() {
             </div>
           </div>
         </div>
+        {hoveredEvent && <EventTooltip event={hoveredEvent} position={tooltipPosition} />}
       </div>
     </div>
   );
