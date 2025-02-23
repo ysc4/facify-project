@@ -46,7 +46,7 @@ app.post('/facify/login/:type', (req, res) => {
     // Determine the correct table based on the login type
     let query;
     if (type === 'Admin') {
-        query = 'SELECT * FROM admin WHERE email = ? AND password = ?';
+        query = 'SELECT * FROM facility WHERE email = ? AND password = ?';
     } else if (type === 'Organization') {
         query = 'SELECT * FROM user WHERE email = ? AND password = ?';
     } else {
@@ -65,6 +65,7 @@ app.post('/facify/login/:type', (req, res) => {
                 success: true,
                 org_id: user.org_id || null,
                 org_name: user.org_name || null,
+                admin_id: user.admin_id,
                 admin_name: user.first_name + ' ' + user.last_name || null,
                 role: type  
             });
@@ -375,4 +376,49 @@ app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
     });
 });
 
+app.get('/facify/admin-home/:adminID', (req, res) => {
+    const { adminID } = req.params;
+    const { filter } = req.query; // Get filter from dropdown
+
+    let dateCondition = ''; // This will store the condition dynamically
+
+    if (filter === 'Today') {
+        dateCondition = `DATE(bs.date_time) = CURDATE()`;
+    } else if (filter === 'This Week') {
+        dateCondition = `YEARWEEK(bs.date_time, 1) = YEARWEEK(CURDATE(), 1)`;
+    } else if (filter === 'This Month') {
+        dateCondition = `YEAR(bs.date_time) = YEAR(CURDATE()) AND MONTH(bs.date_time) = MONTH(CURDATE())`;
+    } else if (filter === 'This Year') {
+        dateCondition = `YEAR(bs.date_time) = YEAR(CURDATE())`;
+    } else {
+        dateCondition = `1 = 1`;
+    }
+
+    const query = `
+            SELECT 
+                ei.*, 
+                f.facility_name, 
+                s.status_name, 
+                u.org_name,
+                u.org_id
+            FROM event_information ei
+            JOIN facilities f ON ei.facility_id = f.facility_id
+            JOIN booking_status bs ON ei.booking_id = bs.booking_id
+            JOIN status s ON bs.status_id = s.status_id
+            JOIN user u ON ei.org_id = u.org_id
+            WHERE bs.date_time = (
+                SELECT MAX(date_time) 
+                FROM booking_status 
+                WHERE booking_status.booking_id = ei.booking_id
+            )
+            AND ${dateCondition}`;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching booking information:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.json(results);
+    });
+});
 
