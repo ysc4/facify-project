@@ -11,7 +11,8 @@ import './Venue-Availability.css';
 
 
 function Venue() {
-  const { orgID } = useParams();
+  const orgID = localStorage.getItem('orgID')
+  const userType = localStorage.getItem('userType');
   const [facilityID, setFacilityID] = useState(1);
   const [events, setEvents] = useState([]);
   const [hoveredEvent, setHoveredEvent] = useState(null);
@@ -201,11 +202,13 @@ function Venue() {
             </div>
             <h2>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
           </div>
-            <div className="add-booking">
-              <Link to={`/venue-booking/${orgID}/${facilityID}`}>
-                <button className="add-booking-button">Add a Booking</button>
-              </Link>
-            </div>
+          {userType === 'Organization' && (
+              <div className="add-booking">
+                <Link to={`/venue-booking/${orgID}/${facilityID}`}>
+                  <button className="add-booking-button">Add a Booking</button>
+                </Link>
+              </div>
+          )}
           </div>
           <div className="calendar-body">
             <div className="venue-titles">
