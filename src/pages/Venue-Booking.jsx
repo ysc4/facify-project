@@ -56,12 +56,12 @@ function VenueBooking() {
     if (existingData?.booking_id) { 
         setBookingID(existingData.booking_id);
         setFormData({
-            orgID: existingData.orgID,
+            orgID: existingData.orgID || orgID,
             eventDate: new Date(existingData.event_date).toISOString().split('T')[0],
             eventStart: existingData.event_start || "",
             eventEnd: existingData.event_end || "",
             activityTitle: existingData.activity_title || "",
-            facilityID: existingData.facilityID || "",
+            facilityID: existingData.facilityID || facilityID,
             attendance: existingData.expected_attendance || "",
             speakerName: existingData.speaker_name || "",
             equipment: {
@@ -79,7 +79,7 @@ function VenueBooking() {
             status: "pencil",
         });
     }
-}, [existingData]);
+}, [existingData, orgID, facilityID]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -139,8 +139,8 @@ function VenueBooking() {
           response = await axios.post(`/facify/venue-booking/${orgID}/${facilityID}/create`, finalFormData);
           if (response.data.success) {
               alert('Booking created successfully');
-              setBookingID(response.data.bookingID); // Save new booking ID for future updates
-              navigate(`/venue-availability/${orgID}`);
+              setBookingID(response.data.bookingID); 
+              navigate(`/venue-availability/${facilityID}`);
           } else {
               alert('Error creating booking');
           }
