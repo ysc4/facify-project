@@ -245,7 +245,7 @@ app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
     }
 
     const query = `
-        SELECT bs.*, s.remarks
+        SELECT bs.*, s.*
         FROM booking_status bs
         JOIN status s ON bs.status_id = s.status_id
         JOIN (
@@ -459,5 +459,39 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
             return res.status(500).json({ error: 'Database error' });
         }
         res.json(results);
+    });
+});
+
+app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) => {
+    const { bookingID, adminID } = req.params;
+    const { action } = req.body; 
+    const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+    let statusID;
+
+    switch (action) {
+        case "For Assessing":
+            statusID = 3;
+            break;
+        case "Approved":
+            statusID = 4;
+            break;
+        case "Denied":
+            statusID = 5;
+            break;
+        default:
+            return res.status(400).json({ success: false, message: 'Invalid action type' });
+    }
+
+    const statusQuery = `
+        INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) 
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => {
+        if (err) {
+            return res.status(500).json({ success: false, message: 'Database error', error: err });
+        }
+        res.status(200).json({ success: true, message: `Booking status updated to "${action}"`, bookingID: bookingID });
     });
 });
