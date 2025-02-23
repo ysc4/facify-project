@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     height: 100vh;
+    overflow: auto;
 }
 
 .Header {
@@ -67,7 +68,7 @@
     width: 40%;
 }
 
-.submitReqs-button, .edit-button {
+.submitReqs-button, .edit-button, .assess-button, .approve-button, .deny-button {
     width: 250px;
     padding: 10px 20px;
     border-radius: 10px;
@@ -79,16 +80,40 @@
     border: none;
 }
 
-.submitReqs-button {
+.submitReqs-button, .assess-button {
     background-color: #FFFFFF;
     color: #000000;
     border: 1px solid #FFD80C;
 }
 
-.submitReqs-button:hover {
+.submitReqs-button:hover, .assess-button:hover {
     background-color: #FFD80C;
     color: #000000;
     border: 1px solid #FFD80C;
+}
+
+.approve-button {
+    background-color: #66C17A;
+    color: #000000;
+    border: 1px solid #66C17A;
+}
+
+.approve-button:hover {
+    background-color: #FFFFFF;
+    color: #66C17A;
+    border: 1px solid #66C17A;
+}
+
+.deny-button {
+    background-color: #952424;
+    color: #FFFFFF;
+    border: 1px solid #952424;
+}
+
+.deny-button:hover {
+    background-color: #FFFFFF;
+    color: #952424;
+    border: 1px solid #952424;
 }
 
 .cancel-button {
@@ -132,7 +157,7 @@
     height: 100px;
 }
 
-.event-info, .other-info, .submit-reqs, .update-logs {
+.event-info, .other-info, .submit-info, .update-logs {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -140,7 +165,7 @@
     box-sizing: border-box;
 }
 
-.event-info h3, .other-info h3, .submit-reqs h3, .update-logs h3 {
+.event-info h3, .other-info h3, .submit-info h3, .update-logs h3 {
     font-size: 32px;
     font-weight: 1000;
     font-family: 'Poppins', sans-serif;
@@ -176,6 +201,90 @@
 .values {
     text-align: right;
     font-weight: 400;
+}
+
+.submit-info .reqs-table .reqs-table-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 24px;
+    font-weight: 800;
+    padding: 15px 15px;
+    background-color: #FFFFFF;
+}
+
+.submit-info .req-title, .submit-info .date-title, .submit-info .file-title {
+    color: #837118;
+}
+
+.submit-info .reqs-table .table-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 16px;
+}
+
+.submit-info .reqs-table-header div {
+    flex-grow: 1;
+}
+
+.submit-info .reqs-table-header div:last-child {
+    margin-right: 0;
+}
+
+.submit-info .table-content .req {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    padding: 15px 15px;
+    border: 1px solid #ccc;
+}
+
+.submit-info .file .file-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 5px;
+    color: #BD5151;
+}
+
+.submit-info .file-item {
+    display: flex;
+    align-items: center; 
+    justify-content: space-between;
+    background: #E4E2E2;
+    padding: 10px;
+    border-radius: 2px;
+}
+
+.submit-info .file-info {
+    display: flex;
+    flex-grow: 1; 
+    min-width: 0; 
+    flex-direction: column;
+}
+
+.submit-info .file-info h4 {
+    font-size: 16px;
+    font-weight: 400;
+    color: #445CFF;
+    white-space: nowrap;
+    max-width: 150px; 
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+
+.submit-info .file-info p {
+    font-size: 10px;
+    font-weight: 400;
+    margin: 0;
+    line-height: 1;
 }
 
 .logs {

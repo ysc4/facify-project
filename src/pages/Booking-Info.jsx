@@ -1,13 +1,15 @@
 import BackIcon from '@mui/icons-material/ArrowBack';
+import PdfIcon from '@mui/icons-material/Description';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import CancelModal from '../components/CancelModal';
 import Header from '../components/Navbar';
 import ProgressBar from '../components/ProgressBar';
 import Sidebar from '../components/Sidebar';
-import SubmitRequirements from './Submit-Requirements';
 import './Booking-Info.css';
+import { format } from 'mysql';
+
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -30,15 +32,23 @@ const formatDateTime = (dateTimeString) => {
 };
 
 function BookingInfo() {
+    const userType = localStorage.getItem('userType');
+    const adminID = localStorage.getItem('adminID');
     const { bookingID, orgID, facilityID } = useParams();
     const navigate = useNavigate();
     const [bookingInfo, setBookingInfo] = useState([]);
     const [error, setError] = useState('');
     const [logs, setLogs] = useState([]);
+    const [requirements, setRequirements] = useState([]); 
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
+    const [decision, setDecision] = useState(null); 
+    const [decisionDateTime, setDecisionDateTime] = useState(null); 
+
+    const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
     useEffect(() => {
+        console.log(userType);
         const fetchBookingInfo = async () => {
             try {
                 const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
@@ -62,22 +72,54 @@ function BookingInfo() {
             }
         };
 
-        const fetchLogs = async () => {
-            try {
-                const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}/logs`);
-                if (response.data.success) {
-                    setLogs(response.data.logs);
-                } else {
-                    console.error('Error fetching logs:', response.data.message);
+        const fetchRequirements = async () => {
+            if (userType === "Admin") {
+                try {
+                    const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}/requirements`);
+                    if (response.data.success) {
+                        setRequirements(response.data.requirements);
+                        console.log("Logs API Response:", response.data); // Debugging line
+                    } else {
+                        console.error('Error fetching requirements:', response.data.message);
+                        setRequirements([]);
+                    }
+                } catch (err) {
+                    console.error('Error fetching requirements:', err);
                 }
-            } catch (err) {
-                console.error('Error fetching logs:', err);
             }
         };
 
         fetchLogs();
         fetchBookingInfo();
-    }, [orgID, bookingID]);
+        fetchRequirements();
+    }, [orgID, bookingID, userType]);
+
+    const fetchLogs = async () => {
+        try {
+            const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}/logs`);
+            if (response.data.success) {
+                const logs = response.data.logs;
+                const sortedLogs = logs.sort((a, b) => new Date(a.date_time) - new Date(b.date_time));
+                const latestLog = sortedLogs[sortedLogs.length - 1];
+                
+                if (logs.length > 0) {
+                    if (latestLog.status_name === "Approved") {
+                        setDecision("approved");
+                    } else if (latestLog.status_name === "Denied") {
+                        setDecision("denied");
+                    } else if (latestLog.status_name === "Cancelled") {
+                        setDecision("cancelled");
+                    }
+                    setDecisionDateTime(formatDateTime(latestLog.date_time)); 
+                    setLogs(logs);
+                }
+            } else {
+                setError('No logs found for this booking');
+            }
+        } catch (err) {
+            console.error('Error fetching logs:', err);
+        }
+    };
 
     const handleCancelBooking = async () => {
         try {
@@ -93,6 +135,8 @@ function BookingInfo() {
             alert('An error occurred while cancelling the booking.');
         }
         setIsCancelModalOpen(false);
+        setDecision("cancelled");
+        setDecisionDateTime(new Date().toLocaleString());
         fetchLogs();
     };
 
@@ -111,6 +155,21 @@ function BookingInfo() {
     const handleEdit = () => {
         navigate(`/venue-booking/${orgID}/${facilityID}`, { state: bookingInfo[0] });
     };
+
+    const updateBookingStatus = async (action) => {
+        try {
+            const response = await axios.post(`/facify/booking-info/${bookingID}/${adminID}/update-status`, { action });
+            console.log(response.data.message);
+            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" ? 4 : 0);
+            fetchLogs();
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
+    
+    const handleAssess = () => updateBookingStatus("For Assessing");
+    const handleApprove = () => updateBookingStatus("Approved");
+    const handleDeny = () => updateBookingStatus("Denied");
 
     const handleSubmit = () => {
         navigate(`/submit-requirements/${orgID}/${bookingID}`);
@@ -136,8 +195,41 @@ function BookingInfo() {
                                         <h2>Booking Information - {booking.booking_id}</h2>
                                     </div>
                                     <div className="booking-buttons">
-                                        <button className="submitReqs-button" onClick={handleSubmit} disabled={currentStep === 0} >Submit Requirements</button>
-                                        <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0 || 2} >Edit Submission</button>
+                                        {userType === 'Organization' ? (
+                                            <>
+                                            {currentStep === 1 || currentStep === 2 ? (
+                                                <>
+                                                    <button className="submitReqs-button" onClick={handleSubmit} disabled={currentStep === 0}>
+                                                        Submit Requirements
+                                                    </button>
+                                                    <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0 || currentStep === 2}>
+                                                        Edit Submission
+                                                    </button>
+                                                </>
+                                            ) : currentStep === 4 || currentStep === 0 ? (
+                                                <p>Booking has been <strong>{decision}</strong> on {decisionDateTime}.</p>
+                                            ) : null}
+                                        </>
+                                        ) : (
+                                            <>
+                                                {currentStep === 1 || currentStep === 2 ? (
+                                                    <button className="assess-button" onClick={handleAssess} disabled={currentStep === 1}>
+                                                        Mark as For Assessing
+                                                    </button>
+                                                ) : currentStep === 3 ? (
+                                                    <>
+                                                        <button className="approve-button" onClick={handleApprove} >
+                                                            Approve Booking
+                                                        </button>
+                                                        <button className="deny-button" onClick={handleDeny} >
+                                                            Deny Booking
+                                                        </button>
+                                                    </>
+                                                ) : (
+                                                    <p>Booking has been <strong>{decision}</strong> on {decisionDateTime}.</p>
+                                                )}
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 <div className="booking-progress">
@@ -203,31 +295,75 @@ function BookingInfo() {
                                 </div>
                                 <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} handleCancel={handleCancelBooking}/>
                             </div>
-                    )))}            
-                <div className="update-logs">
-                    <h3>Update Logs</h3>
-                    <div className="logs">
-                        {logs.length > 0 ? (
-                        logs.map((log, index) => (
-                            <div className="log" key={index}>
-                            <div className="log-entry">
-                                <p>{log.remarks}</p>
-                            </div>
-                            <div className="log-date">
-                                <p>{formatDateTime(log.date_time)}</p>
-                            </div>
-                            </div>
                         ))
-                        ) : (
-                        <p>No logs available.</p>
-                        )}
+                    )}
+                    {userType === 'Admin' && (
+                        <div className="submit-info">
+                            <h3>Submitted Requirements</h3>
+                            <div className="reqs-table">
+                                <div className="reqs-table-header">
+                                    <div className="req-title">Requirement</div>
+                                    <div className="date-title">Date Submitted</div>
+                                    <div className="file-title">File</div>
+                                </div>
+                                <div className="table-content">
+                                    {requirementNames.map((requirementName) => {
+                                        const matchingRequirement = requirements.find(req =>
+                                            req.file_name?.toLowerCase().includes(requirementName.toLowerCase())
+                                        );
+                                        return (
+                                            <div className="req" key={requirementName}>
+                                                <div className="file-name">{requirementName}</div>
+                                                <div className="date">
+                                                    {matchingRequirement
+                                                        ? new Date(matchingRequirement.date_time_submitted).toLocaleString()
+                                                        : '—'}
+                                                </div>
+                                                <div className="file">
+                                                    {matchingRequirement ? (
+                                                        <div className="file-item">
+                                                            <PdfIcon className="file-icon" />
+                                                            <div className="file-info">
+                                                                <h4>{matchingRequirement.file_name}</h4>
+                                                                <p>{(matchingRequirement.file_size / 1024).toFixed(2)} KB</p>
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <p>No file uploaded</p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                    <div className="update-logs">
+                        <h3>Update Logs</h3>
+                        <div className="logs">
+                            {logs && logs.length > 0 ? (
+                                logs.map((log, index) => (
+                                    <div className="log" key={index}>
+                                        <div className="log-entry">
+                                            <p>{log.remarks}</p>
+                                        </div>
+                                        <div className="log-date">
+                                            <p>{formatDateTime(log.date_time)}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <p>No logs available.</p>
+                            )}
+                        </div>
                     </div>
+                    {userType === 'Organization' && (
+                        <button className="cancel-button" onClick={handleOpenCancelModal} disabled={currentStep === 0}> Cancel Booking </button> )}
                 </div>
-                <button className="cancel-button" onClick={handleOpenCancelModal} disabled={currentStep === 0} >Cancel Booking</button>
             </div>
         </div>
-    </div>
-  );
+    );
 }
 
 export default BookingInfo;
