@@ -1,11 +1,12 @@
 import BlockIcon from '@mui/icons-material/Block';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PencilIcon from '@mui/icons-material/Edit';
-import EventIcon from '@mui/icons-material/Event';
+import CheckIcon from '@mui/icons-material/CheckOutlined';
+import PencilIcon from '@mui/icons-material/EditOutlined';
+import EventIcon from '@mui/icons-material/BookOutlined';
 import DocumentIcon from '@mui/icons-material/FileCopyOutlined';
 import ReportIcon from '@mui/icons-material/Report';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import CancelIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -50,6 +51,7 @@ function AdminHome() {
       "For Assessing": 0,
       "Approved": 0,
       "Denied": 0,
+      "Cancelled": 0,
       "Total Bookings": bookings.length,
       "Scheduled Today": 0
     };
@@ -94,8 +96,9 @@ function AdminHome() {
       case "Pencil Booked": return <PencilIcon />;
       case "Officially Booked": return <DocumentIcon />;
       case "For Assessing": return <ReportIcon />;
-      case "Approved": return <CheckCircleIcon />;
+      case "Approved": return <CheckIcon />;
       case "Denied": return <BlockIcon />;
+      case "Cancelled": return <CancelIcon />;
       case "Total Bookings": return <EventIcon />;
       case "Scheduled Today": return <CalendarTodayIcon />;
       default: return <EventIcon />;
@@ -104,13 +107,14 @@ function AdminHome() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Pencil Booked": return "#837878";
-      case "Officially Booked": return "#236AD4";
-      case "For Assessing": return "#FFDC5E";
-      case "Approved": return "#44D852";
-      case "Denied": return "#B71919";
+      case "Pencil Booked": return "#FFF3B4";
+      case "Officially Booked": return "#A6C4FF";
+      case "For Assessing": return "#FFB951";
+      case "Approved": return "#B3FFA6";
+      case "Denied": return "#FFA6A6";
+      case "Cancelled": return "#D9D9D9";
       case "Total Bookings": return "#262323";
-      case "Scheduled Today": return "#CFCFCF";
+      case "Scheduled Today": return "#FFB8D6";
       default: return "#CFCFCF";
     }
   }
