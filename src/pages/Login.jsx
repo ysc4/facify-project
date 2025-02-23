@@ -1,12 +1,13 @@
-import VisibilityOff from '@mui/icons-material/VisibilityOffOutlined';
-import Visibility from '@mui/icons-material/VisibilityOutlined';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import logo from '../assets/facify-white.png';
 import girlypops from '../assets/girlypops-pink.png';
-import './Login.css';
 import Dropdown from '../components/Dropdown';
+import ConditionsModal from '../components/ConditionsModal';
+import PrivacyModal from '../components/PrivacyModal'; // Import PrivacyModal
+import HelpModal from '../components/HelpModal'; // Import HelpModal
+import './Login.css';
 
 const Login = ({ setIsLoggedIn }) => {
     const [email, setEmail] = useState('');
@@ -14,6 +15,9 @@ const Login = ({ setIsLoggedIn }) => {
     const [error, setError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [userType, setUserType] = useState('Organization'); 
+    const [isConditionsModalOpen, setIsConditionsModalOpen] = useState(false); // Conditions Modal state
+    const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false); // Privacy Modal state
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false); // Help Modal state
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -55,6 +59,31 @@ const Login = ({ setIsLoggedIn }) => {
         setPasswordVisible(!passwordVisible);
     };
 
+    // Handle the modal open and close
+    const openConditionsModal = () => {
+        setIsConditionsModalOpen(true);  // Open Conditions Modal
+    };
+
+    const closeConditionsModal = () => {
+        setIsConditionsModalOpen(false);  // Close Conditions Modal
+    };
+
+    const openPrivacyModal = () => {
+        setIsPrivacyModalOpen(true);  // Open Privacy Modal
+    };
+
+    const closePrivacyModal = () => {
+        setIsPrivacyModalOpen(false);  // Close Privacy Modal
+    };
+
+    const openHelpModal = () => {
+        setIsHelpModalOpen(true);  // Open Help Modal
+    };
+
+    const closeHelpModal = () => {
+        setIsHelpModalOpen(false);  // Close Help Modal
+    };
+
     return (
         <div className="Login">
             <div className="description">
@@ -71,7 +100,7 @@ const Login = ({ setIsLoggedIn }) => {
                 <h2>Enter your credentials.</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="form-group">
-                    <label htmlFor="user-type">User Type:</label>
+                        <label htmlFor="user-type">User Type:</label>
                         <Dropdown 
                             className="user-type-dropdown"
                             options={['Organization', 'Admin']} 
@@ -109,9 +138,9 @@ const Login = ({ setIsLoggedIn }) => {
                 </form>
                 <div className="footer">
                     <div className="footer-links">
-                        <a href="/conditions">Conditions of Use</a>
-                        <a href="/privacy">Privacy Notice</a>
-                        <a href="/help">Help</a>
+                        <a href="#" onClick={openConditionsModal}>Conditions of Use</a>
+                        <a href="#" onClick={openPrivacyModal}>Privacy Notice</a>
+                        <a href="#" onClick={openHelpModal}>Help</a>
                     </div>
                     <div className="published-date">
                         <p>© 2024 facify. All Rights Reserved.</p>
@@ -122,6 +151,10 @@ const Login = ({ setIsLoggedIn }) => {
                     </div>
                 </div>
             </div>
+
+            <ConditionsModal isOpen={isConditionsModalOpen} onClose={closeConditionsModal} />
+            <PrivacyModal isOpen={isPrivacyModalOpen} onClose={closePrivacyModal} />
+            <HelpModal isOpen={isHelpModalOpen} onClose={closeHelpModal} />
         </div>
     );
 };
