@@ -171,7 +171,7 @@ function AdminHome() {
                     <th>EVENT</th>
                     <th>VENUE</th>
                     <th>TIME</th>
-                    <th>ACTIONS</th>
+                    <th>VIEW</th>
                   </tr>
                 </thead>
                 <tbody>
