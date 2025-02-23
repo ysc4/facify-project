@@ -1,0 +1,134 @@
+.BookingOverview {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
+}
+
+
+.main-content {
+    display: flex;
+    flex: 1; /* Take up the remaining space */
+}
+
+.sidebar-placeholder {
+    width: 20%; /* Adjust the width as needed */
+}
+
+.booking-overview {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    padding-top: 90px;
+    padding-left: 20px;
+    background-color: #FFFFFF; 
+    overflow-y: auto;
+}
+
+.overview-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 98%;
+    padding: 10px 20px;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.search-bar input {
+    padding: 10px 40px 10px 10px; 
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%; 
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.booking-overview .filters {
+    display: flex;
+    align-items: center;
+    width: 20%;
+    height: 40px;
+    margin-top: 5px;
+    margin-right: 20px;
+    gap: 20px;
+}
+
+.booking-content {
+    margin: 20px;
+    width: 96%;
+}
+
+.booking-content table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    padding: 10px;
+    overflow: hidden;
+}
+
+.booking-content thead {
+    background-color: #EBEDF2; 
+}
+
+.booking-content th, 
+.booking-content td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+.booking-content th {
+    color: #3F4043;
+    font-size: 15px;
+}
+
+.booking-content tbody {
+    color: #323030;
+    font-size: 13px;
+    text-overflow: ellipsis;
+}
+
+.booking-content tbody tr:first-child td {
+    border-top: none; 
+}
+
+.view-booking {
+    cursor: pointer;
+    text-align: center;
+}
+
+.status-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; 
+}
+
+.status-dot {
+    width: 8px; 
+    height: 8px;
+    border-radius: 50%; 
+}
+
+.sort-arrow {
+    font-size: 8px; 
+    margin-left: 3px; 
+    vertical-align: middle;
+    opacity: 0.7; 
+}
