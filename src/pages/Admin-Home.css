@@ -1,0 +1,180 @@
+.AdminHome {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.Header {
+    flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
+}
+
+
+.main-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.sidebar-placeholder {
+    width: 20%; 
+    flex-shrink: 0;
+}
+
+.AdminHome .content {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    padding: 90px 30px 20px 20px;
+    background-color: #FFFFFF; 
+    overflow-y: auto;
+}
+
+h1 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    margin: 20px 0;
+}
+
+.dashboard-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+    margin: 10px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.date-container h1 {
+    font-size: 50px; /* Make it bold and large */
+    font-weight: bold;
+    color: #000;
+    margin: 0;
+}
+
+.date-container h4 {
+    font-size: 20px;
+    font-weight: 500;
+    color: #000;
+    margin: 0;
+}
+
+.date-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 16px;
+    color: #333;
+}
+
+.filterDates-type-dropdown {
+    margin-top: 5px;
+    align-self: flex-end;
+}
+
+
+.status-cards {
+    display: flex;
+    gap: 20px; 
+    flex-wrap: wrap; 
+}
+
+.data-panels {
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.status-panel-container {
+    flex: 2; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* Status Cards Layout */
+.status-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 20px 50px; 
+    max-width: 800px;
+    margin: 0; 
+    padding: 0;
+}
+
+.pie-chart-panel {
+    width: 600px;
+    height: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    flex-shrink: 0;
+}
+
+.pie-chart-panel h3 {
+    font-size: 24px;
+    font-weight: 500;
+    color: #000;
+    margin: 5px;
+}
+
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: 20px;
+    box-sizing: border-box;
+}
+
+.booking-list h2 {
+    font-size: 32px;
+    font-weight: 1000;
+    font-family: 'Poppins', sans-serif;
+    color: #2F3B8D;
+    background-color: #D5D7E8;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 20px;
+}
+
+.booking-list table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.booking-list thead {
+    background-color: #EBEDF2; 
+}
+
+.booking-list th, 
+.booking-list td {
+    padding: 12px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+.booking-list th {
+    color: #3F4043;
+    font-size: 16px;
+}
+
+.booking-list tbody {
+    color: #323030;
+    font-size: 16px;
+}
+
+.booking-list tbody tr:first-child td {
+    border-top: none; 
+}
+
+.view-booking {
+    cursor: pointer;
+}
