@@ -1,43 +1,55 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import '../App.css';
 import logo from '../assets/girlypops-pink.png';
 import { SidebarData } from './SidebarData';
 
-
 function Sidebar() {
-
     const navigate = useNavigate();
-    const { orgID } = useParams();
+    const location = useLocation();
+    const { facilityID: paramFacilityID, orgID } = useParams();
+    const adminID = localStorage.getItem('adminID');
+    const userType = localStorage.getItem('userType');
+
+    const [facilityID, setFacilityID] = useState(paramFacilityID || "1");
+
+    useEffect(() => {
+        if (paramFacilityID) {
+            setFacilityID(paramFacilityID);
+        }
+    }, [paramFacilityID]);
 
     const handleNavigation = (path) => {
-        navigate(`${path}/${orgID}`);
+        navigate(path);
     };
 
-    return (
-    <div className="Sidebar">
-        <h2>MAIN MENU</h2>
-        <ul className='SidebarList'>
-        {SidebarData.map((val, key)=> {
-        return <li 
-        key={key} 
-        className={window.location.pathname.includes(val.path) ? "row active" : "row"} 
-        onClick={() => handleNavigation(val.path)}>
-            {" "} 
-            <div id="icon">{val.icon}</div>{" "}
-            <div id="title">
-                {val.title}
-            </div>
-            </li>; 
-        })}
-        </ul>
+    const sidebarItems = SidebarData({ user: userType, orgID: orgID, facilityID: facilityID, adminID: adminID });
 
-        <div className="SidebarLogo">
-            <h4>Powered by</h4>
-            <img src={logo} alt="Logo" />
+    return (
+        <div className="Sidebar">
+            <h2>MAIN MENU</h2>
+            <ul className='SidebarList'>
+                {sidebarItems.map((val, key) => {
+                    const isActive = location.pathname === val.path;
+                    return (
+                        <li 
+                            key={key} 
+                            className={isActive ? "row active" : "row"} 
+                            onClick={() => handleNavigation(val.path)}
+                        >
+                            <div id="icon">{val.icon}</div>
+                            <div id="title">{val.title}</div>
+                        </li>
+                    );
+                })}
+            </ul>
+
+            <div className="SidebarLogo">
+                <h4>Powered by</h4>
+                <img src={logo} alt="Logo" />
+            </div>
         </div>
-    </div>
     );
 }
 
-export default Sidebar
+export default Sidebar;
