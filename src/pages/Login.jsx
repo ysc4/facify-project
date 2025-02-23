@@ -28,13 +28,21 @@ const Login = ({ setIsLoggedIn }) => {
             const response = await axios.post(`/facify/login/${userType}`, { email, password });
     
             if (response.data.success) {
-                const { org_id, org_name, admin_name } = response.data;
+                const { org_id, org_name, admin_id, admin_name } = response.data;
                 console.log(response.data);
                 setIsLoggedIn(true);
                 localStorage.setItem('orgID', org_id);
                 localStorage.setItem('orgName', org_name);
+                localStorage.setItem('adminID', admin_id);
                 localStorage.setItem('adminName', admin_name);
-                navigate(`/bookings/${org_id}`);
+                localStorage.setItem('userType', userType);
+
+                if (userType === 'Organization') {
+                    navigate(`/bookings/${org_id}`);
+                } else {
+                    navigate(`/admin-home/${admin_id}`);
+                }
+                
             } else {
                 setError('Invalid credentials');
             }
