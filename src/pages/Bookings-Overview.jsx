@@ -2,7 +2,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import data from '../components/data.jsx';
 import '../components/Dropdown.css';
 import Dropdown from '../components/Dropdown.jsx';
@@ -56,6 +56,7 @@ function BookingOverview() {
     const [selectedFacility, setSelectedFacility] = useState('All Facilities');
     const [selectedStatus, setSelectedStatus] = useState('All Statuses');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -116,6 +117,11 @@ function BookingOverview() {
             direction: prevConfig.key === key && prevConfig.direction === 'asc' ? 'desc' : 'asc',
         }));
     };
+
+    const handleViewBooking = (booking) => {
+        console.log(`Viewing booking ${booking.booking_id}`);
+        navigate(`/booking-info/${booking.org_id}/${booking.booking_id}`);
+    }
 
     return (
         <div className="Homepage">
