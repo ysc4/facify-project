@@ -1,0 +1,52 @@
+/* Modal.css */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  
+  .modal-content {
+    position: relative;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .close-icon {
+    cursor: pointer;
+    font-size: 30px;
+    color: #333;
+  }
+  
+  .close-icon:hover {
+    color: red;
+  }
+
+  ol {
+    padding-left: 20px; /* Add padding for the numbered list */
+  }
+  
+  ol li {
+    margin-bottom: 15px; /* Spacing between list items */
+  }
+  
+  ol li p {
+    margin-left: 20px; /* Indent the description text */
+    font-size: 14px; /* Smaller text for the description */
+    color: #555; /* Slightly lighter color for the description */
+  }
