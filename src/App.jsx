@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Venue from './pages/Venue-Availability';
 import VenueBooking from './pages/Venue-Booking';
 import SubmitRequirements from './pages/Submit-Requirements';
+import AdminHome from './pages/Admin-Home';
+import AdminBookings from './pages/Bookings-Overview';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -29,7 +31,7 @@ function App() {
       errorElement: <NotFound />
     },
     {
-      path: '/venue-availability/:orgID',
+      path: '/venue-availability/:facilityID',
       element: <Venue />,
       errorElement: <NotFound />
     },
@@ -42,8 +44,17 @@ function App() {
       path: '/submit-requirements/:orgID/:bookingID',
       element: <SubmitRequirements />,
       errorElement: <NotFound />
+    },
+    {
+      path: '/admin-home/:adminID',
+      element: <AdminHome />,
+      errorElement: <NotFound />
+    },
+    {
+      path: '/admin-bookings/:adminID',
+      element: <AdminBookings />,
+      errorElement: <NotFound />
     }
-
   ]);
 
   return <RouterProvider router={router} basename='facify' />;
