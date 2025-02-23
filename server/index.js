@@ -422,3 +422,42 @@ app.get('/facify/admin-home/:adminID', (req, res) => {
     });
 });
 
+app.get('/facify/admin-bookings/:adminID', (req, res) => {
+    const { adminID } = req.params;
+    const { search } = req.query; 
+
+    let query = `
+        SELECT 
+            ei.*, 
+            f.facility_name, 
+            s.status_name, 
+            u.org_name,
+            u.org_id
+        FROM event_information ei
+        JOIN facilities f ON ei.facility_id = f.facility_id
+        JOIN booking_status bs ON ei.booking_id = bs.booking_id
+        JOIN status s ON bs.status_id = s.status_id
+        JOIN user u ON ei.org_id = u.org_id
+        WHERE bs.date_time = (
+            SELECT MAX(date_time) 
+            FROM booking_status 
+            WHERE booking_status.booking_id = ei.booking_id
+        )`;
+
+    if (search) {
+        query += ` 
+            AND (
+                ei.event_name LIKE ? 
+                OR u.org_name LIKE ? 
+                OR f.facility_name LIKE ?
+            )`;
+    }
+
+    db.query(query, search ? [`%${search}%`, `%${search}%`, `%${search}%`] : [], (err, results) => {
+        if (err) {
+            console.error('Error fetching booking information:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.json(results);
+    });
+});
