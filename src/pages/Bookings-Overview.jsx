@@ -47,7 +47,7 @@ const formatEventDateTime = (eventDate, eventStart) => {
 
 
 function BookingOverview() {
-    const { orgID } = useParams();
+    const { adminID } = localStorage.getItem('adminID');
     const [bookings, setBookings] = useState([]);
     const [error, setError] = useState('');
     const [facilities, setFacilities] = useState([]);
@@ -61,7 +61,7 @@ function BookingOverview() {
     useEffect(() => {
         const fetchBookings = async () => {
             try {
-                const response = await axios.get(`/facify/admin-bookings/${orgID}`, {
+                const response = await axios.get(`/facify/admin-bookings/${adminID}`, {
                     params: { search: searchTerm } 
                 });
     
@@ -83,7 +83,7 @@ function BookingOverview() {
         };
     
         fetchBookings();
-    }, [orgID, searchTerm]); 
+    }, [adminID, searchTerm]); 
     
     const handleFilterChange = (type, selectedOption) => {
         if (type === 'facility') {
@@ -97,7 +97,7 @@ function BookingOverview() {
     .filter((booking) => {
         const matchesFacility = selectedFacility === 'All Facilities' || booking.facility_name === selectedFacility;
         const matchesStatus = selectedStatus === 'All Statuses' || booking.status_name === selectedStatus;
-        const matchesSearch = booking.activity_title.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesSearch = booking.activity_title.toLowerCase().includes(searchTerm.toLowerCase()) || booking.org_name.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesFacility && matchesStatus && matchesSearch;
     })
     .sort((a, b) => {
@@ -136,7 +136,7 @@ function BookingOverview() {
                             <SearchIcon className="search-icon" />
                             <input 
                                 type="text" 
-                                placeholder="Search for events" 
+                                placeholder="Search for" 
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
