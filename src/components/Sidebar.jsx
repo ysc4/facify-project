@@ -7,9 +7,10 @@ import { SidebarData } from './SidebarData';
 function Sidebar() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { facilityID: paramFacilityID, orgID } = useParams();
+    const { facilityID: paramFacilityID} = useParams();
     const adminID = localStorage.getItem('adminID');
     const userType = localStorage.getItem('userType');
+    const orgID = localStorage.getItem("orgID")
 
     const [facilityID, setFacilityID] = useState(paramFacilityID || "1");
 
