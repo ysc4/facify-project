@@ -43,9 +43,6 @@ function BookingInfo() {
     const [currentStep, setCurrentStep] = useState(1);
     const [decision, setDecision] = useState(null); 
     const [decisionDateTime, setDecisionDateTime] = useState(null); 
-    const [requirementID, setRequirementID] = useState(null);
-    const [fileUrl, setFileUrl] = useState(null);
-    const [fileName, setFileName] = useState("");
 
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
