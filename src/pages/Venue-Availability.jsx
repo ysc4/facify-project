@@ -2,7 +2,7 @@ import Previous from '@mui/icons-material/ArrowBackIos';
 import Next from '@mui/icons-material/ArrowForwardIos';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
@@ -20,6 +20,7 @@ function Venue() {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (facilityID) {
@@ -35,6 +36,7 @@ function Venue() {
   
       const formattedEvents = response.data.events.map(event => ({
         ...event,
+        orgID: event.org_id,
         bookingID: event.booking_id,
         venue: event.facility_name, 
         eventDate: new Date(event.event_date), 
@@ -92,11 +94,12 @@ function Venue() {
 
   const EventTooltip = ({ event, position }) => {
     if (!event) return null; 
-    
+ 
     return (
       <div 
         className="tooltip-box" 
         style={{ top: position.y, left: position.x }}
+        onClick={() => handleStatusClick(event, userType)}
       >
         <div className="tooltip-header">
           <p className="tooltip-title">{event.bookingID}</p>
@@ -113,7 +116,9 @@ function Venue() {
     );
   };
 
-  const DayContainer = ({ day, events }) => {
+
+
+  const DayContainer = ({ day, events, userType }) => {
     const dayStatus = events.length > 0 ? events[0].status_name : null;
     return (
       <div className="day-container" onMouseLeave={handleMouseLeave}>
@@ -149,6 +154,13 @@ function Venue() {
     setHoveredEvent(null);
   };
 
+  const handleStatusClick = (event, userType) => {
+    if (userType === 'Admin') {
+      navigate(`/booking-info/${event.orgID}/${event.bookingID}`);
+    }
+  };
+
+
   const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
   const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
 
@@ -171,7 +183,7 @@ function Venue() {
       });
   
       console.log(`Day ${i} Events:`, dayEvents); // Debugging
-      days.push(<DayContainer key={i} day={i} events={dayEvents} />);
+      days.push(<DayContainer key={i} day={i} events={dayEvents} userType={userType}/>);
     }
 
     while (days.length < totalBoxes) {
@@ -234,8 +246,8 @@ function Venue() {
             </div>
           </div>
         </div>
-        {hoveredEvent && <EventTooltip event={hoveredEvent} position={tooltipPosition} />}
-      </div>
+        {hoveredEvent && <EventTooltip event={hoveredEvent} position={tooltipPosition} userType={userType} />}
+              </div>
     </div>
   );
 }
