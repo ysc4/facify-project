@@ -56,13 +56,13 @@ function AdminHome() {
       "Scheduled Today": 0
     };
 
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toLocaleDateString('en-CA');
 
     bookings.forEach((booking) => {
       if (counts.hasOwnProperty(booking.status_name)) {
         counts[booking.status_name] += 1;
       }
-      if (booking.event_date && booking.event_date.startsWith(today)) {
+      if (booking.event_date === today) {
         counts["Scheduled Today"] += 1;
       }
     });
