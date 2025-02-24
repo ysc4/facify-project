@@ -1,12 +1,14 @@
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import logo from '../assets/facify-white.png';
 import girlypops from '../assets/girlypops-pink.png';
 import Dropdown from '../components/Dropdown';
-import ConditionsModal from '../components/ConditionsModal';
-import PrivacyModal from '../components/PrivacyModal'; // Import PrivacyModal
-import HelpModal from '../components/HelpModal'; // Import HelpModal
+import ConditionsModal from '../pages/modals/Condition';
+import HelpModal from '../pages/modals/Help';
+import PrivacyModal from '../pages/modals/Privacy';
 import './Login.css';
 
 const Login = ({ setIsLoggedIn }) => {
@@ -15,9 +17,9 @@ const Login = ({ setIsLoggedIn }) => {
     const [error, setError] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [userType, setUserType] = useState('Organization'); 
-    const [isConditionsModalOpen, setIsConditionsModalOpen] = useState(false); // Conditions Modal state
-    const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false); // Privacy Modal state
-    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false); // Help Modal state
+    const [isConditionsModalOpen, setIsConditionsModalOpen] = useState(false); 
+    const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false); 
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false); 
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -26,7 +28,7 @@ const Login = ({ setIsLoggedIn }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setError(''); // Clear previous errors
+        setError(''); 
     
         try {
             const response = await axios.post(`/facify/login/${userType}`, { email, password });
@@ -55,34 +57,14 @@ const Login = ({ setIsLoggedIn }) => {
         }
     };
 
-    const togglePasswordVisibility = () => {
-        setPasswordVisible(!passwordVisible);
-    };
+    const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
-    // Handle the modal open and close
-    const openConditionsModal = () => {
-        setIsConditionsModalOpen(true);  // Open Conditions Modal
-    };
-
-    const closeConditionsModal = () => {
-        setIsConditionsModalOpen(false);  // Close Conditions Modal
-    };
-
-    const openPrivacyModal = () => {
-        setIsPrivacyModalOpen(true);  // Open Privacy Modal
-    };
-
-    const closePrivacyModal = () => {
-        setIsPrivacyModalOpen(false);  // Close Privacy Modal
-    };
-
-    const openHelpModal = () => {
-        setIsHelpModalOpen(true);  // Open Help Modal
-    };
-
-    const closeHelpModal = () => {
-        setIsHelpModalOpen(false);  // Close Help Modal
-    };
+    const openConditionsModal = () => setIsConditionsModalOpen(true); 
+    const closeConditionsModal = () => setIsConditionsModalOpen(false);  
+    const openPrivacyModal = () => setIsPrivacyModalOpen(true);  
+    const closePrivacyModal = () => setIsPrivacyModalOpen(false);
+    const openHelpModal = () => setIsHelpModalOpen(true); 
+    const closeHelpModal = () => setIsHelpModalOpen(false);  
 
     return (
         <div className="Login">
