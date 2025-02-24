@@ -12,7 +12,6 @@ const ConditionModal = ({ isOpen, onClose }) => {
           <h2>Terms and Conditions of Use</h2>
           <CloseIcon className="close-icon" onClick={onClose} />
         </div>
-        <p>Here are some frequently asked questions and helpful information:</p>
         <ol>
           <li><strong>Acceptance of Terms</strong>
           <p>By accessing or using facify, you agree to be bound by these Terms and Conditions of Use. If you do not agree to these Terms, please do not use facify at all and by any means.</p> </li>
