@@ -214,7 +214,7 @@ app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, 
                 if (count === totalReqs) {
                     const updateStatusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE status_id = VALUES(status_id)';
                     
-                    db.query(updateStatusQuery, [bookingID, 2, date_time, 1], (err, result) => { //Update admin_id depending on the logged in admin
+                    db.query(updateStatusQuery, [bookingID, 2, date_time, NULL], (err, result) => { //Update admin_id to NULL if not yet approved
                         if (err) {
                             return res.status(500).json({ success: false, message: 'Database error', error: err });
                         }
@@ -312,7 +312,7 @@ app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
             console.log('date_time:', date_time);
 
             const statusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?)';
-            db.query(statusQuery, [bookingID, statusID, date_time, 1], (err, result) => {
+            db.query(statusQuery, [bookingID, statusID, date_time, NULL], (err, result) => { //Update admin_id to NULL if not yet approved
                 if (err) {
                     return res.status(500).json({ success: false, message: 'Database error', error: err });
                 }
@@ -387,7 +387,7 @@ app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
     const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
     const query = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?)';
-    db.query(query, [bookingID, 6, date_time, 1], (err, result) => {
+    db.query(query, [bookingID, 6, date_time, NULL], (err, result) => { //Update admin_id to NULL if not yet approved
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }
@@ -398,9 +398,9 @@ app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
 // Get all bookings with filtered time for admin endpoint
 app.get('/facify/admin-home/:adminID', (req, res) => {
     const { adminID } = req.params;
-    const { filter } = req.query; // Get filter from dropdown
+    const { filter } = req.query; 
 
-    let dateCondition = ''; // This will store the condition dynamically
+    let dateCondition = ''; 
 
     if (filter === 'Today') {
         dateCondition = `DATE(bs.date_time) = CURDATE()`;
@@ -498,7 +498,7 @@ app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) =>
         VALUES (?, ?, ?, ?)
     `;
 
-    db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => {
+    db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => { //Update admin_id to the logged in admin
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }
