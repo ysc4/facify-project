@@ -359,7 +359,7 @@ function BookingInfo() {
                         </div>
                     </div>
                     {userType === 'Organization' && (
-                        <button className="cancel-button" onClick={handleOpenCancelModal} disabled={currentStep === 0}> Cancel Booking </button> )}
+                        <button className="cancel-button" onClick={handleOpenCancelModal} disabled={currentStep === 0 || currentStep === 3 || currentStep === 4}> Cancel Booking </button> )}
                 </div>
             </div>
         </div>
