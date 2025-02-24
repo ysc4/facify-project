@@ -251,6 +251,7 @@
     background: #E4E2E2;
     padding: 10px;
     border-radius: 2px;
+    cursor: pointer;
 }
 
 .submit-info .file-info {
