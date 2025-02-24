@@ -178,8 +178,8 @@ function AdminHome() {
                 {bookings.length > 0 ? (
                   bookings
                     .filter((booking) => {
-                      const today = new Date().toISOString().split('T')[0];
-                      const eventDate = new Date(booking.event_date).toISOString().split('T')[0];
+                      const today = new Date().toLocaleDateString('en-CA');
+                      const eventDate = new Date(booking.event_date).toLocaleDateString('en-CA');
                       return eventDate === today; 
                     })
                     .map((booking) => (
