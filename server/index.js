@@ -35,6 +35,8 @@ app.get('/', (req, res) => {
      res.sendFile(path.join(__dirname, '../dist', 'index.html'));
 });
 
+
+// Login endpoint
 app.post('/facify/login/:type', (req, res) => {
     const { email, password } = req.body;
     const { type } = req.params;
@@ -82,6 +84,7 @@ app.post('/facify/login/:type', (req, res) => {
     });
 });
 
+// Get bookings endpoint
 app.get('/facify/bookings/:orgID', (req, res) => {
     const { orgID } = req.params;
     if (!orgID) {
@@ -119,6 +122,7 @@ app.get('/facify/bookings/:orgID', (req, res) => {
     });
 });
 
+// Get booking info endpoint
 app.get('/facify/booking-info/:orgID/:bookingID', (req, res) => {
     const { orgID, bookingID } = req.params;
     if (!bookingID || !orgID) {
@@ -170,6 +174,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage: storage })
 
+// Upload requirements endpoint
 app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, res) => {
     if (!req.file) {
         return res.status(400).json({ success: false, message: 'No file uploaded' });
@@ -223,6 +228,7 @@ app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, 
     });
 });
 
+// Get requirements endpoint
 app.get('/facify/booking-info/:orgID/:bookingID/requirements', (req, res) => {
     const { orgID, bookingID } = req.params;
     if (!orgID || !bookingID) {
@@ -245,6 +251,7 @@ app.get('/facify/booking-info/:orgID/:bookingID/requirements', (req, res) => {
     });
 });
 
+// Get update logs endpoint
 app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
     const { orgID, bookingID } = req.params;
     if (!bookingID || !orgID) {
@@ -278,6 +285,8 @@ app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
     });
 });
 
+
+// Create booking endpoint
 app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
     const { orgID, facilityID } = req.params;
     const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment, status, bookingDate, bookingTime } = req.body;
@@ -313,6 +322,7 @@ app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
     });
 });
 
+// Update booking endpoint
 app.put('/facify/booking-info/:bookingID/update', (req, res) => {
     const { bookingID } = req.params;
     const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment } = req.body;
@@ -333,6 +343,7 @@ app.put('/facify/booking-info/:bookingID/update', (req, res) => {
     });
 });
 
+// Get venue availability endpoint
 app.get('/facify/venue-availability/:facilityID', (req, res) => {
     const { facilityID } = req.params;
     const { month, year } = req.query;
@@ -370,6 +381,7 @@ app.get('/facify/venue-availability/:facilityID', (req, res) => {
     });
 });
 
+// Cancel booking endpoint
 app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
     const { bookingID } = req.params;
     const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
@@ -383,6 +395,7 @@ app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
     });
 });
 
+// Get all bookings with filtered time for admin endpoint
 app.get('/facify/admin-home/:adminID', (req, res) => {
     const { adminID } = req.params;
     const { filter } = req.query; // Get filter from dropdown
@@ -429,11 +442,9 @@ app.get('/facify/admin-home/:adminID', (req, res) => {
     });
 });
 
+// Get all bookings with search for admin endpoint
 app.get('/facify/admin-bookings/:adminID', (req, res) => {
-    const { adminID } = req.params;
-    const { search } = req.query; 
-
-    let query = `
+    const query = `
         SELECT 
             ei.*, 
             f.facility_name, 
@@ -450,17 +461,8 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
             FROM booking_status 
             WHERE booking_status.booking_id = ei.booking_id
         )`;
-
-    if (search) {
-        query += ` 
-            AND (
-                ei.event_name LIKE ? 
-                OR u.org_name LIKE ? 
-                OR f.facility_name LIKE ?
-            )`;
-    }
-
-    db.query(query, search ? [`%${search}%`, `%${search}%`, `%${search}%`] : [], (err, results) => {
+        
+    db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching booking information:', err);
             return res.status(500).json({ error: 'Database error' });
@@ -469,6 +471,7 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
     });
 });
 
+// Update booking status endpoint
 app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) => {
     const { bookingID, adminID } = req.params;
     const { action } = req.body; 
