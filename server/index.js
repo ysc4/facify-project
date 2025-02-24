@@ -186,7 +186,7 @@ app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, 
     const { bookingID } = req.params;
     const filePath = req.file.path; // Get the uploaded file path
     const filename = req.file.filename; // Get the stored file name
-    const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
 
     fs.readFile(filePath, (err, fileData) => {
         if (err) {
@@ -212,9 +212,9 @@ app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, 
                 const totalReqs = 4;
 
                 if (count === totalReqs) {
-                    const updateStatusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE status_id = VALUES(status_id)';
+                    const updateStatusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE status_id = VALUES(status_id), admin_id = VALUES(admin_id);';
                     
-                    db.query(updateStatusQuery, [bookingID, 2, date_time, NULL], (err, result) => { //Update admin_id to NULL if not yet approved
+                    db.query(updateStatusQuery, [bookingID, 2, date_time], (err, result) => { // Update admin_id to 0 if not yet approved
                         if (err) {
                             return res.status(500).json({ success: false, message: 'Database error', error: err });
                         }
@@ -306,13 +306,14 @@ app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
                 return res.status(500).json({ success: false, message: 'Database error', error: err });
             }
 
-            const date_time = new Date(`${bookingDate}T${bookingTime}`).toISOString().slice(0, 19).replace('T', ' ');
+            const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
             const statusID = status === 'pencil' ? 1 : 2;
             console.log('statusID:', statusID);
             console.log('date_time:', date_time);
 
-            const statusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?)';
-            db.query(statusQuery, [bookingID, statusID, date_time, NULL], (err, result) => { //Update admin_id to NULL if not yet approved
+            const statusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time) VALUES (?, ?, ?)';
+            db.query(statusQuery, [bookingID, statusID, date_time], (err, result) => { //Update admin_id to 0 because no admin is handling the booking yet
+                
                 if (err) {
                     return res.status(500).json({ success: false, message: 'Database error', error: err });
                 }
@@ -384,10 +385,10 @@ app.get('/facify/venue-availability/:facilityID', (req, res) => {
 // Cancel booking endpoint
 app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
     const { bookingID } = req.params;
-    const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
 
     const query = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?)';
-    db.query(query, [bookingID, 6, date_time, NULL], (err, result) => { //Update admin_id to NULL if not yet approved
+    db.query(query, [bookingID, 6, date_time, 0], (err, result) => { //Update admin_id to 0 if not yet approved
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }
@@ -403,35 +404,35 @@ app.get('/facify/admin-home/:adminID', (req, res) => {
     let dateCondition = ''; 
 
     if (filter === 'Today') {
-        dateCondition = `DATE(bs.date_time) = CURDATE()`;
+        dateCondition = `DATE(ei.event_date) = CURDATE()`;
     } else if (filter === 'This Week') {
-        dateCondition = `YEARWEEK(bs.date_time, 1) = YEARWEEK(CURDATE(), 1)`;
+        dateCondition = `YEARWEEK(ei.event_date, 1) = YEARWEEK(CURDATE(), 1)`;
     } else if (filter === 'This Month') {
-        dateCondition = `YEAR(bs.date_time) = YEAR(CURDATE()) AND MONTH(bs.date_time) = MONTH(CURDATE())`;
+        dateCondition = `YEAR(ei.event_date) = YEAR(CURDATE()) AND MONTH(ei.event_date) = MONTH(CURDATE())`;
     } else if (filter === 'This Year') {
-        dateCondition = `YEAR(bs.date_time) = YEAR(CURDATE())`;
+        dateCondition = `YEAR(ei.event_date) = YEAR(CURDATE())`;
     } else {
         dateCondition = `1 = 1`;
     }
 
     const query = `
-            SELECT 
-                ei.*, 
-                f.facility_name, 
-                s.status_name, 
-                u.org_name,
-                u.org_id
-            FROM event_information ei
-            JOIN facilities f ON ei.facility_id = f.facility_id
-            JOIN booking_status bs ON ei.booking_id = bs.booking_id
-            JOIN status s ON bs.status_id = s.status_id
-            JOIN user u ON ei.org_id = u.org_id
-            WHERE bs.date_time = (
-                SELECT MAX(date_time) 
-                FROM booking_status 
-                WHERE booking_status.booking_id = ei.booking_id
-            )
-            AND ${dateCondition}`;
+        SELECT 
+            ei.*, 
+            f.facility_name, 
+            s.status_name, 
+            u.org_name,
+            u.org_id
+        FROM event_information ei
+        JOIN facilities f ON ei.facility_id = f.facility_id
+        JOIN booking_status bs ON ei.booking_id = bs.booking_id
+        JOIN status s ON bs.status_id = s.status_id
+        JOIN user u ON ei.org_id = u.org_id
+        WHERE bs.date_time = (
+            SELECT MAX(bs.date_time) 
+            FROM booking_status bs
+            WHERE ei.booking_id = bs.booking_id
+        )
+        AND ${dateCondition}`;
 
     db.query(query, (err, results) => {
         if (err) {
@@ -457,9 +458,9 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
         JOIN status s ON bs.status_id = s.status_id
         JOIN user u ON ei.org_id = u.org_id
         WHERE bs.date_time = (
-            SELECT MAX(date_time) 
-            FROM booking_status 
-            WHERE booking_status.booking_id = ei.booking_id
+            SELECT MAX(bs.date_time) 
+            FROM booking_status bs
+            WHERE ei.booking_id = bs.booking_id
         )`;
 
     db.query(query, (err, results) => {
@@ -475,7 +476,7 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
 app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) => {
     const { bookingID, adminID } = req.params;
     const { action } = req.body; 
-    const date_time = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
 
     let statusID;
 
@@ -498,7 +499,7 @@ app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) =>
         VALUES (?, ?, ?, ?)
     `;
 
-    db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => { //Update admin_id to the logged in admin
+    db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => { // Update admin_id to the logged in admin
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }
