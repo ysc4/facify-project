@@ -158,7 +158,7 @@ const SubmitRequirements = () => {
                     <div className="submit-reqs_header">
                         <div className="booking-id">
                             <BackIcon className="back-icon" style={{ fontSize: 40 }} onClick={() => navigate(-1)} />
-                            <h2>Booking Information - {bookingID} // Submit Requirements</h2>
+                            <h2>Booking Information - FACI{String(bookingID).padStart(3, '0')} // Submit Requirements</h2>
                         </div>
                     </div>
                     <div className="submit-reqs_table">

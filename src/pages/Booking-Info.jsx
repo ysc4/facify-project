@@ -220,7 +220,7 @@ function BookingInfo() {
                                 <div className="booking-details_header">
                                     <div className="booking">
                                         <BackIcon className="back-icon" style={{ fontSize: 40 }} onClick={handleBackButtonClick} />
-                                        <h2>Booking Information - {booking.booking_id}</h2>
+                                        <h2>Booking Information - FACI{String(booking.booking_id).padStart(3, '0')}</h2>
                                     </div>
                                     <div className="booking-buttons">
                                         {userType === 'Organization' ? (

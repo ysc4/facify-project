@@ -102,7 +102,7 @@ function Venue() {
         onClick={() => handleStatusClick(event, userType)}
       >
         <div className="tooltip-header">
-          <p className="tooltip-title">{event.bookingID}</p>
+          <p className="tooltip-title">FACI{String(event.bookingID).padStart(3, '0')}</p>
           <div className="tooltip-status">
             <span className="status-dot" style={{ backgroundColor: getStatusColor(event.status) }}></span>
             <p className="tooltip-status-name">{event.status}</p>
@@ -133,7 +133,7 @@ function Venue() {
             style={{ backgroundColor: getStatusColor(event.status) }}
             onMouseEnter={(e) => handleMouseEnter(event, e)}
           >
-            {event.bookingID}
+            FACI{String(event.bookingID).padStart(3, '0')}
           </div>
           ))}
         </div>

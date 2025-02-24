@@ -184,7 +184,7 @@ function AdminHome() {
                     })
                     .map((booking) => (
                       <tr key={booking.booking_id}>
-                        <td>{booking.booking_id}</td>
+                        <td>FACI{String(booking.booking_id).padStart(3, '0')}</td>
                         <td>{booking.org_name}</td>
                         <td>{booking.activity_title}</td>
                         <td>{booking.facility_name}</td>

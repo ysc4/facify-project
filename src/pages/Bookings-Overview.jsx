@@ -164,7 +164,7 @@ function BookingOverview() {
                             {sortedFilteredBookings.length > 0 ? (
                                 sortedFilteredBookings.map((booking) => (
                                     <tr key={booking.booking_id}>
-                                        <td>{booking.booking_id}</td>
+                                        <td>FACI{String(booking.booking_id).padStart(3, '0')}</td>
                                         <td>{booking.org_name}</td>
                                         <td>{booking.activity_title}</td>
                                         <td>{formatEventDateTime(booking.event_date, booking.event_start)}</td>
