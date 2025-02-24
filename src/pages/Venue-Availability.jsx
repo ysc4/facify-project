@@ -74,7 +74,7 @@ function Venue() {
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', {
+    return date.toLocaleDateString('en-CA', {
       month: 'long',
       day: 'numeric',
       year: 'numeric'
