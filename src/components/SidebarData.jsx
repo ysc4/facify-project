@@ -1,6 +1,6 @@
 import BookIcon from '@mui/icons-material/BookOutlined';
 import EventIcon from '@mui/icons-material/Event';
-import DashboardIcon from '@mui/icons-material/Dashboard';
+import DashboardIcon from '@mui/icons-material/DashboardOutlined';
 import React from 'react';
 
 export const SidebarData = ({ user, orgID, facilityID, adminID }) => {
@@ -22,19 +22,19 @@ export const SidebarData = ({ user, orgID, facilityID, adminID }) => {
     } else {
         return [
             {
-                title: 'Dashboard',
+                title: 'Facility Dashboard',
                 path: `/admin-home/${adminID}`,
                 icon: <DashboardIcon style={{ fontSize: 30 }} />,
                 cName: 'nav-text'
             },
             {
-                title: 'Bookings',
+                title: 'Facility Reservations',
                 path: `/admin-bookings/${adminID}`,
                 icon: <BookIcon style={{ fontSize: 30 }} />,
                 cName: 'nav-text'
             },
             {
-                title: 'Calendar',
+                title: 'Facility Availability',
                 path: `/venue-availability/${facilityID}`,
                 icon: <EventIcon style={{ fontSize: 30 }} />,
                 cName: 'nav-text'
