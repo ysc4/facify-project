@@ -60,7 +60,6 @@ function Navbar() {
     <header className="header">
       <img src={logo} alt="Logo" className="facify-logo"/>
       <div className="navbar">
-        <NotifIcon className="notif-icon" style={{ fontSize: 30 }} />
         <p>Hi, {displayName}!</p>
         <AccountIcon
           className="account-icon"

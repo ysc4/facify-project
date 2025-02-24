@@ -24,7 +24,7 @@
     gap: 15px;
 }
 
-.notif-icon, .account-icon {
+.account-icon {
     color: #FFFFFF;
     font-size: 30px;
     cursor: pointer;
