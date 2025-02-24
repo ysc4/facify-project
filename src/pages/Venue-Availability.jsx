@@ -161,40 +161,64 @@ function Venue() {
   };
 
 
-  const getDaysInMonth = (year, month) => new Date(year, month + 1, 0).getDate();
+  const getDaysInMonth = (year, month) => {
+    if (month === 1) { // February
+      return (year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0)) ? 29 : 28;
+    }
+    return new Date(year, month + 1, 0).getDate();
+  };
+  
   const getFirstDayOfMonth = (year, month) => new Date(year, month, 1).getDay();
-
+  
+  const handleMonthChange = (direction) => {
+    if (direction === 'prev') {
+      if (currentMonth === 0) {
+        setCurrentMonth(11);
+        setCurrentYear(currentYear - 1); // Go to December of the previous year
+      } else {
+        setCurrentMonth(currentMonth - 1);
+      }
+    } else if (direction === 'next') {
+      if (currentMonth === 11) {
+        setCurrentMonth(0);
+        setCurrentYear(currentYear + 1); // Go to January of the next year
+      } else {
+        setCurrentMonth(currentMonth + 1);
+      }
+    }
+  };
+  
   const daysInMonth = getDaysInMonth(currentYear, currentMonth);
   const firstDayOfMonth = getFirstDayOfMonth(currentYear, currentMonth);
-
+  
   const generateCalendarDays = () => {
     let days = [];
-    let totalBoxes = 42;
+    let totalBoxes = 42; 
     let dayCounter = 1;
-
+  
     for (let i = 0; i < firstDayOfMonth; i++) {
       days.push(<div key={`empty-${i}`} className="day-container empty"></div>);
     }
-
+  
     for (let i = 1; i <= daysInMonth; i++) {
       const dayEvents = events.filter(event => {
         const eventDate = new Date(event.event_date);
-        return eventDate.getDate() === i && eventDate.getMonth() === currentMonth;
+        return eventDate.getDate() === i && eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
       });
   
-      console.log(`Day ${i} Events:`, dayEvents); // Debugging
-      days.push(<DayContainer key={i} day={i} events={dayEvents} userType={userType}/>);
+      console.log(`Year ${currentYear} - Day ${i} Events:`, dayEvents); // Debugging
+      days.push(<DayContainer key={i} day={i} events={dayEvents} userType={userType} />);
     }
-
+  
     while (days.length < totalBoxes) {
       days.push(<div key={`extra-${days.length}`} className="day-container empty"></div>);
     }
-
+  
     let weekRows = [];
     for (let i = 0; i < totalBoxes; i += 7) {
       weekRows.push(<div key={`week-${i / 7}`} className="week-container">{days.slice(i, i + 7)}</div>);
     }
-
+  
     return weekRows;
   };
 
@@ -209,8 +233,8 @@ function Venue() {
           <div className="calendar-header">
           <div className="calendar-title">
             <div className="nav-arrows">
-              <Previous className="prev-month" onClick={() => setCurrentMonth(currentMonth === 0 ? 11 : currentMonth - 1)} />
-              <Next className="next-month" onClick={() => setCurrentMonth(currentMonth === 11 ? 0 : currentMonth + 1)} />
+              <Previous className="prev-month" onClick={() => handleMonthChange('prev')} />
+              <Next className="next-month" onClick={() => handleMonthChange('next')} />
             </div>
             <h2>{new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
           </div>
