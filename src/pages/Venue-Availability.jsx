@@ -142,7 +142,7 @@ function Venue() {
 
   const handleMouseEnter = (event, e) => {
     setHoveredEvent(event);
-    setTooltipPosition({ x: e.clientX + 10, y: e.clientY - 50 }); // Adjust position
+    setTooltipPosition({ x: e.clientX + 10, y: e.clientY - 50 }); 
   };
   
   const handleMouseLeave = () => {
