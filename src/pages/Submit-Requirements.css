@@ -25,9 +25,8 @@
     flex: 1; 
     display: flex;
     flex-direction: column;
-    padding-top: 90px;
+    padding: 90px 40px 15px 40px;
     background-color: #FFFFFF; 
-    padding: 20px;
     overflow-y: auto;
 }
 
@@ -38,6 +37,7 @@
     align-items: center;
     width: 100%;
     box-sizing: border-box;
+    margin-bottom: 20px;
 }
 
 .submit-reqs_header .booking-id {
@@ -63,7 +63,7 @@
 .upload-file {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 70%;
     padding: 10px 30px;
     border: 1px solid #ccc;
     background-color: #F5F5F5;
@@ -115,6 +115,7 @@
     background: #E4E2E2;
     padding: 10px;
     border-radius: 2px;
+    cursor: pointer;
 }
 
 .submit-reqs_table .file-info {
@@ -191,14 +192,14 @@
     padding: 8px 15px;
 }
 
-.file-card .file-info {
+.file-card .file-upload-info {
     flex: 1;
     display: flex;
-    flex-direction: flex-start;
+    flex-direction: column;
     gap: 5px;
 }
 
-.file-card .file-info h4 {
+.file-card .file-upload-info h4 {
     flex: 1;
     font-size: 16px;
     font-weight: 400;
@@ -222,7 +223,7 @@
     border: none;
 }
 
-.file-info .progress-bar {
+.file-upload-info .progress-bar {
     display: block;
     width: 100%;
     height: 5px;
@@ -238,7 +239,7 @@
     border-radius: 8px;
     width: 0%;
     max-width: 100% !important;
-    transition: width 0.3s ease;
+    transition: width 0.5s ease;
 }
 
 .file-card .pdf-icon {

@@ -47,6 +47,37 @@ const SubmitRequirements = () => {
         }
     };
 
+    const fetchFile = async (bookingID, requirementID) => {
+        if (!bookingID || !requirementID) return;
+    
+        try {
+            const response = await axios.get(`/facify/get-file/${bookingID}/${requirementID}`, {
+                responseType: 'blob', 
+            });
+    
+            if (!response.data || response.data.size === 0) {
+                console.error("Received empty file");
+                return;
+            }
+    
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(blob);
+    
+            window.open(fileURL, "_blank");
+    
+        } catch (error) {
+            console.error("Error fetching file:", error);
+        }
+    };
+
+    const handleViewFile = (requirement) => {
+        if (requirement.tempFileURL) {
+            window.open(requirement.tempFileURL, "_blank");
+        } else {
+            fetchFile(bookingID, requirement.requirement_id);
+        }
+    };
+
     const clearFileInput = () => {
         inputRef.current.value = '';
         setSelectedFile(null);
@@ -64,8 +95,8 @@ const SubmitRequirements = () => {
         try {
             setUploadStatus('uploading');
             const formData = new FormData();
-
-            const fileName = `${bookingID}-${currentRequirement}.pdf`
+    
+            const fileName = `${bookingID}-${currentRequirement}.pdf`;
     
             formData.append('file', selectedFile, fileName);
             formData.append('file_name', fileName);
@@ -75,16 +106,26 @@ const SubmitRequirements = () => {
                 onUploadProgress: (progressEvent) => {
                     const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                     setProgress(percentCompleted);
-                    console.log('Upload progress:', percentCompleted);
                 },
             });
     
             if (response.data.success) {
                 setUploadStatus('done');
+    
+                const blob = new Blob([selectedFile], { type: 'application/pdf' });
+                const fileURL = URL.createObjectURL(blob);
+    
                 setRequirements(prev => [
                     ...prev,
-                    { file: selectedFile, file_name: fileName, date_time_submitted: new Date().toISOString(), file_size: selectedFile.size, requirement_id: response.data.requirement_id }
+                    {
+                        file_name: fileName,
+                        date_time_submitted: new Date().toISOString(),
+                        file_size: selectedFile.size,
+                        requirement_id: response.data.requirement_id,
+                        tempFileURL: fileURL
+                    }
                 ]);
+    
             } else {
                 throw new Error(response.data.message || 'Upload failed');
             }
@@ -144,7 +185,7 @@ const SubmitRequirements = () => {
                                             </td>
                                             <td className="file">
                                             {matchingRequirement ? (
-                                                    <div className="file-item">
+                                                    <div className="file-item" onClick={() => handleViewFile(matchingRequirement)}>
                                                         <PdfIcon className="file-icon" />
                                                         <div className="file-info">
                                                             <h4>{matchingRequirement.file_name}</h4>
@@ -193,7 +234,7 @@ const SubmitRequirements = () => {
                     <>
                     <div className="file-card">
                         <PdfIcon className="pdf-icon" />
-                        <div className="file-info">
+                        <div className="file-upload-info">
                                 <h4>{selectedFile.name}</h4>
                                 <div className="progress-bar">
                                     <div className="file-progress" style={{ width: `${progress}%` }}></div>
