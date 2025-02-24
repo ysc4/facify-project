@@ -56,6 +56,7 @@ function BookingOverview() {
     const [selectedFacility, setSelectedFacility] = useState('All Facilities');
     const [selectedStatus, setSelectedStatus] = useState('All Statuses');
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+    const [sortedFilteredBookings, setSortedFilteredBookings] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -93,23 +94,28 @@ function BookingOverview() {
         }
     };
 
-    const sortedFilteredBookings = [...bookings]
-    .filter((booking) => {
-        const matchesFacility = selectedFacility === 'All Facilities' || booking.facility_name === selectedFacility;
-        const matchesStatus = selectedStatus === 'All Statuses' || booking.status_name === selectedStatus;
-        const matchesSearch = booking.activity_title.toLowerCase().includes(searchTerm.toLowerCase()) || booking.org_name.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesFacility && matchesStatus && matchesSearch;
-    })
-    .sort((a, b) => {
-        if (!sortConfig.key) return 0;
-
-        const valueA = a[sortConfig.key].toLowerCase();
-        const valueB = b[sortConfig.key].toLowerCase();
-
-        if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-    });
+    useEffect(() => {
+        const filteredBookings = [...bookings]
+            .filter((booking) => {
+                const matchesFacility = selectedFacility === 'All Facilities' || booking.facility_name === selectedFacility;
+                const matchesStatus = selectedStatus === 'All Statuses' || booking.status_name === selectedStatus;
+                const matchesSearch = booking.activity_title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                      booking.org_name.toLowerCase().includes(searchTerm.toLowerCase());
+                return matchesFacility && matchesStatus && matchesSearch;
+            })
+            .sort((a, b) => {
+                if (!sortConfig.key) return 0;
+    
+                const valueA = a[sortConfig.key].toLowerCase();
+                const valueB = b[sortConfig.key].toLowerCase();
+    
+                if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+    
+        setSortedFilteredBookings(filteredBookings);
+    }, [bookings, searchTerm, selectedFacility, selectedStatus, sortConfig]);
 
     const handleSort = (key) => {
         setSortConfig((prevConfig) => ({
