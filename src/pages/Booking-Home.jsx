@@ -138,7 +138,7 @@ function Homepage() {
                                     location={booking.facility_name}
                                     date={`${formatDate(booking.event_date)} ${booking.event_start} - ${booking.event_end}`}
                                     organizer={booking.org_name}
-                                    faciCode={`FACI${String(booking.booking_id).padStart(3, '0')}`}
+                                    faciCode={booking.booking_id}
                                     status={booking.status_name}
                                     orgID={orgID}
                                 />
