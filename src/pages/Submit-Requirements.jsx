@@ -120,26 +120,30 @@ const SubmitRequirements = () => {
                             <h2>Booking Information - {bookingID} // Submit Requirements</h2>
                         </div>
                     </div>
-                    <div className="submit-reqs_content">
-                        <div className="reqs">
-                            <div className="table-header">
-                                <div className="req-title">Requirement</div>
-                                <div className="date-title">Date Submitted</div>
-                                <div className="file-title">File</div>
-                            </div>
-                            <div className="table-content">
+                    <div className="submit-reqs_table">
+                            <table className="reqs-table">
+                            <thead>
+                                <tr className="reqs-table-header">
+                                    <th className="req-title">Requirement</th>
+                                    <th className="date-title">Date Submitted</th>
+                                    <th className="file-title">File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 {requirementNames.map((requirementName) => {
-                                        const matchingRequirement = requirements.find(req =>
-                                            req.file_name.toLowerCase().includes(requirementName.toLowerCase())
-                                        );
+                                    const matchingRequirement = requirements.find(req =>
+                                        req.file_name?.toLowerCase().includes(requirementName.toLowerCase())
+                                    );
                                     return (
-                                        <div className="req" key={requirementName}>
-                                            <div className="file-name">{requirementName}</div>
-                                            <div className="date">
-                                                {matchingRequirement ? new Date(matchingRequirement.date_time_submitted).toLocaleString() : '—'}
-                                            </div>
-                                            <div className="file">
-                                                {matchingRequirement ? (
+                                        <tr className="req" key={requirementName}>
+                                            <td className="file-name">{requirementName}</td>
+                                            <td className="date">
+                                                {matchingRequirement
+                                                    ? new Date(matchingRequirement.date_time_submitted).toLocaleString()
+                                                    : '—'}
+                                            </td>
+                                            <td className="file">
+                                            {matchingRequirement ? (
                                                     <div className="file-item">
                                                         <PdfIcon className="file-icon" />
                                                         <div className="file-info">
@@ -152,12 +156,12 @@ const SubmitRequirements = () => {
                                                         {uploadStatus === 'select' || uploadStatus === 'uploading' ? 'Upload' : 'Done'}
                                                     </button>
                                                 )}
-                                            </div>
-                                        </div>
+                                            </td>
+                                        </tr>
                                     );
                                 })}
-                            </div>
-                        </div>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

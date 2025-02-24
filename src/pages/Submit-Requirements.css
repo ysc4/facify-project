@@ -27,6 +27,8 @@
     flex-direction: column;
     padding-top: 90px;
     background-color: #FFFFFF; 
+    padding: 20px;
+    overflow-y: auto;
 }
 
 .submit-reqs .submit-reqs_header {
@@ -61,54 +63,42 @@
 .upload-file {
     display: flex;
     flex-direction: column;
-    width: 150px;
+    width: 90%;
     padding: 10px 30px;
     border: 1px solid #ccc;
     background-color: #F5F5F5;
     color: #191A1B;
 }
 
-.reqs .table-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
+.submit-reqs_table .reqs-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; 
+}
+
+.submit-reqs_table .reqs-table-header th {
+    text-align: left;
+    padding: 15px;
+    font-weight: bold;
+    background-color: #B0B6DA; 
+    color: #2F3B8D;
     font-size: 24px;
-    font-weight: 800;
-    padding: 15px 15px;
-    background-color: #B0B6DA;
-    margin-top: 20px;
 }
 
-.req-title, .date-title, .file-title {
-    color: #2C356E;
+.submit-reqs_table .reqs-table tbody tr {
+    background: white;
+    border: 1px solid #ccc; 
+    padding: 15px;
+    width: 100%;
 }
 
-.reqs .table-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 16px;
+.submit-reqs_table .reqs-table tbody tr td {
+    padding: 10px;
+    text-align: left;
+    width: 33.33%; 
 }
 
-.table-header div {
-    flex-grow: 1;
-}
-
-.table-header div:last-child {
-    margin-right: 0;
-}
-
-.table-content .req {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    padding: 15px 15px;
-    border: 1px solid #ccc;
-}
-
-.file .file-icon {
+.submit-reqs_table .file .file-icon {
     width: 40px;
     height: 40px;
     display: flex;
@@ -118,7 +108,7 @@
     color: #BD5151;
 }
 
-.file-item {
+.submit-reqs_table .file-item {
     display: flex;
     align-items: center; 
     justify-content: space-between;
@@ -127,26 +117,25 @@
     border-radius: 2px;
 }
 
-.file-info {
+.submit-reqs_table .file-info {
     display: flex;
     flex-grow: 1; 
     min-width: 0; 
     flex-direction: column;
 }
 
-.file-info h4 {
+.submit-reqs_table .file-info h4 {
     font-size: 16px;
     font-weight: 400;
     color: #445CFF;
     white-space: nowrap;
-    max-width: 150px; 
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
     display: inline-block;
 }
 
-.file-info p {
+.submit-reqs_table .file-info p {
     font-size: 10px;
     font-weight: 400;
     margin: 0;
@@ -278,7 +267,6 @@
 .upload-btn:hover {
     background-color: #F5F5F5;
     color: #2F3B8D;
-
 }
 
 .file svg {
