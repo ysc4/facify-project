@@ -43,7 +43,6 @@ app.post('/facify/login/:type', (req, res) => {
         return res.status(400).send({ success: false, message: 'Email and password are required' });
     }
 
-    // Determine the correct table based on the login type
     let query;
     if (type === 'Admin') {
         query = 'SELECT * FROM facility WHERE email = ? AND password = ?';
@@ -58,8 +57,15 @@ app.post('/facify/login/:type', (req, res) => {
             console.error('Database query error:', err);
             return res.status(500).send({ success: false, message: 'Database error' });
         }
+
         if (result.length > 0) {
             const user = result[0];
+
+            let imageBase64 = null;
+            if (user.org_image || user.admin_image) {
+                const imageBuffer = user.org_image || user.admin_image;
+                imageBase64 = Buffer.from(imageBuffer).toString('base64'); 
+            }
 
             return res.send({
                 success: true,
@@ -67,6 +73,7 @@ app.post('/facify/login/:type', (req, res) => {
                 org_name: user.org_name || null,
                 admin_id: user.admin_id,
                 admin_name: user.first_name + ' ' + user.last_name || null,
+                image: imageBase64 ? `data:image/png;base64,${imageBase64}` : null, // Set Base64 format
                 role: type  
             });
         } else {
