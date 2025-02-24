@@ -1,10 +1,13 @@
 import React from 'react';
 import Progress from './Progress.jsx';
 import './ProgressBar.css';
-import CheckIcon from '@mui/icons-material/Check';
 
-const ProgressBar = ({ currentStep }) => {
+const ProgressBar = ({ currentStep, status }) => {
     const totalSteps = 4;
+
+    let circleColor = "active"; 
+    if (status === "Approved") circleColor = "approved"; 
+    if (status === "Denied") circleColor = "denied";
 
     return (
         <div className="container">
@@ -12,12 +15,13 @@ const ProgressBar = ({ currentStep }) => {
                 <Progress 
                     totalSteps={totalSteps} 
                     step={currentStep} 
+                    status={status} 
                     className="progress active" 
                 />
-                <div className={`${currentStep>=1 ? "circle active": "circle"}`}><CheckIcon /></div>
-                <div className={`${currentStep>=2 ? "circle active": "circle"}`}><CheckIcon /></div>
-                <div className={`${currentStep>=3 ? "circle active": "circle"}`}><CheckIcon /></div>
-                <div className={`${currentStep>=4 ? "circle active": "circle"}`}><CheckIcon /></div>
+                <div className={`${currentStep>=1 ? `circle ${circleColor}`: "circle"}`}></div>
+                <div className={`${currentStep>=2 ? `circle ${circleColor}`: "circle"}`}></div>
+                <div className={`${currentStep>=3 ? `circle ${circleColor}`: "circle"}`}></div>
+                <div className={`${currentStep>=4 ? `circle ${circleColor}`: "circle"}`}></div>
             </div>
             <div className="step-labels">
                 <div className={`${currentStep>=1 ? "step-label active": "step-label"}`}>Pencil Booked</div>

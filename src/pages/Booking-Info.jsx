@@ -59,7 +59,7 @@ function BookingInfo() {
                         'Officially Booked': 2,
                         'For Assessing': 3,
                         'Approved': 4,
-                        'Denied': 0
+                        'Denied': 4
                     };
                     setCurrentStep(statusSteps[response.data.bookingInfo[0].status_name] || 0);
                 } else {
@@ -261,7 +261,7 @@ function BookingInfo() {
                                     </div>
                                 </div>
                                 <div className="booking-progress">
-                                    <ProgressBar currentStep={currentStep} />
+                                    <ProgressBar currentStep={currentStep} status={booking.status_name} />
                                 </div>
                                 <div className="event-info">
                                     <h3>Event Information</h3>

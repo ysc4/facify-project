@@ -1,7 +1,11 @@
 import React from 'react';
 
-function Progress({ totalSteps, step }) {
+function Progress({ totalSteps, step, status }) {
     const progress = ((step - 1) / (totalSteps - 1)) * 100;
+
+    let progressColor = "#FFDC5E"; 
+    if (status === "Approved") progressColor = "#0B8C2F";
+    if (status === "Denied") progressColor = "#B71919";
 
     return (
         <div className="progress" 
@@ -14,7 +18,7 @@ function Progress({ totalSteps, step }) {
             <div className="progress" 
             style={{
                 height: "4px", 
-                background: "#FFDC5E", 
+                background: progressColor, 
                 width: `${progress}%`, 
                 transition: "all 0.4s ease-in"}}>
             </div>    

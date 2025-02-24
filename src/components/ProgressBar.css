@@ -85,6 +85,16 @@
     background-color: var(--line-border-fill);
 }
 
+.circle.approved {
+    border-color: var(--line-border-empty);
+    background-color: #0B8C2F;
+}
+
+.circle.denied {
+    border-color: var(--line-border-empty);
+    background-color: #B71919;
+}
+
 .step-label {
     background-color: #FFFFFF;
     color: #ccc;
