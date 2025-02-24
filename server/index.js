@@ -461,7 +461,7 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
             FROM booking_status 
             WHERE booking_status.booking_id = ei.booking_id
         )`;
-        
+
     db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching booking information:', err);
@@ -504,4 +504,35 @@ app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) =>
         }
         res.status(200).json({ success: true, message: `Booking status updated to "${action}"`, bookingID: bookingID });
     });
+});
+
+// Open the requirement for admin endpoint
+app.get('/facify/get-file/:bookingID/:requirementID', async (req, res) => {
+    try {
+        const { bookingID, requirementID } = req.params;
+        const query = `SELECT file, file_name FROM requirement WHERE booking_id = ? AND requirement_id = ?`;
+
+        db.query(query, [bookingID, requirementID], (err, result) => {
+            if (err) {
+                console.error('Database query error:', err);
+                return res.status(500).send('Database error');
+            }
+
+            if (result.length === 0) {
+                return res.status(404).send('File not found');
+            }
+
+            const fileBuffer = result[0].file;
+            const filename = result[0].file_name || "download.pdf";
+
+            console.log(fileBuffer);
+
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(Buffer.from(fileBuffer, 'binary')); 
+        });
+    } catch (error) {
+        console.error('Error retrieving file:', error);
+        res.status(500).send('Server error');
+    }
 });

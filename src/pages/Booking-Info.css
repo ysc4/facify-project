@@ -203,43 +203,35 @@
     font-weight: 400;
 }
 
-.submit-info .reqs-table .reqs-table-header {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 24px;
-    font-weight: 800;
-    padding: 15px 15px;
-    background-color: #FFFFFF;
-}
-
 .submit-info .req-title, .submit-info .date-title, .submit-info .file-title {
     color: #837118;
 }
 
-.submit-info .reqs-table .table-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 16px;
+.reqs-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* Ensures even spacing */
 }
 
-.submit-info .reqs-table-header div {
-    flex-grow: 1;
+.reqs-table-header th {
+    text-align: left;
+    padding: 15px;
+    font-weight: bold;
+    background: none; 
+    font-size: 24px;
 }
 
-.submit-info .reqs-table-header div:last-child {
-    margin-right: 0;
+.reqs-table tbody tr {
+    background: white;
+    border: 1px solid #ccc; 
+    padding: 15px;
+    width: 100%;
 }
 
-.submit-info .table-content .req {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    padding: 15px 15px;
-    border: 1px solid #ccc;
+.reqs-table tbody tr td {
+    padding: 10px;
+    text-align: left;
+    width: 33.33%; 
 }
 
 .submit-info .file .file-icon {
@@ -273,7 +265,6 @@
     font-weight: 400;
     color: #445CFF;
     white-space: nowrap;
-    max-width: 150px; 
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

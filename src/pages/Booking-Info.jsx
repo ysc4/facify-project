@@ -8,7 +8,6 @@ import Header from '../components/Navbar';
 import ProgressBar from '../components/ProgressBar';
 import Sidebar from '../components/Sidebar';
 import './Booking-Info.css';
-import { format } from 'mysql';
 
 
 const formatDate = (dateString) => {
@@ -44,6 +43,9 @@ function BookingInfo() {
     const [currentStep, setCurrentStep] = useState(1);
     const [decision, setDecision] = useState(null); 
     const [decisionDateTime, setDecisionDateTime] = useState(null); 
+    const [requirementID, setRequirementID] = useState(null);
+    const [fileUrl, setFileUrl] = useState(null);
+    const [fileName, setFileName] = useState("");
 
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
@@ -93,6 +95,30 @@ function BookingInfo() {
         fetchBookingInfo();
         fetchRequirements();
     }, [orgID, bookingID, userType]);
+
+    const fetchFile = async (bookingID, requirementID) => {
+        if (!bookingID || !requirementID) return;
+    
+        try {
+            const response = await axios.get(`/facify/get-file/${bookingID}/${requirementID}`, {
+                responseType: 'blob', 
+            });
+    
+            if (!response.data || response.data.size === 0) {
+                console.error("Received empty file");
+                return;
+            }
+    
+            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const fileURL = URL.createObjectURL(blob);
+    
+            window.open(fileURL, "_blank");
+    
+        } catch (error) {
+            console.error("Error fetching file:", error);
+        }
+    };
+
 
     const fetchLogs = async () => {
         try {
@@ -155,6 +181,11 @@ function BookingInfo() {
     const handleEdit = () => {
         navigate(`/venue-booking/${orgID}/${facilityID}`, { state: bookingInfo[0] });
     };
+
+    const handleViewFile = (requirementID) => {
+        fetchFile(bookingID, requirementID);
+    };
+
 
     const updateBookingStatus = async (action) => {
         try {
@@ -300,44 +331,46 @@ function BookingInfo() {
                     {userType === 'Admin' && (
                         <div className="submit-info">
                             <h3>Submitted Requirements</h3>
-                            <div className="reqs-table">
-                                <div className="reqs-table-header">
-                                    <div className="req-title">Requirement</div>
-                                    <div className="date-title">Date Submitted</div>
-                                    <div className="file-title">File</div>
-                                </div>
-                                <div className="table-content">
-                                    {requirementNames.map((requirementName) => {
-                                        const matchingRequirement = requirements.find(req =>
-                                            req.file_name?.toLowerCase().includes(requirementName.toLowerCase())
-                                        );
-                                        return (
-                                            <div className="req" key={requirementName}>
-                                                <div className="file-name">{requirementName}</div>
-                                                <div className="date">
-                                                    {matchingRequirement
-                                                        ? new Date(matchingRequirement.date_time_submitted).toLocaleString()
-                                                        : '—'}
-                                                </div>
-                                                <div className="file">
-                                                    {matchingRequirement ? (
-                                                        <div className="file-item">
-                                                            <PdfIcon className="file-icon" />
-                                                            <div className="file-info">
-                                                                <h4>{matchingRequirement.file_name}</h4>
-                                                                <p>{(matchingRequirement.file_size / 1024).toFixed(2)} KB</p>
-                                                            </div>
+                            <table className="reqs-table">
+                            <thead>
+                                <tr className="reqs-table-header">
+                                    <th className="req-title">Requirement</th>
+                                    <th className="date-title">Date Submitted</th>
+                                    <th className="file-title">File</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {requirementNames.map((requirementName) => {
+                                    const matchingRequirement = requirements.find(req =>
+                                        req.file_name?.toLowerCase().includes(requirementName.toLowerCase())
+                                    );
+                                    return (
+                                        <tr className="req" key={requirementName}>
+                                            <td className="file-name">{requirementName}</td>
+                                            <td className="date">
+                                                {matchingRequirement
+                                                    ? new Date(matchingRequirement.date_time_submitted).toLocaleString()
+                                                    : '—'}
+                                            </td>
+                                            <td className="file">
+                                                {matchingRequirement ? (
+                                                    <div className="file-item" onClick={() => handleViewFile(matchingRequirement.requirement_id)}>
+                                                        <PdfIcon className="file-icon" />
+                                                        <div className="file-info">
+                                                            <h4>{matchingRequirement.file_name}</h4>
+                                                            <p>{(matchingRequirement.file_size / 1024).toFixed(2)} KB</p>
                                                         </div>
-                                                    ) : (
-                                                        <p>No file uploaded</p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <p>No file uploaded</p>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                     )}
                     <div className="update-logs">
                         <h3>Update Logs</h3>
