@@ -12,7 +12,8 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 300px;  /* Fixed width for each card */
+    min-width: 275px;
+    max-width: 300px;  
     padding: 10px;
     border: 1px solid #D9D9D9;
     border-radius: 8px;
