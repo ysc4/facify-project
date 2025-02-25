@@ -19,7 +19,6 @@ import StatusCard from '../components/StatusCard.jsx';
 import './Admin-Home.css';
 import BasicPie from '../components/PieChart.jsx';
 
-
 function AdminHome() {
   const [filterDates, setFilterDates] = useState('Today');
   const [bookings, setBookings] = useState([]);
@@ -32,7 +31,6 @@ function AdminHome() {
       try {
         const response = await axios.get(`/facify/admin-home/${adminID}?filter=${filterDates}`);
         setBookings(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Error fetching booking data:', error);
       }
