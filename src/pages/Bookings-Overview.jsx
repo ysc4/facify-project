@@ -69,7 +69,7 @@ function BookingOverview() {
                 if (response.data.length > 0) {
                     setBookings(response.data);
     
-                    const uniqueFacilities = ['All Facilities', 'Ampitheater', 'E-library', 'Multimedia Room', 'Multipurpose Hall', 'PE Area'];
+                    const uniqueFacilities = ['All Facilities', 'Amphitheater', 'E-library', 'Multimedia Room', 'Multipurpose Hall', 'PE Area'];
                     const uniqueStatuses = ['All Statuses', 'Pencil Booked', 'Officially Booked', 'For Assessing', 'Approved', 'Denied', 'Cancelled'];
     
                     setFacilities(uniqueFacilities);
