@@ -28,11 +28,11 @@ export default function BasicPie({ data }) {
         cornerRadius: 5,
         startAngle: -45,
         endAngle: 360,
-        cx: 150,
+        cx: 130,
         cy: 120,
         },
       ]}
-      width={550}
+      width={430}
       height={250}
     />
   );
