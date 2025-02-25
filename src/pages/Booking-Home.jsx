@@ -2,7 +2,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import data from '../components/data.jsx';
 import '../components/Dropdown.css';
 import Dropdown from '../components/Dropdown.jsx';
 import '../components/Navbar.css';
@@ -72,7 +71,7 @@ function Homepage() {
     const[filter, setFilter] = useState('All Facilities');
     const [facilities, setFacilities] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-
+    const data = ['All Facilities', 'Multipurpose Hall', 'PE Area', 'Multimedia Room', 'Amphitheater', 'E-Library'];
 
     useEffect(() => {
         const fetchBookings = async () => {
@@ -88,7 +87,7 @@ function Homepage() {
                 }
             } catch (err) {
                 console.log(err);
-                setError('An error occurred while fetching bookings');
+                setError('No bookings found');
             }
         };
         fetchBookings();
@@ -124,7 +123,7 @@ function Homepage() {
                 </div>
                 <div className="filters">
                     {data.map((options, index) => (
-                        <Dropdown key={index} options={options} onSelect={handleFilterChange} defaultValue="All Facilities"/>
+                        <Dropdown key={index} options={[options]} onSelect={handleFilterChange} defaultValue="All Facilities"/>
                     ))}
                 </div>
             </div>
