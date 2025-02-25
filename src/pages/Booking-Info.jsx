@@ -176,7 +176,7 @@ function BookingInfo() {
     };
 
     const handleEdit = () => {
-        navigate(`/venue-booking/${orgID}/${facilityID}`, { state: bookingInfo[0] });
+        navigate(`/venue-booking/${orgID}/${bookingInfo[0].facility_id}`, { state: bookingInfo[0] });
     };
 
     const handleViewFile = (requirementID) => {
