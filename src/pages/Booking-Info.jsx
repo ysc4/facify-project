@@ -205,7 +205,7 @@ function BookingInfo() {
     const handleDeny = () => updateBookingStatus("Denied");
 
     const handleSubmit = () => {
-        navigate(`/submit-requirements/${orgID}/${bookingID}`);
+        navigate(`/submit-requirements/${orgID}/${bookingID}`, { state: { status: bookingInfo[0].status_name }});
     }
 
     return (
@@ -230,12 +230,12 @@ function BookingInfo() {
                                     <div className="booking-buttons">
                                         {userType === 'Organization' ? (
                                             <>
-                                            {currentStep === 1 || currentStep === 2 ? (
+                                            {currentStep < 4  ? (
                                                 <>
                                                     <button className="submitReqs-button" onClick={handleSubmit} disabled={currentStep === 0}>
                                                         Submit Requirements
                                                     </button>
-                                                    <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0 || currentStep === 2}>
+                                                    <button className="edit-button" onClick={handleEdit} disabled={currentStep === 0 || currentStep === 2 || currentStep === 3}>
                                                         Edit Submission
                                                     </button>
                                                 </>
