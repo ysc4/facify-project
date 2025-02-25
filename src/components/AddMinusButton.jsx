@@ -26,7 +26,7 @@ function AddMinusButton({ item, onCountChange, initialValue = 0 }) {
         let value = e.target.value;
 
         if (value === "") {
-            setCount("");
+            setCount(0);
             onCountChange(item, 0);
             return;
         }
