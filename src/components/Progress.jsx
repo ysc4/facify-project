@@ -1,7 +1,7 @@
 import React from 'react';
 
 function Progress({ totalSteps, step, status }) {
-    const progress = ((step - 1) / (totalSteps - 1)) * 100;
+    const progress = (status === "Approved" || status === "Denied") ? 100 : ((step - 1) / (totalSteps - 1)) * 100;
 
     let progressColor = "#FFDC5E"; 
     if (status === "Approved") progressColor = "#0B8C2F";
