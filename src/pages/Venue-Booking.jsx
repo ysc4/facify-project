@@ -175,19 +175,19 @@ function VenueBooking() {
                 <div className="content">
                     <div className="venueInfo">
                             <label for="event-date">Date of Activity:</label>
-                            <input type="date" id="event-date" name="eventDate" value={formData.eventDate} onChange={handleChange}></input>
+                            <input type="date" id="event-date" name="eventDate" value={formData.eventDate} onChange={handleChange} required></input>
                             <label for="event-start">Start of Activity:</label>
-                            <input type="time" id="event-start" name="eventStart" value={formData.eventStart} onChange={handleChange}></input>
+                            <input type="time" id="event-start" name="eventStart" value={formData.eventStart} onChange={handleChange} required></input>
                             </div>
                     <div className="venueInfo">
                             <label for="activity-title">Title of Activity:</label>
-                            <input type="text" id="activity-title" name="activityTitle" value={formData.activityTitle} onChange={handleChange}></input>
+                            <input type="text" id="activity-title" name="activityTitle" value={formData.activityTitle} onChange={handleChange} required></input>
                             <label for="event-end">End of Activity:</label>
-                            <input type="time" id="event-end" name="eventEnd" value={formData.eventEnd} onChange={handleChange}></input>
+                            <input type="time" id="event-end" name="eventEnd" value={formData.eventEnd} onChange={handleChange} required></input>
                             </div>
                     <div className="venueInfo">
                             <label for="attendance">Expected Attendance:</label>
-                            <input type="number" id="attendance" name="attendance" value={formData.attendance} onChange={handleChange}></input>
+                            <input type="number" id="attendance" name="attendance" value={formData.attendance} onChange={handleChange} required></input>
                             <label for="speaker-name">Name of Speaker (if applicable):</label>
                             <input type="text" id="speaker-name" name="speakerName" value={formData.speakerName} onChange={handleChange}></input>  
                     </div>
