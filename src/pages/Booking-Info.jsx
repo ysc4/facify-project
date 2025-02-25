@@ -47,7 +47,6 @@ function BookingInfo() {
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
     useEffect(() => {
-        console.log(userType);
         const fetchBookingInfo = async () => {
             try {
                 const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
@@ -59,7 +58,8 @@ function BookingInfo() {
                         'Officially Booked': 2,
                         'For Assessing': 3,
                         'Approved': 4,
-                        'Denied': 4
+                        'Denied': 4,
+                        'Cancelled': 0
                     };
                     setCurrentStep(statusSteps[response.data.bookingInfo.status_name] || 0);
                 } else {
@@ -187,7 +187,13 @@ function BookingInfo() {
     const updateBookingStatus = async (action) => {
         try {
             const response = await axios.post(`/facify/booking-info/${bookingID}/${adminID}/update-status`, { action });
-            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" ? 4 : 0);
+            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" || action === "Denied" ? 4 : 0);
+
+            setBookingInfo((prevInfo) => prevInfo.map(booking => ({
+                ...booking,
+                status_name: action
+            })));
+
             fetchLogs();
         } catch (error) {
             console.error("Error updating status:", error);
