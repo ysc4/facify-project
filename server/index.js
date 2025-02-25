@@ -289,7 +289,8 @@ app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
 // Create booking endpoint
 app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
     const { orgID, facilityID } = req.params;
-    const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment, status, bookingDate, bookingTime } = req.body;
+    const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment, status, bookingDate, bookingTime} = req.body;
+
     console.log(bookingDate, bookingTime);
 
     const query = 'INSERT INTO event_information (event_date, event_start, event_end, activity_title, org_id, facility_id, booking_date, booking_time, expected_attendance, speaker_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -306,13 +307,13 @@ app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
                 return res.status(500).json({ success: false, message: 'Database error', error: err });
             }
 
-            const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
+            const date_time = bookingDate + ' ' + bookingTime;
             const statusID = status === 'pencil' ? 1 : 2;
             console.log('statusID:', statusID);
             console.log('date_time:', date_time);
 
             const statusQuery = 'INSERT INTO booking_status (booking_id, status_id, date_time) VALUES (?, ?, ?)';
-            db.query(statusQuery, [bookingID, statusID, date_time], (err, result) => { //Update admin_id to 0 because no admin is handling the booking yet
+            db.query(statusQuery, [bookingID, statusID, date_time], (err, result) => { //Update admin_id to NULL because no admin is handling the booking yet
                 
                 if (err) {
                     return res.status(500).json({ success: false, message: 'Database error', error: err });
@@ -387,8 +388,8 @@ app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
     const { bookingID } = req.params;
     const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
 
-    const query = 'INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) VALUES (?, ?, ?, ?)';
-    db.query(query, [bookingID, 6, date_time, 0], (err, result) => { //Update admin_id to 0 if not yet approved
+    const query = 'INSERT INTO booking_status (booking_id, status_id, date_time) VALUES (?, ?, ?)';
+    db.query(query, [bookingID, 6, date_time], (err, result) => { //Update admin_id to NULL since there are no admins involved
         if (err) {
             return res.status(500).json({ success: false, message: 'Database error', error: err });
         }
