@@ -97,18 +97,19 @@ h1 {
     flex-direction: column;
 }
 
-/* Status Cards Layout */
 .status-card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
     gap: 20px 50px; 
-    max-width: 800px;
+    max-width: 900px;
     margin: 0; 
     padding: 0;
 }
 
 .pie-chart-panel {
-    width: 600px;
+    flex: 1;
+    min-width: 400px;
+    max-width: 100%;
     height: auto;
     border: 1px solid #ccc;
     padding: 10px;
