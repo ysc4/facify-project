@@ -27,6 +27,7 @@ function VenueBooking() {
   };
 
   const [formData, setFormData] = useState({
+    bookingID: "",
     orgID: orgID,
     eventDate: "",
     eventStart: "",
@@ -56,8 +57,9 @@ function VenueBooking() {
     if (existingData?.booking_id) { 
         setBookingID(existingData.booking_id);
         setFormData({
+            bookingID: existingData.booking_id,
             orgID: existingData.orgID || orgID,
-            eventDate: new Date(existingData.event_date + 8 * 60 * 60000).toISOString().slice(0, 10),
+            eventDate: new Date(existingData.event_date).toISOString().split('T')[0] || "",
             eventStart: existingData.event_start || "",
             eventEnd: existingData.event_end || "",
             activityTitle: existingData.activity_title || "",
@@ -167,7 +169,7 @@ function VenueBooking() {
             <div className="booking-details_header">
                 <div className="booking">
                     <BackIcon className="back-icon" style={{  fontSize: 40  }} onClick={handleBackButtonClick}/>
-                    <h2>{facilityNames[facilityID]}</h2>
+                    <h2>{existingData?.booking_id ? `Edit Booking Information - FACI${String(formData.bookingID).padStart(3, '0')}` : facilityNames[facilityID]}</h2>
                 </div>
             </div>
             <div className="venue-input">
