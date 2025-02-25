@@ -53,7 +53,7 @@ function BookingInfo() {
                 const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
 
                 if (response.data.success) {
-                    setBookingInfo([response.data.bookingInfo[0]]);
+                    setBookingInfo([response.data.bookingInfo]);
                     const statusSteps = {
                         'Pencil Booked': 1,
                         'Officially Booked': 2,
@@ -61,7 +61,7 @@ function BookingInfo() {
                         'Approved': 4,
                         'Denied': 4
                     };
-                    setCurrentStep(statusSteps[response.data.bookingInfo[0].status_name] || 0);
+                    setCurrentStep(statusSteps[response.data.bookingInfo.status_name] || 0);
                 } else {
                     setError('No booking information found');
                 }
@@ -187,7 +187,6 @@ function BookingInfo() {
     const updateBookingStatus = async (action) => {
         try {
             const response = await axios.post(`/facify/booking-info/${bookingID}/${adminID}/update-status`, { action });
-            console.log(response.data.message);
             setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" ? 4 : 0);
             fetchLogs();
         } catch (error) {
