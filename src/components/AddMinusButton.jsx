@@ -16,17 +16,49 @@ function AddMinusButton({ item, onCountChange, initialValue = 0 }) {
     };
 
     const decrement = () => {
-        if (count === 0) return; 
+        if (count === 0) return;
         const newCount = count - 1;
         setCount(newCount);
         onCountChange(item, newCount);
     };
 
+    const handleInputChange = (e) => {
+        let value = e.target.value;
+
+        if (value === "") {
+            setCount("");
+            onCountChange(item, 0);
+            return;
+        }
+
+        const parsedValue = parseInt(value, 10);
+
+        if (!isNaN(parsedValue) && parsedValue >= 0) {
+            setCount(parsedValue);
+            onCountChange(item, parsedValue);
+        }
+    };
+
+    const handleBlur = () => {
+        if (count === "") {
+            setCount(0);
+            onCountChange(item, 0);
+        }
+    };
+
     return (
         <div className="AddMinusButton">
-            <span className="minus" onClick={decrement} aria-label="Decrease count">-</span>
-            <span className="count" aria-live="polite">{count}</span>
-            <span className="plus" onClick={increment} aria-label="Increase count">+</span>
+            <button className="minus" onClick={decrement} aria-label="Decrease count">-</button>
+            <input 
+                type="number"
+                className="count-input"
+                value={count}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                min="0"
+                aria-live="polite"
+            />
+            <button className="plus" onClick={increment} aria-label="Increase count">+</button>
         </div>
     );
 }

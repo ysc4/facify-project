@@ -4,6 +4,7 @@
     padding: 0;
     box-sizing: border-box;
 }
+
 .AddMinusButton {
     height: 30px;
     width: 100px;
@@ -13,18 +14,44 @@
     border: 1px solid #1F1D1D;
     border-radius: 5px;
     margin-bottom: 10px;
+    overflow: hidden;
 }
 
-.AddMinusButton span {
-    width: 100%;
+.AddMinusButton button {
+    width: 30%;
+    height: 100%;
     font-size: 16px;
-    padding: 10px;
-    text-align: center;
+    background-color: #f0f0f0;
+    border: none;
     cursor: pointer;
+    text-align: center;
+    transition: background 0.3s;
 }
 
-.AddMinusButton .count {
-    border-right: 1px solid rgba(0, 0, 0, 0.2);
+.AddMinusButton button:hover {
+    background-color: #ddd;
+}
+
+.AddMinusButton .count-input {
+    width: 40%;
+    height: 100%;
+    font-size: 16px;
+    text-align: center;
     border-left: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 0 15px;
+    border-right: 1px solid rgba(0, 0, 0, 0.2);
+    outline: none;
+    border: none;
+    background-color: white;
+    appearance: textfield; /* Removes number input arrows in Safari */
+}
+
+/* Removes number input arrows in Chrome, Edge, and Firefox */
+.AddMinusButton .count-input::-webkit-inner-spin-button,
+.AddMinusButton .count-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.AddMinusButton .count-input::-moz-number-spin-box {
+    -moz-appearance: textfield;
 }
