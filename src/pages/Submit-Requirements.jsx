@@ -6,7 +6,7 @@ import PdfIcon from '@mui/icons-material/Description';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Header from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import './Submit-Requirements.css';
@@ -15,13 +15,16 @@ const SubmitRequirements = () => {
     const { orgID, bookingID } = useParams();
     const navigate = useNavigate();
     const [requirements, setRequirements] = useState([]);
-    const [eventName, setEventName] = useState(''); // Store event name
     const inputRef = useRef();
     const [selectedFile, setSelectedFile] = useState(null);
     const [progress, setProgress] = useState(0);
     const [uploadStatus, setUploadStatus] = useState('select');
     const [isFileUploaderOpen, setIsFileUploaderOpen] = useState(false);
     const [currentRequirement, setCurrentRequirement] = useState(null);
+
+    const location = useLocation();
+    const status = location.state?.status || "";
+    console.log("Current Status:", status);
 
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
@@ -193,7 +196,7 @@ const SubmitRequirements = () => {
                                                         </div>
                                                     </div>
                                                 ) : (
-                                                    <button className="upload-file" onClick={() => handleOpenFileUploader(requirementName)}>
+                                                    <button className="upload-file" onClick={() => handleOpenFileUploader(requirementName)} disabled={requirementName === "Ingress Form" && (status === "Approved" || status === "Denied")}>
                                                         {uploadStatus === 'select' || uploadStatus === 'uploading' ? 'Upload' : 'Done'}
                                                     </button>
                                                 )}
