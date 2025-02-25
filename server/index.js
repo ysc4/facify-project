@@ -222,9 +222,9 @@ app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, 
                 if (err) return handleError(res, err, 'Database error while counting requirements');
 
                 const count = result[0]?.count || 0;
-                const totalReqs = 4;
+                const totalReqs = 3;
 
-                if (count === totalReqs) {
+                if (count >= totalReqs) {
                     const updateStatusQuery = `
                         INSERT INTO booking_status (booking_id, status_id, date_time) 
                         VALUES (?, ?, ?) 
