@@ -54,7 +54,7 @@ const Login = ({ setIsLoggedIn }) => {
                 setError('Invalid credentials');
             }
         } catch (err) {
-            setError('An error occurred');
+            setError('Invalid login type');
         }
     };
 
