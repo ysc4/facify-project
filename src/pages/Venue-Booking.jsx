@@ -48,8 +48,8 @@ function VenueBooking() {
       janitor: 0
     },
     status: status,
-    bookingDate: new Date().toISOString().split('T')[0],
-    bookingTime: new Date().toISOString().split('T')[1].split('.')[0]
+    bookingDate: new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 10),
+    bookingTime: new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(11, 19)
   });
 
   useEffect(() => {
@@ -57,7 +57,7 @@ function VenueBooking() {
         setBookingID(existingData.booking_id);
         setFormData({
             orgID: existingData.orgID || orgID,
-            eventDate: new Date(existingData.event_date).toISOString().split('T')[0],
+            eventDate: new Date(existingData.event_date + 8 * 60 * 60000).toISOString().slice(0, 10),
             eventStart: existingData.event_start || "",
             eventEnd: existingData.event_end || "",
             activityTitle: existingData.activity_title || "",
