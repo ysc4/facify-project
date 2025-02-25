@@ -444,7 +444,7 @@ app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
 // Get all bookings with filtered time for admin endpoint
 app.get('/facify/admin-home/:adminID', (req, res) => {
     const { adminID } = req.params;
-    const { filter } = req.query;
+    const { filter } = req.query; 
 
     if (!adminID) {
         return handleError(res, new Error('Admin ID is required'), 'No Admin ID provided', 400);
@@ -459,8 +459,8 @@ app.get('/facify/admin-home/:adminID', (req, res) => {
 
     const dateCondition = filterConditions[filter] || `1 = 1`; // Default: No filter applied
 
-    const query = `
-        SELECT 
+    const query = 
+        `SELECT 
             ei.*, 
             f.facility_name, 
             s.status_name, 
@@ -472,14 +472,15 @@ app.get('/facify/admin-home/:adminID', (req, res) => {
         JOIN status s ON bs.status_id = s.status_id
         JOIN user u ON ei.org_id = u.org_id
         WHERE bs.date_time = (
-            SELECT MAX(date_time) 
-            FROM booking_status 
-            WHERE booking_status.booking_id = ei.booking_id
-        ) AND ${dateCondition}`;
+            SELECT MAX(bs.date_time) 
+            FROM booking_status bs
+            WHERE ei.booking_id = bs.booking_id
+        )
+        AND ${dateCondition}`;
 
     db.query(query, (err, results) => {
-        if (err) return handleError(res, err, 'Error fetching booking information');
-        res.status(200).json({ success: true, bookings: results });
+        if (err) return handleError(res, err, 'Error fetching admin bookings');
+        res.status(200).json(results);
     });
 });
 
@@ -505,12 +506,13 @@ app.get('/facify/admin-bookings/:adminID', (req, res) => {
         JOIN user u ON ei.org_id = u.org_id
         WHERE bs.date_time = (
             SELECT MAX(bs.date_time) 
-            FROM booking_status 
-            WHERE booking_status.booking_id = ei.booking_id)`;
+            FROM booking_status bs
+            WHERE ei.booking_id = bs.booking_id
+        )`;
 
     db.query(query, (err, results) => {
         if (err) return handleError(res, err, 'Error fetching admin bookings');
-        res.status(200).json({ success: true, bookings: results });
+        res.status(200).json(results);
     });
 });
 
@@ -554,7 +556,6 @@ app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) =>
 app.get('/facify/get-file/:bookingID/:requirementID', (req, res) => {
     const { bookingID, requirementID } = req.params;
 
-    // Validate inputs
     if (!bookingID || !requirementID) {
         return handleError(res, new Error('Missing parameters'), 'Booking ID and Requirement ID are required', 400);
     }
