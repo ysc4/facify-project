@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import '../App.css';
+import '../styles/Sidebar.css';
 import logo from '../assets/girlypops-pink.png';
 import { SidebarData } from './SidebarData';
 

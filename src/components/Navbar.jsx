@@ -1,8 +1,6 @@
 import AccountIcon from '@mui/icons-material/AccountCircle';
-import NotifIcon from '@mui/icons-material/Notifications';
-import '../App.css';
 import logo from '../assets/facify-white.png';
-import './Navbar.css';
+import '../styles/Navbar.css';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Logout from '@mui/icons-material/LogoutOutlined';

@@ -1,5 +1,5 @@
 import React from 'react';
-import './StatusCard.css';
+import '../styles/StatusCard.css';
 import PencilIcon from '@mui/icons-material/Edit'; 
 
 function StatusCard({ icon, status, count, className, statusColor }) {

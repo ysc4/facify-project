@@ -2,15 +2,12 @@ import SearchIcon from '@mui/icons-material/Search';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import '../components/Dropdown.css';
-import Dropdown from '../components/Dropdown.jsx';
-import '../components/Navbar.css';
-import Header from '../components/Navbar.jsx';
-import '../components/Sidebar.css';
-import Sidebar from '../components/Sidebar.jsx';
+import BookingItem from '../components/BookingItem';
+import Dropdown from '../components/Dropdown';
+import Header from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 import '../styles/BookingHome.css';
 import { formatDate } from '../utils/DateUtil.jsx';
-import BookingItem from '../components/BookingItem.jsx';
 
 function Homepage() {
     const { orgID } = useParams();

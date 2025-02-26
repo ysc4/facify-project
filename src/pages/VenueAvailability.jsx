@@ -2,14 +2,12 @@ import Previous from '@mui/icons-material/ArrowBackIos';
 import Next from '@mui/icons-material/ArrowForwardIos';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import '../components/Navbar.css';
+import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Navbar.jsx';
-import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import '../styles/VenueAvailability.css';
-import { getStatusColor } from '../utils/StatusUtil.jsx';
 import { formatEventDate, formatEventTime } from '../utils/DateUtil.jsx';
+import { getStatusColor } from '../utils/StatusUtil.jsx';
 
 
 function Venue() {
@@ -221,7 +219,7 @@ function Venue() {
           </div>
           <div className="calendar-body">
             <div className="venue-titles">
-              {["Amphitheater", "E-Library", "Multimedia Room", "Multipurpose Hall", "PE Area"].map((venue, index) => (
+              {["Amphitheater", "E-library", "Multimedia Room", "Multipurpose Hall", "PE Area"].map((venue, index) => (
                 <div 
                   key={index} 
                   className={`venue-name ${facilityID === index + 1 ? "active" : ""}`} 

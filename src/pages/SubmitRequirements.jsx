@@ -6,7 +6,7 @@ import PdfIcon from '@mui/icons-material/Description';
 import axios from 'axios';
 import React, { useEffect, useRef, useState } from 'react';
 import Modal from 'react-modal';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import '../styles/SubmitRequirements.css';

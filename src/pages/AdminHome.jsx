@@ -11,13 +11,13 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Dropdown from '../components/Dropdown.jsx';
-import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import BasicPie from '../components/PieChart.jsx';
-import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import StatusCard from '../components/StatusCard.jsx';
 import '../styles/AdminHome.css';
+import '../styles/Navbar.css';
+import '../styles/Sidebar.css';
 
 function AdminHome() {
   const [filterDates, setFilterDates] = useState('Today');

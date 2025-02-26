@@ -3,15 +3,12 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../components/Dropdown.css';
-import Dropdown from '../components/Dropdown.jsx';
-import '../components/Navbar.css';
-import Header from '../components/Navbar.jsx';
-import '../components/Sidebar.css';
-import Sidebar from '../components/Sidebar.jsx';
+import Dropdown from '../components/Dropdown';
+import Header from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 import '../styles/BookingsOverview.css';
-import { getStatusColor } from '../utils/StatusUtil.jsx';
 import { formatEventDateTime } from '../utils/DateUtil.jsx';
+import { getStatusColor } from '../utils/StatusUtil.jsx';
 
 function BookingOverview() {
     const { adminID } = localStorage.getItem('adminID');

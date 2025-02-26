@@ -2,12 +2,9 @@ import BackIcon from '@mui/icons-material/ArrowBackOutlined';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import '../components/AddMinusButton.css';
-import AddMinusButton from '../components/AddMinusButton.jsx';
-import '../components/Navbar.css';
-import Header from '../components/Navbar.jsx';
-import '../components/Sidebar.css';
-import Sidebar from '../components/Sidebar.jsx';
+import AddMinusButton from '../components/AddMinusButton';
+import Header from '../components/Navbar';
+import Sidebar from '../components/Sidebar';
 import '../styles/VenueBooking.css';
 
 function VenueBooking() {
