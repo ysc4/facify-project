@@ -19,7 +19,7 @@ function Homepage() {
     const[filter, setFilter] = useState('All Facilities');
     const [facilities, setFacilities] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
-    const data = ['All Facilities', 'Multipurpose Hall', 'PE Area', 'Multimedia Room', 'Amphitheater', 'E-Library'];
+    const data = ['All Facilities', 'Multipurpose Hall', 'PE Area', 'Multimedia Room', 'Amphitheater', 'E-library'];
 
     useEffect(() => {
         const fetchBookings = async () => {
