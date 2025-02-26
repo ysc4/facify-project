@@ -9,7 +9,7 @@ import Modal from 'react-modal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import Header from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
-import './Submit-Requirements.css';
+import '../styles/SubmitRequirements.css';
 
 const SubmitRequirements = () => {
     const { orgID, bookingID } = useParams();

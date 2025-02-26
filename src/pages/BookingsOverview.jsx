@@ -9,7 +9,7 @@ import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
-import './Bookings-Overview.css';
+import '../styles/BookingsOverview.css';
 
 const getStatusColor = (status) => {
     switch (status) {

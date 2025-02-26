@@ -1,23 +1,23 @@
 import BlockIcon from '@mui/icons-material/Block';
+import EventIcon from '@mui/icons-material/BookOutlined';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CheckIcon from '@mui/icons-material/CheckOutlined';
+import CancelIcon from '@mui/icons-material/Close';
 import PencilIcon from '@mui/icons-material/EditOutlined';
-import EventIcon from '@mui/icons-material/BookOutlined';
 import DocumentIcon from '@mui/icons-material/FileCopyOutlined';
 import ReportIcon from '@mui/icons-material/Report';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import CancelIcon from '@mui/icons-material/Close';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Dropdown from '../components/Dropdown';
+import Dropdown from '../components/Dropdown.jsx';
 import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
+import BasicPie from '../components/PieChart.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import StatusCard from '../components/StatusCard.jsx';
-import './Admin-Home.css';
-import BasicPie from '../components/PieChart.jsx';
+import '../styles/AdminHome.css';
 
 function AdminHome() {
   const [filterDates, setFilterDates] = useState('Today');

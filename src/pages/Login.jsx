@@ -9,7 +9,7 @@ import Dropdown from '../components/Dropdown';
 import ConditionsModal from '../components/modals/Condition';
 import HelpModal from '../components/modals/Help';
 import PrivacyModal from '../components/modals/Privacy';
-import './Login.css';
+import '../styles/Login.css';
 
 const Login = ({ setIsLoggedIn }) => {
     const [email, setEmail] = useState('');

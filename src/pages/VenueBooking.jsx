@@ -8,7 +8,7 @@ import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
-import './Venue-Booking.css';
+import '../styles/VenueBooking.css';
 
 function VenueBooking() {
   const { orgID, facilityID } = useParams();

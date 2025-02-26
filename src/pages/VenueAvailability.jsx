@@ -7,7 +7,7 @@ import '../components/Navbar.css';
 import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
-import './Venue-Availability.css';
+import '../styles/VenueAvailability.css';
 
 
 function Venue() {

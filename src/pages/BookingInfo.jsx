@@ -8,7 +8,7 @@ import DenyModal from '../components/modals/DenyModal';
 import Header from '../components/Navbar';
 import ProgressBar from '../components/ProgressBar';
 import Sidebar from '../components/Sidebar';
-import './Booking-Info.css';
+import '../styles/BookingInfo.css';
 
 
 const formatDate = (dateString) => {
