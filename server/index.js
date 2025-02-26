@@ -84,7 +84,9 @@ app.post('/facify/login/:type', (req, res) => {
                 admin_id: user.admin_id || null,
                 admin_name: user.first_name && user.last_name ? `${user.first_name} ${user.last_name}` : null,
                 image: imageBase64,
-                role: type
+                role: type,
+                bookings_num: user.bookings_num || null,
+                handled_bookings: user.handled_bookings || null
             });
         });
     } catch (error) {
