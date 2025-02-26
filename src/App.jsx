@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Booking from './pages/Booking-Home';
-import BookingInfo from './pages/Booking-Info';
+import AdminHome from './pages/AdminHome';
+import BookingInfo from './pages/BookingInfo';
+import Booking from './pages/BookingHome';
+import AdminBookings from './pages/BookingsOverview';
 import Login from './pages/Login';
-import Venue from './pages/Venue-Availability';
-import VenueBooking from './pages/Venue-Booking';
-import SubmitRequirements from './pages/Submit-Requirements';
-import AdminHome from './pages/Admin-Home';
-import AdminBookings from './pages/Bookings-Overview';
+import SubmitRequirements from './pages/SubmitRequirements';
+import Venue from './pages/VenueAvailability';
+import VenueBooking from './pages/VenueBooking';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
