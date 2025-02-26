@@ -75,7 +75,17 @@ const ConditionModal = ({ isOpen, onClose }) => {
                 <li>Full event details are accessible only to administrators on their administrative side of the Facility Availability calendar.</li>
               </ul>
               </li>
-              <li><strong>Facility Reservation Approval/Denial:</strong> Administrators have the authority to approve or deny facility reservations. Students will be notified of the assessment outcome (approved or denied) of their facility reservations through the "Update Log" section within their "Facility Reservation" tab.</li>
+              <li><strong>Facility Reservation Approval/Rejection:</strong> Administrators can approve or reject facility reservations and must select rejection reasons from a predefined list on their Facility Reservations tab, including:
+                <ul>
+                  <li>Scheduling Conflict</li>
+                  <li>Unauthorized Use</li>
+                  <li>Maintenance or Repairs</li>
+                  <li>Policy Violation</li>
+                  <li>Insufficient Resources</li>
+                  <li>Incomplete or Incorrect Documents</li>
+                </ul>
+                Students will be notified of the assessment outcome (approved or rejected) of their facility reservations through the "Update Log" section within their "Facility Reservation" tab.
+              </li>
             </ul>
           </li>
           <li><strong>Disclaimer of Warranties</strong>
