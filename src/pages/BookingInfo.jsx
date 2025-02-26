@@ -29,29 +29,7 @@ function BookingInfo() {
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
     useEffect(() => {
-        const fetchBookingInfo = async () => {
-            try {
-                const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
-
-                if (response.data.success) {
-                    setBookingInfo([response.data.bookingInfo]);
-                    const statusSteps = {
-                        'Pencil Booked': 1,
-                        'Officially Booked': 2,
-                        'For Assessing': 3,
-                        'Approved': 4,
-                        'Denied': 4,
-                        'Cancelled': 0
-                    };
-                    setCurrentStep(statusSteps[response.data.bookingInfo.status_name] || 0);
-                } else {
-                    setError('No booking information found');
-                }
-            } catch (err) {
-                console.error('Error fetching booking information:', err);
-                setError('An error occurred while fetching booking information');
-            }
-        };
+        
 
         const fetchRequirements = async () => {
             if (userType === "Admin") {
@@ -74,6 +52,30 @@ function BookingInfo() {
         fetchBookingInfo();
         fetchRequirements();
     }, [orgID, bookingID, userType]);
+
+    const fetchBookingInfo = async () => {
+        try {
+            const response = await axios.get(`/facify/booking-info/${orgID}/${bookingID}`);
+
+            if (response.data.success) {
+                setBookingInfo([response.data.bookingInfo]);
+                const statusSteps = {
+                    'Pencil Booked': 1,
+                    'Officially Booked': 2,
+                    'For Assessing': 3,
+                    'Approved': 4,
+                    'Denied': 4,
+                    'Cancelled': 0
+                };
+                setCurrentStep(statusSteps[response.data.bookingInfo.status_name] || 0);
+            } else {
+                setError('No booking information found');
+            }
+        } catch (err) {
+            console.error('Error fetching booking information:', err);
+            setError('An error occurred while fetching booking information');
+        }
+    };
 
     const fetchFile = async (bookingID, requirementID) => {
         if (!bookingID || !requirementID) return;
@@ -162,7 +164,7 @@ function BookingInfo() {
     const updateBookingStatus = async (action) => {
         try {
             const response = await axios.post(`/facify/booking-info/${bookingID}/${adminID}/update-status`, { action });
-            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" || action === "Denied" ? 4 : 0);
+            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved"  || action === "Denied" ? 4 : 0);
 
             setBookingInfo((prevInfo) => prevInfo.map(booking => ({
                 ...booking,
@@ -181,18 +183,25 @@ function BookingInfo() {
             alert("Please select a valid reason.");
             return;
         }
+    
         setReasonID(reasonID);
+    
         try {
-            const response = await axios.post(
-                `/facify/booking-info/${bookingID}/deny`, 
-                { reasonID }  
-            );
-
+            const response = await axios.post(`/facify/booking-info/${bookingID}/deny`, { reasonID });
+    
             if (response.data.success) {
                 alert("Booking has been successfully denied.");
                 setCurrentStep(4);
+    
+                setBookingInfo((prevInfo) => prevInfo.map(booking => ({
+                    ...booking,
+                    status_name: "Denied",
+                    denied_reason: response.data.denied_reason,  
+                    denied_reason_description: response.data.denied_reason_description
+                })));
+                
                 updateBookingStatus("Denied");
-
+                await fetchLogs(); 
             } else {
                 alert("Failed to deny the booking. Please try again.");
             }
@@ -204,7 +213,6 @@ function BookingInfo() {
         setIsDenyModalOpen(false);
         setDecision("denied");
         setDecisionDateTime(new Date().toLocaleString());
-        fetchLogs();
     };
     
     const handleAssess = () => updateBookingStatus("For Assessing");
