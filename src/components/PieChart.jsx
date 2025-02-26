@@ -4,8 +4,8 @@ import { PieChart } from '@mui/x-charts/PieChart';
 export default function BasicPie({ data }) {
 
     const facilityColors = {
-        'Ampitheater': '#2B2E79',
-        'E-Library': '#4D7A15',
+        'Amphitheater': '#2B2E79',
+        'E-library': '#4D7A15',
         'Multimedia Room': '#C43C3C',
         'Multipurpose Hall': '#E9A237',
         'PE Area': '#FFD703'
