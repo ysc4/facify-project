@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../App.css';
-import './AddMinusButton.css';
+import '../styles/AddMinusButton.css';
 
 function AddMinusButton({ item, onCountChange, initialValue = 0 }) {
     const [count, setCount] = useState(initialValue);
@@ -48,7 +47,7 @@ function AddMinusButton({ item, onCountChange, initialValue = 0 }) {
 
     return (
         <div className="AddMinusButton">
-            <button className="minus" onClick={decrement} aria-label="Decrease count">-</button>
+            <button type="button" className="minus" onClick={decrement} aria-label="Decrease count">-</button>
             <input 
                 type="number"
                 className="count-input"
@@ -58,7 +57,7 @@ function AddMinusButton({ item, onCountChange, initialValue = 0 }) {
                 min="0"
                 aria-live="polite"
             />
-            <button className="plus" onClick={increment} aria-label="Increase count">+</button>
+            <button type="button" className="plus" onClick={increment} aria-label="Increase count">+</button>
         </div>
     );
 }
