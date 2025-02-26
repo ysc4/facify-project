@@ -557,7 +557,7 @@ app.get('/facify/admin-bookings/:adminID', async (req, res) => {
                 SELECT MAX(bs.date_time) 
                 FROM booking_status bs
                 WHERE ei.booking_id = bs.booking_id
-            )`;
+            ) ORDER BY ei.booking_id ASC`;
 
         db.query(query, (err, results) => {
             if (err) return handleError(res, err, 'Error fetching admin bookings');
