@@ -99,6 +99,7 @@ const Login = ({ setIsLoggedIn }) => {
                             value={email}
                             placeholder="Enter your email"
                             onChange={(e) => setEmail(e.target.value)}
+                            autoComplete='on'
                             required
                         />
                     </div>
@@ -110,6 +111,7 @@ const Login = ({ setIsLoggedIn }) => {
                             value={password}
                             placeholder="Enter your password"
                             onChange={(e) => setPassword(e.target.value)}
+                            autoComplete='on'
                             required
                         />
                         <span className="password-toggle" onClick={togglePasswordVisibility}>
