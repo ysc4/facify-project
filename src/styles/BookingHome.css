@@ -1,0 +1,81 @@
+.Homepage {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: auto;
+}
+
+.Header {
+    flex: 0 0 auto; /* Ensure the header takes up only as much space as it needs */
+}
+
+.main-content {
+    display: flex;
+    flex: 1; /* Take up the remaining space */
+}
+
+.sidebar-placeholder {
+    width: 20%; /* Adjust the width as needed */
+}
+
+.overview {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+    padding-top: 90px;
+    padding-left: 20px;
+    background-color: #FFFFFF; 
+    overflow-y: auto;
+}
+
+.overview-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 98%;
+    padding: 10px 20px;
+}
+
+.search-bar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 80%;
+}
+
+.search-bar input {
+    padding: 10px 40px 10px 10px; 
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%; 
+}
+
+.search-icon {
+    position: absolute;
+    right: 15px;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.filters {
+    display: flex;
+    align-items: center;
+    width: 20%;
+    height: 40px;
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.filter-label {
+    font-size: 15px;
+    color: #1F1D1D;
+    font-family: 'Poppins', sans-serif;
+    margin-right: 10px; 
+}
+
+.overview-content {
+    margin-top: 20px;
+}
+
