@@ -156,7 +156,9 @@ app.get('/facify/booking-info/:orgID/:bookingID', (req, res) => {
                 facilities.facility_name, 
                 status.status_name, 
                 user.org_name,
-                event_equipment.*
+                event_equipment.*,
+                denied_booking_reasons.reason AS denied_reason,
+                denied_booking_reasons.reason_description AS denied_reason_description
             FROM event_information 
             JOIN facilities ON event_information.facility_id = facilities.facility_id 
             JOIN (
@@ -173,8 +175,11 @@ app.get('/facify/booking-info/:orgID/:bookingID', (req, res) => {
             ON event_information.booking_id = latest_bs.booking_id
             JOIN status ON latest_bs.status_id = status.status_id 
             JOIN user ON event_information.org_id = user.org_id
-            JOIN event_equipment ON event_information.booking_id = event_equipment.booking_id
-            WHERE event_information.booking_id = ? AND event_information.org_id = ?`;
+            LEFT JOIN event_equipment ON event_information.booking_id = event_equipment.booking_id
+            LEFT JOIN denied_booking ON event_information.booking_id = denied_booking.booking_id
+            LEFT JOIN denied_booking_reasons ON denied_booking.reason_id = denied_booking_reasons.reason_id
+            WHERE event_information.booking_id = ? AND event_information.org_id = ?
+            GROUP BY event_information.booking_id;`;
 
         db.query(query, [bookingID, orgID], (err, result) => {
             if (err) return handleError(res, err, 'Error fetching booking information');
@@ -200,380 +205,461 @@ const upload = multer({
 });
 
 // Upload requirements endpoint
-app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), (req, res) => {
-    if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
+app.post('/facify/booking-info/:bookingID/upload', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ success: false, message: 'No file uploaded' });
 
-    console.log("File uploaded:", req.file);
+        console.log("File uploaded:", req.file);
 
-    const { bookingID } = req.params;
-    const filePath = req.file.path;
-    const filename = req.file.filename;
-    const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
+        const { bookingID } = req.params;
+        const filePath = req.file.path;
+        const filename = req.file.filename;
+        const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
 
-    fs.readFile(filePath, (err, fileData) => {
-        if (err) return handleError(res, err, 'File read error');
+        fs.readFile(filePath, (err, fileData) => {
+            if (err) return handleError(res, err, 'File read error');
 
-        const query = 'INSERT INTO requirement (booking_id, file_name, file, date_time_submitted) VALUES (?, ?, ?, ?)';
-        db.query(query, [bookingID, filename, fileData, date_time], (err) => {
-            if (err) return handleError(res, err, 'Database error while inserting requirement');
+            const query = 'INSERT INTO requirement (booking_id, file_name, file, date_time_submitted) VALUES (?, ?, ?, ?)';
+            db.query(query, [bookingID, filename, fileData, date_time], (err) => {
+                if (err) return handleError(res, err, 'Database error while inserting requirement');
 
-            const checkReqQuery = 'SELECT COUNT(*) AS count FROM requirement WHERE booking_id = ?';
-            db.query(checkReqQuery, [bookingID], (err, result) => {
-                if (err) return handleError(res, err, 'Database error while counting requirements');
+                const checkReqQuery = 'SELECT COUNT(*) AS count FROM requirement WHERE booking_id = ?';
+                db.query(checkReqQuery, [bookingID], (err, result) => {
+                    if (err) return handleError(res, err, 'Database error while counting requirements');
 
-                const count = result[0]?.count || 0;
-                const totalReqs = 3;
+                    const count = result[0]?.count || 0;
+                    const totalReqs = 3;
 
-                if (count >= totalReqs) {
-                    const updateStatusQuery = `
-                        INSERT INTO booking_status (booking_id, status_id, date_time) 
-                        VALUES (?, ?, ?) 
-                        ON DUPLICATE KEY UPDATE status_id = VALUES(status_id), admin_id = VALUES(admin_id);`;
+                    if (count >= totalReqs) {
+                        const updateStatusQuery = `
+                            INSERT INTO booking_status (booking_id, status_id, date_time) 
+                            VALUES (?, ?, ?) 
+                            ON DUPLICATE KEY UPDATE status_id = VALUES(status_id), admin_id = VALUES(admin_id);`;
 
-                    db.query(updateStatusQuery, [bookingID, 2, date_time], (err) => {
-                        if (err) return handleError(res, err, 'Database error while updating status');
+                        db.query(updateStatusQuery, [bookingID, 2, date_time], (err) => {
+                            if (err) return handleError(res, err, 'Database error while updating status');
 
-                        return res.status(200).json({ success: true, message: 'File uploaded and status updated' });
-                    });
-                } else {
-                    return res.status(200).json({ success: true, message: 'File uploaded successfully' });
-                }
+                            return res.status(200).json({ success: true, message: 'File uploaded and status updated' });
+                        });
+                    } else {
+                        return res.status(200).json({ success: true, message: 'File uploaded successfully' });
+                    }
+                });
             });
         });
-    });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during file upload');
+    }
 });
-
 
 // Get requirements endpoint
-app.get('/facify/booking-info/:orgID/:bookingID/requirements', (req, res) => {
-    const { orgID, bookingID } = req.params;
+app.get('/facify/booking-info/:orgID/:bookingID/requirements', async (req, res) => {
+    try {
+        const { orgID, bookingID } = req.params;
 
-    if (!orgID || !bookingID) return handleError(res, new Error('Missing orgID or bookingID'), 'Missing required parameters', 400);
-
-    const query = `
-        SELECT r.*, OCTET_LENGTH(r.file) AS file_size 
-        FROM requirement r
-        JOIN event_information e ON r.booking_id = e.booking_id
-        WHERE r.booking_id = ? AND e.org_id = ?`;
-
-    db.query(query, [bookingID, orgID], (err, result) => {
-        if (err) return handleError(res, err, 'Database error while fetching requirements');
-
-        if (result.length === 0) {
-            return res.status(404).json({ success: false, message: 'No requirements found' });
+        if (!orgID || !bookingID) {
+            return handleError(res, new Error('Missing orgID or bookingID'), 'Missing required parameters', 400);
         }
-        res.status(200).json({ success: true, requirements: result });
-    });
+
+        const query = `
+            SELECT r.*, OCTET_LENGTH(r.file) AS file_size 
+            FROM requirement r
+            JOIN event_information e ON r.booking_id = e.booking_id
+            WHERE r.booking_id = ? AND e.org_id = ?`;
+
+        db.query(query, [bookingID, orgID], (err, result) => {
+            if (err) {
+                return handleError(res, err, 'Database error while fetching requirements');
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ success: false, message: 'No requirements found' });
+            }
+            res.status(200).json({ success: true, requirements: result });
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during fetching of requirements');
+    }
 });
+
 
 // Get update logs endpoint
-app.get('/facify/booking-info/:orgID/:bookingID/logs', (req, res) => {
-    const { orgID, bookingID } = req.params;
+app.get('/facify/booking-info/:orgID/:bookingID/logs', async (req, res) => {
+    try {
+        const { orgID, bookingID } = req.params;
 
-    if (!bookingID || !orgID) {
-        return handleError(res, new Error('Missing parameters'), 'No bookingID or orgID provided', 400);
-    }
-
-    const query = `
-        SELECT bs.*, s.*
-        FROM booking_status bs
-        JOIN status s ON bs.status_id = s.status_id
-        JOIN (
-            SELECT status_id, MAX(date_time) AS latest_date
-            FROM booking_status
-            WHERE booking_id = ?
-            GROUP BY status_id
-        ) latest_logs 
-        ON bs.status_id = latest_logs.status_id 
-        AND bs.date_time = latest_logs.latest_date
-        WHERE bs.booking_id = ? 
-        AND EXISTS (SELECT 1 FROM event_information WHERE booking_id = ? AND org_id = ?)
-        ORDER BY bs.date_time DESC`;
-
-    db.query(query, [bookingID, bookingID, bookingID, orgID], (err, result) => {
-        if (err) return handleError(res, err, 'Database error while fetching update logs');
-
-        if (result.length === 0) {
-            return res.status(404).json({ success: false, message: 'No logs found' });
+        if (!bookingID || !orgID) {
+            return handleError(res, new Error('Missing parameters'), 'No bookingID or orgID provided', 400);
         }
 
-        res.status(200).json({ success: true, logs: result });
-    });
+        const query = `
+            SELECT bs.*, s.*
+            FROM booking_status bs
+            JOIN status s ON bs.status_id = s.status_id
+            JOIN (
+                SELECT status_id, MAX(date_time) AS latest_date
+                FROM booking_status
+                WHERE booking_id = ?
+                GROUP BY status_id
+            ) latest_logs 
+            ON bs.status_id = latest_logs.status_id 
+            AND bs.date_time = latest_logs.latest_date
+            WHERE bs.booking_id = ? 
+            AND EXISTS (SELECT 1 FROM event_information WHERE booking_id = ? AND org_id = ?)
+            ORDER BY bs.date_time DESC`;
+
+        db.query(query, [bookingID, bookingID, bookingID, orgID], (err, result) => {
+            if (err) return handleError(res, err, 'Database error while fetching update logs');
+
+            if (result.length === 0) {
+                return res.status(404).json({ success: false, message: 'No logs found' });
+            }
+
+            res.status(200).json({ success: true, logs: result });
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during fetching of update logs');
+    }
 });
+
 
 
 // Create booking endpoint
-app.post('/facify/venue-booking/:orgID/:facilityID/create', (req, res) => {
-    const { orgID, facilityID } = req.params;
-    const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName = null, equipment = [], status = 'pencil' } = req.body;
+app.post('/facify/venue-booking/:orgID/:facilityID/create', async (req, res) => {
+    try {
+        const { orgID, facilityID } = req.params;
+        const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName = null, equipment = [], status = 'pencil' } = req.body;
 
-    if (!eventDate || !eventStart || !eventEnd || !activityTitle || !attendance) {
-        return handleError(res, new Error('Missing required fields'), 'Event date, start time, end time, activity title, and attendance are required', 400);
-    }
-
-    const bookingDate = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 10);
-    const bookingTime = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(11, 19);
-
-    const query = `
-        INSERT INTO event_information (event_date, event_start, event_end, activity_title, org_id, facility_id, booking_date, booking_time, expected_attendance, speaker_name) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    db.query(query, [eventDate, eventStart, eventEnd, activityTitle, orgID, facilityID, bookingDate, bookingTime, attendance, speakerName], (err, result) => {
-        if (err) return handleError(res, err, 'Error creating booking information');
-
-        const bookingID = result.insertId;
-
-        if (equipment.length > 0) {
-            const equipmentQuery = `
-                INSERT INTO event_equipment (booking_id, tables, chairs, bulletin_boards, speaker, microphone, flagpole, podium, platform, electrician, janitor) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-            db.query(equipmentQuery, [bookingID, ...equipment], (err) => {
-                if (err) return handleError(res, err, 'Error creating equipment information');
-            });
+        if (!eventDate || !eventStart || !eventEnd || !activityTitle || !attendance) {
+            return handleError(res, new Error('Missing required fields'), 'Event date, start time, end time, activity title, and attendance are required', 400);
         }
 
-        const date_time = `${bookingDate} ${bookingTime}`;
-        const statusID = status === 'pencil' ? 1 : 2;
+        const bookingDate = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 10);
+        const bookingTime = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(11, 19);
 
-        const statusQuery = `
-            INSERT INTO booking_status (booking_id, status_id, date_time) 
-            VALUES (?, ?, ?)`;
+        const eventQuery = `
+            INSERT INTO event_information (event_date, event_start, event_end, activity_title, org_id, facility_id, booking_date, booking_time, expected_attendance, speaker_name) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-        db.query(statusQuery, [bookingID, statusID, date_time], (err) => {
-            if (err) return handleError(res, err, 'Error updating booking status');
+        db.query(eventQuery, [eventDate, eventStart, eventEnd, activityTitle, orgID, facilityID, bookingDate, bookingTime, attendance, speakerName], (err, result) => {
+            if (err) return handleError(res, err, 'Error creating booking information');
 
-            res.status(200).json({ success: true, message: 'Booking created successfully', bookingID });
+            const bookingID = result.insertId;
+
+            if (equipment.length > 0) {
+                const equipmentQuery = `
+                    INSERT INTO event_equipment (booking_id, tables, chairs, bulletin_boards, speaker, microphone, flagpole, podium, platform, electrician, janitor) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+                db.query(equipmentQuery, [bookingID, ...equipment], (err) => {
+                    if (err) return handleError(res, err, 'Error creating equipment information');
+                });
+            }
+
+            const date_time = `${bookingDate} ${bookingTime}`;
+            const statusID = status === 'pencil' ? 1 : 2;
+
+            const statusQuery = `
+                INSERT INTO booking_status (booking_id, status_id, date_time) 
+                VALUES (?, ?, ?)`;
+
+            db.query(statusQuery, [bookingID, statusID, date_time], (err) => {
+                if (err) return handleError(res, err, 'Error updating booking status');
+
+                res.status(200).json({ success: true, message: 'Booking created successfully', bookingID });
+            });
         });
-    });
+
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error creating venue booking');
+    }
 });
+
 
 // Update booking endpoint
-app.put('/facify/booking-info/:bookingID/update', (req, res) => {
-    const { bookingID } = req.params;
-    const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment } = req.body;
+app.put('/facify/booking-info/:bookingID/update', async (req, res) => {
+    try {
+        const { bookingID } = req.params;
+        const { eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName, equipment } = req.body;
 
-    if (!bookingID || !eventDate || !eventStart || !eventEnd || !activityTitle || !attendance) {
-        return handleError(res, new Error('Missing required fields'), 'Booking ID, event details, and attendance are required', 400);
-    }
-
-    // Update event information
-    const query = `
-        UPDATE event_information 
-        SET event_date = ?, event_start = ?, event_end = ?, activity_title = ?, expected_attendance = ?, speaker_name = ? 
-        WHERE booking_id = ?`;
-    
-    db.query(query, [eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName || null, bookingID], (err, result) => {
-        if (err) return handleError(res, err, 'Error updating booking information');
-
-        if (!equipment || !Array.isArray(equipment) || equipment.length < 10) {
-            return res.status(200).json({ success: true, message: 'Booking updated successfully (no equipment update)' });
+        if (!bookingID || !eventDate || !eventStart || !eventEnd || !activityTitle || !attendance) {
+            return handleError(res, new Error('Missing required fields'), 'Booking ID, event details, and attendance are required', 400);
         }
 
-        const equipmentQuery = `
-            UPDATE event_equipment 
-            SET tables = ?, chairs = ?, bulletin_boards = ?, speaker = ?, microphone = ?, flagpole = ?, podium = ?, platform = ?, electrician = ?, janitor = ? 
+        // Update event information
+        const query = `
+            UPDATE event_information 
+            SET event_date = ?, event_start = ?, event_end = ?, activity_title = ?, expected_attendance = ?, speaker_name = ? 
             WHERE booking_id = ?`;
+        
+        db.query(query, [eventDate, eventStart, eventEnd, activityTitle, attendance, speakerName || null, bookingID], (err, result) => {
+            if (err) return handleError(res, err, 'Error updating booking information');
 
-        db.query(equipmentQuery, [...equipment, bookingID], (err, result) => {
-            if (err) return handleError(res, err, 'Error updating equipment information');
-            res.status(200).json({ success: true, message: 'Booking and equipment updated successfully' });
+            if (!equipment || !Array.isArray(equipment) || equipment.length < 10) {
+                return res.status(200).json({ success: true, message: 'Booking updated successfully (no equipment update)' });
+            }
+
+            const equipmentQuery = `
+                UPDATE event_equipment 
+                SET tables = ?, chairs = ?, bulletin_boards = ?, speaker = ?, microphone = ?, flagpole = ?, podium = ?, platform = ?, electrician = ?, janitor = ? 
+                WHERE booking_id = ?`;
+
+            db.query(equipmentQuery, [...equipment, bookingID], (err, result) => {
+                if (err) return handleError(res, err, 'Error updating equipment information');
+                res.status(200).json({ success: true, message: 'Booking and equipment updated successfully' });
+            });
         });
-    });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during updating of booking information');
+    }
 });
+
 
 // Get venue availability endpoint
-app.get('/facify/venue-availability/:facilityID', (req, res) => {
-    const { facilityID } = req.params;
-    const { month, year } = req.query;
+app.get('/facify/venue-availability/:facilityID', async (req, res) => {
+    try {
+        const { facilityID } = req.params;
+        const { month, year } = req.query;
 
-    if (!facilityID || !month || !year) {
-        return handleError(res, new Error('Missing required parameters'), 'Facility ID, month, and year are required', 400);
-    }
+        if (!facilityID || !month || !year) {
+            return handleError(res, new Error('Missing required parameters'), 'Facility ID, month, and year are required', 400);
+        }
 
-    const query = `
-        SELECT ei.*, s.status_name, f.facility_name, o.org_name
-        FROM event_information ei
-        JOIN (
-            SELECT bs.booking_id, bs.status_id, bs.date_time
-            FROM booking_status bs
+        const query = `
+            SELECT ei.*, s.status_name, f.facility_name, o.org_name
+            FROM event_information ei
             JOIN (
-                SELECT booking_id, MAX(date_time) AS max_date_time
-                FROM booking_status
-                GROUP BY booking_id
-            ) latest_status 
-            ON bs.booking_id = latest_status.booking_id AND bs.date_time = latest_status.max_date_time
-        ) latest_bs 
-        ON ei.booking_id = latest_bs.booking_id
-        JOIN status s 
-        ON latest_bs.status_id = s.status_id
-        JOIN facilities f 
-        ON ei.facility_id = f.facility_id
-        JOIN user o 
-        ON ei.org_id = o.org_id
-        WHERE ei.facility_id = ? 
-        AND MONTH(ei.event_date) = ? 
-        AND YEAR(ei.event_date) = ?`;
+                SELECT bs.booking_id, bs.status_id, bs.date_time
+                FROM booking_status bs
+                JOIN (
+                    SELECT booking_id, MAX(date_time) AS max_date_time
+                    FROM booking_status
+                    GROUP BY booking_id
+                ) latest_status 
+                ON bs.booking_id = latest_status.booking_id AND bs.date_time = latest_status.max_date_time
+            ) latest_bs 
+            ON ei.booking_id = latest_bs.booking_id
+            JOIN status s 
+            ON latest_bs.status_id = s.status_id
+            JOIN facilities f 
+            ON ei.facility_id = f.facility_id
+            JOIN user o 
+            ON ei.org_id = o.org_id
+            WHERE ei.facility_id = ? 
+            AND MONTH(ei.event_date) = ? 
+            AND YEAR(ei.event_date) = ?`;
 
-    db.query(query, [facilityID, month, year], (err, result) => {
-        if (err) return handleError(res, err, 'Error fetching venue availability');
-        res.status(200).json({ success: true, events: result });
-    });
+        db.query(query, [facilityID, month, year], (err, result) => {
+            if (err) return handleError(res, err, 'Error fetching venue availability');
+            res.status(200).json({ success: true, events: result });
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during fetching of venue availability');
+    }
 });
 
+
 // Cancel booking endpoint
-app.post('/facify/booking-info/:bookingID/cancel', (req, res) => {
-    const { bookingID } = req.params;
+app.post('/facify/booking-info/:bookingID/cancel', async (req, res) => {
+    try {
+        const { bookingID } = req.params;
 
-    if (!bookingID) {
-        return handleError(res, new Error('Booking ID is required'), 'No booking ID provided', 400);
+        if (!bookingID) {
+            return handleError(res, new Error('Booking ID is required'), 'No booking ID provided', 400);
+        }
+
+        const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
+
+        const query = `
+            INSERT INTO booking_status (booking_id, status_id, date_time) 
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE status_id = VALUES(status_id), date_time = VALUES(date_time)`;
+
+        db.query(query, [bookingID, 6, date_time], (err, result) => {
+            if (err) return handleError(res, err, 'Error updating booking status');
+            res.status(200).json({ success: true, message: 'Booking cancelled successfully' });
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during booking cancellation');
     }
-
-    const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
-
-    const query = `
-        INSERT INTO booking_status (booking_id, status_id, date_time) 
-        VALUES (?, ?, ?) 
-        ON DUPLICATE KEY UPDATE status_id = VALUES(status_id), date_time = VALUES(date_time)`;
-
-    db.query(query, [bookingID, 6, date_time], (err, result) => {
-        if (err) return handleError(res, err, 'Error updating booking status');
-        res.status(200).json({ success: true, message: 'Booking cancelled successfully' });
-    });
 });
 
 // Get all bookings with filtered time for admin endpoint
-app.get('/facify/admin-home/:adminID', (req, res) => {
-    const { adminID } = req.params;
-    const { filter } = req.query; 
+app.get('/facify/admin-home/:adminID', async (req, res) => {
+    try {
+        const { adminID } = req.params;
+        const { filter } = req.query; 
 
-    if (!adminID) {
-        return handleError(res, new Error('Admin ID is required'), 'No Admin ID provided', 400);
+        if (!adminID) {
+            return handleError(res, new Error('Admin ID is required'), 'No Admin ID provided', 400);
+        }
+
+        const filterConditions = {
+            'Today': `DATE(ei.event_date) = CURDATE()`,
+            'This Week': `YEARWEEK(ei.event_date, 1) = YEARWEEK(CURDATE(), 1)`,
+            'This Month': `YEAR(ei.event_date) = YEAR(CURDATE()) AND MONTH(ei.event_date) = MONTH(CURDATE())`,
+            'This Year': `YEAR(ei.event_date) = YEAR(CURDATE())`
+        };
+
+        const dateCondition = filterConditions[filter] || `1 = 1`; // Default: No filter applied
+
+        const query = 
+            `SELECT 
+                ei.*, 
+                f.facility_name, 
+                s.status_name, 
+                u.org_name,
+                u.org_id
+            FROM event_information ei
+            JOIN facilities f ON ei.facility_id = f.facility_id
+            JOIN booking_status bs ON ei.booking_id = bs.booking_id
+            JOIN status s ON bs.status_id = s.status_id
+            JOIN user u ON ei.org_id = u.org_id
+            WHERE bs.date_time = (
+                SELECT MAX(bs2.date_time) 
+                FROM booking_status bs2
+                WHERE ei.booking_id = bs2.booking_id
+            )
+            AND ${dateCondition}`;
+
+        db.query(query, (err, results) => {
+            if (err) return handleError(res, err, 'Error fetching admin bookings');
+            res.status(200).json(results);
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected server error', 500);
     }
-
-    const filterConditions = {
-        'Today': `DATE(ei.event_date) = CURDATE()`,
-        'This Week': `YEARWEEK(ei.event_date, 1) = YEARWEEK(CURDATE(), 1)`,
-        'This Month': `YEAR(ei.event_date) = YEAR(CURDATE()) AND MONTH(ei.event_date) = MONTH(CURDATE())`,
-        'This Year': `YEAR(ei.event_date) = YEAR(CURDATE())`
-    };
-
-    const dateCondition = filterConditions[filter] || `1 = 1`; // Default: No filter applied
-
-    const query = 
-        `SELECT 
-            ei.*, 
-            f.facility_name, 
-            s.status_name, 
-            u.org_name,
-            u.org_id
-        FROM event_information ei
-        JOIN facilities f ON ei.facility_id = f.facility_id
-        JOIN booking_status bs ON ei.booking_id = bs.booking_id
-        JOIN status s ON bs.status_id = s.status_id
-        JOIN user u ON ei.org_id = u.org_id
-        WHERE bs.date_time = (
-            SELECT MAX(bs.date_time) 
-            FROM booking_status bs
-            WHERE ei.booking_id = bs.booking_id
-        )
-        AND ${dateCondition}`;
-
-    db.query(query, (err, results) => {
-        if (err) return handleError(res, err, 'Error fetching admin bookings');
-        res.status(200).json(results);
-    });
 });
 
+
 // Get all bookings with search for admin endpoint
-app.get('/facify/admin-bookings/:adminID', (req, res) => {
-    const { adminID } = req.params;
+app.get('/facify/admin-bookings/:adminID', async (req, res) => {
+    try {
+        const { adminID } = req.params;
 
-    if (!adminID) {
-        return handleError(res, new Error('Admin ID is required'), 'No Admin ID provided', 400);
+        if (!adminID) {
+            return handleError(res, new Error('Admin ID is required'), 'No Admin ID provided', 400);
+        }
+
+        const query = `
+            SELECT 
+                ei.*, 
+                f.facility_name, 
+                s.status_name, 
+                u.org_name,
+                u.org_id
+            FROM event_information ei
+            JOIN facilities f ON ei.facility_id = f.facility_id
+            JOIN booking_status bs ON ei.booking_id = bs.booking_id
+            JOIN status s ON bs.status_id = s.status_id
+            JOIN user u ON ei.org_id = u.org_id
+            WHERE bs.date_time = (
+                SELECT MAX(bs.date_time) 
+                FROM booking_status bs
+                WHERE ei.booking_id = bs.booking_id
+            )`;
+
+        db.query(query, (err, results) => {
+            if (err) return handleError(res, err, 'Error fetching admin bookings');
+            res.status(200).json(results);
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error fetching admin bookings');
     }
-
-    const query = `
-        SELECT 
-            ei.*, 
-            f.facility_name, 
-            s.status_name, 
-            u.org_name,
-            u.org_id
-        FROM event_information ei
-        JOIN facilities f ON ei.facility_id = f.facility_id
-        JOIN booking_status bs ON ei.booking_id = bs.booking_id
-        JOIN status s ON bs.status_id = s.status_id
-        JOIN user u ON ei.org_id = u.org_id
-        WHERE bs.date_time = (
-            SELECT MAX(bs.date_time) 
-            FROM booking_status bs
-            WHERE ei.booking_id = bs.booking_id
-        )`;
-
-    db.query(query, (err, results) => {
-        if (err) return handleError(res, err, 'Error fetching admin bookings');
-        res.status(200).json(results);
-    });
 });
 
 // Update booking status endpoint
-app.post('/facify/booking-info/:bookingID/:adminID/update-status', (req, res) => {
-    const { bookingID, adminID } = req.params;
-    const { action } = req.body;
+app.post('/facify/booking-info/:bookingID/:adminID/update-status', async (req, res) => {
+    try {
+        const { bookingID, adminID } = req.params;
+        const { action } = req.body;
 
-    if (!bookingID || !adminID) {
-        return handleError(res, new Error('Missing bookingID or adminID'), 'Booking ID and Admin ID are required', 400);
+        if (!bookingID || !adminID) {
+            return handleError(res, new Error('Missing bookingID or adminID'), 'Booking ID and Admin ID are required', 400);
+        }
+        if (!action) {
+            return handleError(res, new Error('Missing action type'), 'Action type is required', 400);
+        }
+
+        const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
+
+        const statusMap = {
+            "For Assessing": 3,
+            "Approved": 4,
+            "Denied": 5
+        };
+
+        const statusID = statusMap[action];
+
+        if (!statusID) {
+            return handleError(res, new Error('Invalid action type'), 'Invalid action type', 400);
+        }
+
+        const statusQuery = `
+            INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) 
+            VALUES (?, ?, ?, ?)`;
+
+        db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => {
+            if (err) return handleError(res, err, 'Error updating booking status');
+            res.status(200).json({ success: true, message: `Booking status updated to "${action}"`, bookingID });
+        });
+
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error updating booking status');
     }
-    if (!action) {
-        return handleError(res, new Error('Missing action type'), 'Action type is required', 400);
-    }
-
-    const date_time = new Date(Date.now() + 8 * 60 * 60000).toISOString().slice(0, 19).replace("T", " ");
-
-    const statusMap = {
-        "For Assessing": 3,
-        "Approved": 4,
-        "Denied": 5
-    };
-
-    const statusID = statusMap[action];
-
-    if (!statusID) {
-        return handleError(res, new Error('Invalid action type'), 'Invalid action type', 400);
-    }
-
-    const statusQuery = `
-        INSERT INTO booking_status (booking_id, status_id, date_time, admin_id) 
-        VALUES (?, ?, ?, ?)`;
-
-    db.query(statusQuery, [bookingID, statusID, date_time, adminID], (err, result) => {
-        if (err) return handleError(res, err, 'Error updating booking status');
-        res.status(200).json({ success: true, message: `Booking status updated to "${action}"`, bookingID });
-    });
 });
 
 // Open the requirement for admin endpoint
-app.get('/facify/get-file/:bookingID/:requirementID', (req, res) => {
-    const { bookingID, requirementID } = req.params;
+app.get('/facify/get-file/:bookingID/:requirementID', async (req, res) => {
+    try {
+        const { bookingID, requirementID } = req.params;
 
-    if (!bookingID || !requirementID) {
-        return handleError(res, new Error('Missing parameters'), 'Booking ID and Requirement ID are required', 400);
-    }
-
-    const query = `SELECT file, file_name FROM requirement WHERE booking_id = ? AND requirement_id = ?`;
-
-    db.query(query, [bookingID, requirementID], (err, result) => {
-        if (err) return handleError(res, err, 'Error fetching file');
-
-        if (!result.length) {
-            return handleError(res, new Error('File not found'), 'File not found', 404);
+        if (!bookingID || !requirementID) {
+            return handleError(res, new Error('Missing parameters'), 'Booking ID and Requirement ID are required', 400);
         }
 
-        const fileBuffer = result[0].file;
-        const filename = result[0].file_name || "download.pdf";
+        const query = `SELECT file, file_name FROM requirement WHERE booking_id = ? AND requirement_id = ?`;
 
-        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-        res.setHeader('Content-Type', 'application/pdf');
-        res.send(Buffer.from(fileBuffer, 'binary'));
-    });
+        db.query(query, [bookingID, requirementID], (err, result) => {
+            if (err) return handleError(res, err, 'Error fetching file');
+
+            if (!result.length) {
+                return handleError(res, new Error('File not found'), 'File not found', 404);
+            }
+
+            const fileBuffer = result[0].file;
+            const filename = result[0].file_name || "download.pdf";
+
+            res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(Buffer.from(fileBuffer, 'binary'));
+        });
+
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error fetching file');
+    }
+});
+
+app.post('/facify/booking-info/:bookingID/deny', async (req, res) => {
+    try {
+        const { bookingID } = req.params;
+        const { reasonID, createdAt } = req.body;
+
+        if (!bookingID || !reasonID || !createdAt) {
+            return res.status(400).json({ success: false, message: 'Booking ID, Reason ID, and Created At are required' });
+        }
+
+        const query = `
+            INSERT INTO denied_booking (booking_id, reason_id, created_at) 
+            VALUES (?, ?, ?) 
+            ON DUPLICATE KEY UPDATE reason_id = VALUES(reason_id), created_at = VALUES(created_at);`;
+
+        db.query(query, [bookingID, reasonID, createdAt], (err) => {
+            if (err) return handleError(res, err, 'Database error while updating status');
+
+            res.status(200).json({ success: true, message: 'Booking denied successfully' });
+        });
+    } catch (error) {
+        return handleError(res, error, 'Unexpected error during booking denial');
+    }
 });
