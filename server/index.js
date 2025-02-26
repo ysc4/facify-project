@@ -640,26 +640,32 @@ app.get('/facify/get-file/:bookingID/:requirementID', async (req, res) => {
     }
 });
 
-app.post('/facify/booking-info/:bookingID/deny', async (req, res) => {
+app.post("/facify/booking-info/:bookingID/deny", async (req, res) => {
     try {
-        const { bookingID } = req.params;
-        const { reasonID, createdAt } = req.body;
+        const { bookingID } = req.params; 
+        const { reasonID } = req.body; 
 
-        if (!bookingID || !reasonID || !createdAt) {
-            return res.status(400).json({ success: false, message: 'Booking ID, Reason ID, and Created At are required' });
+        if (!bookingID || !reasonID) {
+            return res.status(400).json({ success: false, message: "Booking ID and Reason ID are required" });
         }
 
+        // Insert the denial reason into the `denied_bookings` table
         const query = `
             INSERT INTO denied_booking (booking_id, reason_id, created_at) 
-            VALUES (?, ?, ?) 
-            ON DUPLICATE KEY UPDATE reason_id = VALUES(reason_id), created_at = VALUES(created_at);`;
+            VALUES (?, ?, NOW())
+            ON DUPLICATE KEY UPDATE reason_id = VALUES(reason_id), created_at = NOW();`;
 
-        db.query(query, [bookingID, reasonID, createdAt], (err) => {
-            if (err) return handleError(res, err, 'Database error while updating status');
+        db.query(query, [bookingID, reasonID], (err, result) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ success: false, message: "Database error while denying booking" });
+            }
 
-            res.status(200).json({ success: true, message: 'Booking denied successfully' });
+            res.status(200).json({ success: true, message: "Booking denied successfully" });
         });
+
     } catch (error) {
-        return handleError(res, error, 'Unexpected error during booking denial');
+        console.error("Unexpected error:", error);
+        res.status(500).json({ success: false, message: "Unexpected error during booking denial" });
     }
 });
