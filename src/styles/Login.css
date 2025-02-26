@@ -210,3 +210,10 @@
     max-width: 40%;
     height: auto;
 }
+
+.error {
+    color: red;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 10px;
+}

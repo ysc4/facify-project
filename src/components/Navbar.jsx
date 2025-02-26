@@ -11,6 +11,7 @@ function Navbar() {
   const [image, setImage] = useState(null);
   const userType = localStorage.getItem('userType');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [bookings, setBookings] = useState(0);
 
   const dropdownRef = useRef(null);
   const accountIconRef = useRef(null);
@@ -20,6 +21,12 @@ function Navbar() {
     const storedOrgName = localStorage.getItem('orgName');
     const storedAdminName = localStorage.getItem('adminName');
     const storedImage = localStorage.getItem('image');
+
+    if (userType === "Organization") { 
+      setBookings(parseInt(localStorage.getItem('bookingsNum'), 10) || 0);
+    } else {
+      setBookings(parseInt(localStorage.getItem('handledBookings'), 10) || 0);    
+    }
 
     if (storedOrgName) setOrgName(storedOrgName);
     if (storedAdminName) setAdminName(storedAdminName);
@@ -73,6 +80,7 @@ function Navbar() {
           <div className="dropdown-content">
             <img src={image || 'https://via.placeholder.com/80'} alt="Profile" className="profile-image" width="80" height="80"/>
             <p className="dropdown-org-name">{displayName}</p>
+            <p className="dropdown-bookings-num">Bookings: {bookings}</p>
             <Logout className="logout-button" onClick={handleLogout} style={{ fontSize: 20 }}/>
           </div>
         </div>

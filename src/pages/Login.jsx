@@ -34,7 +34,7 @@ const Login = ({ setIsLoggedIn }) => {
             const response = await axios.post(`/facify/login/${userType}`, { email, password });
     
             if (response.data.success) {
-                const { org_id, org_name, admin_id, admin_name, image } = response.data;
+                const { org_id, org_name, admin_id, admin_name, image, bookings_num, handled_bookings } = response.data;
                 console.log(response.data);
                 setIsLoggedIn(true);
                 localStorage.setItem('orgID', org_id);
@@ -42,6 +42,8 @@ const Login = ({ setIsLoggedIn }) => {
                 localStorage.setItem('adminID', admin_id);
                 localStorage.setItem('adminName', admin_name);
                 localStorage.setItem('userType', userType);
+                localStorage.setItem('bookingsNum', bookings_num);
+                localStorage.setItem('handledBookings', handled_bookings);
                 localStorage.setItem('image', image);
 
                 if (userType === 'Organization') {
