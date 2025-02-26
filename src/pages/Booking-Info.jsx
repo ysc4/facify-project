@@ -40,22 +40,12 @@ function BookingInfo() {
     const [error, setError] = useState('');
     const [logs, setLogs] = useState([]);
     const [requirements, setRequirements] = useState([]); 
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [decision, setDecision] = useState(null); 
     const [decisionDateTime, setDecisionDateTime] = useState(null); 
     const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
     const [isDenyModalOpen, setIsDenyModalOpen] = useState(false);
-
-    const reasons = [ 
-        { id: 1, label: 'Scheduling Conflict', value: 'Scheduling Conflict' },
-        { id: 2, label: 'Unauthorized Use', value: 'Unauthorized Use' },
-        { id: 3, label: 'Maintenance or Repairs', value: 'Maintenance or Repairs' },        
-        { id: 4, label: 'Policy Violation', value: 'Policy Violation' },
-        { id: 5, label: 'Insufficient Resources', value: 'Insufficient Resources' },
-        { id: 6, label: 'Incomplete or Incorrect Documents', value: 'Incomplete or Incorrect Documents' }
-    ];
-
+    const [reasonID, setReasonID] = useState(1);
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
     useEffect(() => {
@@ -169,43 +159,12 @@ function BookingInfo() {
             console.error('Error cancelling booking:', err);
             alert('An error occurred while cancelling the booking.');
         }
-        setIsModalOpen(false);
+        setIsCancelModalOpen(false);
         setDecision("cancelled");
         setDecisionDateTime(new Date().toLocaleString());
         fetchLogs();
     };
 
-    const handleDenyBooking = async (reasonID) => {
-        if (!reasonID) {
-            alert("Please select a reason.");
-            return;
-        }
-    
-        try {
-            const createdAt = new Date().toISOString(); 
-    
-            const response = await axios.post(`/facify/booking-info/${bookingID}/deny`, {
-                reasonID,
-                createdAt,
-            });
-    
-            if (response.data.success) {
-                alert("Booking has been successfully denied.");
-                setCurrentStep(4);
-                updateBookingStatus("Denied");
-            } else {
-                alert("Failed to deny the booking. Please try again.");
-            }
-        } catch (err) {
-            console.error("Error denying booking:", err);
-            alert("An error occurred while denying the booking.");
-        }
-    
-        setIsModalOpen(false);
-        setDecision("denied");
-        setDecisionDateTime(new Date().toLocaleString());
-        fetchLogs();
-    };
 
     const handleOpenCancelModal = () => setIsCancelModalOpen(true);
     const handleCloseCancelModal = () => setIsCancelModalOpen(false);
@@ -224,7 +183,7 @@ function BookingInfo() {
     const updateBookingStatus = async (action) => {
         try {
             const response = await axios.post(`/facify/booking-info/${bookingID}/${adminID}/update-status`, { action });
-            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" ? 4 : 0);
+            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" || action === "Denied" ? 4 : 0);
 
             setBookingInfo((prevInfo) => prevInfo.map(booking => ({
                 ...booking,
@@ -235,6 +194,37 @@ function BookingInfo() {
         } catch (error) {
             console.error("Error updating status:", error);
         }
+    };
+
+    const handleDenyBooking = async (reasonID) => {
+        if (!reasonID) {
+            alert("Please select a valid reason.");
+            return;
+        }
+
+        setReasonID(reasonID);
+        try {
+            const response = await axios.post(
+                `/facify/booking-info/${bookingID}/deny`, 
+                { reasonID }  
+            );
+    
+            if (response.data.success) {
+                alert("Booking has been successfully denied.");
+                setCurrentStep(4);
+                updateBookingStatus("Denied");
+            } else {
+                alert("Failed to deny the booking. Please try again.");
+            }
+        } catch (err) {
+            console.error("Error denying booking:", err);
+            alert("An error occurred while denying the booking.");
+        }
+    
+        setIsDenyModalOpen(false);
+        setDecision("denied");
+        setDecisionDateTime(new Date().toLocaleString());
+        fetchLogs();
     };
     
     const handleAssess = () => updateBookingStatus("For Assessing");
@@ -290,7 +280,7 @@ function BookingInfo() {
                                                         <button className="approve-button" onClick={handleApprove} >
                                                             Approve Booking
                                                         </button>
-                                                        <button className="deny-button" onClick={handleDenyBooking} >
+                                                        <button className="deny-button" onClick={handleOpenDenyModal} >
                                                             Deny Booking
                                                         </button>
                                                     </>
@@ -372,7 +362,7 @@ function BookingInfo() {
                                     </div>
                                 </div>
                                 <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} handleCancel={handleCancelBooking}/>
-                                <DenyModal isOpen={isDenyModalOpen} onRequestClose={handleCloseDenyModal} handleDeny={handleDenyBooking} reasons={reasons}/>
+                                <DenyModal isOpen={isDenyModalOpen} onRequestClose={() => setIsDenyModalOpen(false)} handleDeny={(reasonID) => handleDenyBooking(reasonID)} />
                             </div>
                         ))
                     )}
