@@ -8,6 +8,8 @@ import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import '../styles/VenueAvailability.css';
+import { getStatusColor } from '../utils/StatusUtil.jsx';
+import { formatEventDate, formatEventTime } from '../utils/DateUtil.jsx';
 
 
 function Venue() {
@@ -53,18 +55,6 @@ function Venue() {
     }
   };
 
-  const getStatusColor = (status) => {
-    switch (status) {
-        case "Pencil Booked": return "#FFF3B4";
-        case "Officially Booked": return "#A6C4FF";
-        case "For Assessing": return "#FFB951";
-        case "Approved": return "#B3FFA6";
-        case "Denied": return "#FFA6A6";
-        case "Cancelled": return "#D9D9D9";
-        default: return "#FFFFFF"; 
-    }
-};
-
   const Event = ({ eventID, status }) => {
     return (
       <div className="event" style={{ backgroundColor: getStatusColor(status) }}>
@@ -73,24 +63,7 @@ function Venue() {
     );
   };
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-CA', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
 
-  const formatTime = (time) => {
-    const [hours, minutes] = time.split(':');
-    const date = new Date();
-    date.setHours(hours, minutes);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    });
-  };
 
   const EventTooltip = ({ event, position }) => {
     if (!event) return null; 
@@ -109,8 +82,8 @@ function Venue() {
           </div>
         </div>
         <p className="tooltip-venue">{event.venue}</p>
-        <p className="tooltip-date">{formatDate(event.eventDate)}</p>
-        <p className="tooltip-time">{formatTime(event.startTime)} - {formatTime(event.endTime)}</p>
+        <p className="tooltip-date">{formatEventDate(event.eventDate)}</p>
+        <p className="tooltip-time">{formatEventTime(event.startTime)} - {formatEventTime(event.endTime)}</p>
         <p className="tooltip-organizer">{event.organizer}</p>
       </div>
     );
@@ -181,7 +154,7 @@ function Venue() {
     } else if (direction === 'next') {
       if (currentMonth === 11) {
         setCurrentMonth(0);
-        setCurrentYear(currentYear + 1); // Go to January of the next year
+        setCurrentYear(currentYear + 1); 
       } else {
         setCurrentMonth(currentMonth + 1);
       }

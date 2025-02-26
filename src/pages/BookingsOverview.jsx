@@ -10,40 +10,8 @@ import Header from '../components/Navbar.jsx';
 import '../components/Sidebar.css';
 import Sidebar from '../components/Sidebar.jsx';
 import '../styles/BookingsOverview.css';
-
-const getStatusColor = (status) => {
-    switch (status) {
-        case "Pencil Booked": return "#FFF3B4";
-        case "Officially Booked": return "#A6C4FF";
-        case "For Assessing": return "#FFB951";
-        case "Approved": return "#B3FFA6";
-        case "Denied": return "#FFA6A6";
-        case "Cancelled": return "#D9D9D9";
-        default: return "#FFFFFF"; 
-    }
-};
-
-const formatEventDateTime = (eventDate, eventStart) => {
-    if (!eventDate) return "Invalid Date";
-
-    const date = new Date(eventDate);
-    if (isNaN(date.getTime())) return "Invalid Date";
-
-    if (eventStart) {
-        const [hours, minutes, seconds = 0] = eventStart.split(':').map(Number);
-        date.setHours(hours, minutes, seconds);
-    }
-
-    return date.toLocaleString('en-US', {
-        month: '2-digit',
-        day: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true
-    });
-};
-
+import { getStatusColor } from '../utils/StatusUtil.jsx';
+import { formatEventDateTime } from '../utils/DateUtil.jsx';
 
 function BookingOverview() {
     const { adminID } = localStorage.getItem('adminID');
