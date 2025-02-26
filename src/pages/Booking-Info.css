@@ -157,7 +157,7 @@
     height: 100px;
 }
 
-.event-info, .other-info, .submit-info, .update-logs {
+.event-info, .other-info, .submit-info, .update-logs, .cause-info {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -306,3 +306,33 @@
     text-align: right;
 }
 
+.cause-info h3 {
+    font-size: 32px;
+    font-weight: 1000;
+    font-family: 'Poppins', sans-serif;
+    color: #952424;
+    background-color: #FFD8D8;
+    border-radius: 5px;
+    padding: 5px 10px;
+}
+
+.cause-info h4 {
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    padding: 5px 10px;
+}
+
+.cause-info p {
+    font-size: 16px;
+    padding: 5px 10px;
+}
+
+.cause-info .reason {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}

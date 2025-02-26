@@ -3,7 +3,8 @@ import PdfIcon from '@mui/icons-material/Description';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import CancelModal from '../components/CancelModal';
+import CancelModal from '../components/modals/CancelModal';
+import DenyModal from '../components/modals/DenyModal';
 import Header from '../components/Navbar';
 import ProgressBar from '../components/ProgressBar';
 import Sidebar from '../components/Sidebar';
@@ -39,10 +40,21 @@ function BookingInfo() {
     const [error, setError] = useState('');
     const [logs, setLogs] = useState([]);
     const [requirements, setRequirements] = useState([]); 
-    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentStep, setCurrentStep] = useState(1);
     const [decision, setDecision] = useState(null); 
     const [decisionDateTime, setDecisionDateTime] = useState(null); 
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
+    const [isDenyModalOpen, setIsDenyModalOpen] = useState(false);
+
+    const reasons = [ 
+        { id: 1, label: 'Scheduling Conflict', value: 'Scheduling Conflict' },
+        { id: 2, label: 'Unauthorized Use', value: 'Unauthorized Use' },
+        { id: 3, label: 'Maintenance or Repairs', value: 'Maintenance or Repairs' },        
+        { id: 4, label: 'Policy Violation', value: 'Policy Violation' },
+        { id: 5, label: 'Insufficient Resources', value: 'Insufficient Resources' },
+        { id: 6, label: 'Incomplete or Incorrect Documents', value: 'Incomplete or Incorrect Documents' }
+    ];
 
     const requirementNames = ["Activity Request Form", "Event Proposal", "Ingress Form", "Letter of Intent"];
 
@@ -157,23 +169,49 @@ function BookingInfo() {
             console.error('Error cancelling booking:', err);
             alert('An error occurred while cancelling the booking.');
         }
-        setIsCancelModalOpen(false);
+        setIsModalOpen(false);
         setDecision("cancelled");
         setDecisionDateTime(new Date().toLocaleString());
         fetchLogs();
     };
 
-    const handleOpenCancelModal = () => {
-        setIsCancelModalOpen(true);
+    const handleDenyBooking = async (reasonID) => {
+        if (!reasonID) {
+            alert("Please select a reason.");
+            return;
+        }
+    
+        try {
+            const createdAt = new Date().toISOString(); 
+    
+            const response = await axios.post(`/facify/booking-info/${bookingID}/deny`, {
+                reasonID,
+                createdAt,
+            });
+    
+            if (response.data.success) {
+                alert("Booking has been successfully denied.");
+                setCurrentStep(4);
+                updateBookingStatus("Denied");
+            } else {
+                alert("Failed to deny the booking. Please try again.");
+            }
+        } catch (err) {
+            console.error("Error denying booking:", err);
+            alert("An error occurred while denying the booking.");
+        }
+    
+        setIsModalOpen(false);
+        setDecision("denied");
+        setDecisionDateTime(new Date().toLocaleString());
+        fetchLogs();
     };
 
-    const handleCloseCancelModal = () => {
-        setIsCancelModalOpen(false);
-    };
-
-    const handleBackButtonClick = () => {
-        navigate(-1);
-    };
+    const handleOpenCancelModal = () => setIsCancelModalOpen(true);
+    const handleCloseCancelModal = () => setIsCancelModalOpen(false);
+    const handleOpenDenyModal = () => setIsDenyModalOpen(true);
+    const handleCloseDenyModal = () => setIsDenyModalOpen(false);
+    const handleBackButtonClick = () => navigate(-1);
 
     const handleEdit = () => {
         navigate(`/venue-booking/${orgID}/${bookingInfo[0].facility_id}`, { state: bookingInfo[0] });
@@ -183,11 +221,10 @@ function BookingInfo() {
         fetchFile(bookingID, requirementID);
     };
 
-
     const updateBookingStatus = async (action) => {
         try {
             const response = await axios.post(`/facify/booking-info/${bookingID}/${adminID}/update-status`, { action });
-            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" || action === "Denied" ? 4 : 0);
+            setCurrentStep(action === "For Assessing" ? 3 : action === "Approved" ? 4 : 0);
 
             setBookingInfo((prevInfo) => prevInfo.map(booking => ({
                 ...booking,
@@ -202,7 +239,6 @@ function BookingInfo() {
     
     const handleAssess = () => updateBookingStatus("For Assessing");
     const handleApprove = () => updateBookingStatus("Approved");
-    const handleDeny = () => updateBookingStatus("Denied");
 
     const handleSubmit = () => {
         navigate(`/submit-requirements/${orgID}/${bookingID}`, { state: { status: bookingInfo[0].status_name }});
@@ -254,7 +290,7 @@ function BookingInfo() {
                                                         <button className="approve-button" onClick={handleApprove} >
                                                             Approve Booking
                                                         </button>
-                                                        <button className="deny-button" onClick={handleDeny} >
+                                                        <button className="deny-button" onClick={handleDenyBooking} >
                                                             Deny Booking
                                                         </button>
                                                     </>
@@ -268,6 +304,15 @@ function BookingInfo() {
                                 <div className="booking-progress">
                                     <ProgressBar currentStep={currentStep} status={booking.status_name} />
                                 </div>
+                                {booking.status_name === 'Denied' && (
+                                <div className="cause-info">
+                                    <h3>Cause of Rejection</h3>
+                                    <div className="reason">
+                                        <h4><em>{booking.denied_reason}</em></h4>
+                                        <p>{booking.denied_reason_description || '—'}</p>
+                                    </div>
+                                </div>
+                                )}
                                 <div className="event-info">
                                     <h3>Event Information</h3>
                                     <div className="content">
@@ -327,6 +372,7 @@ function BookingInfo() {
                                     </div>
                                 </div>
                                 <CancelModal isOpen={isCancelModalOpen} onRequestClose={handleCloseCancelModal} handleCancel={handleCancelBooking}/>
+                                <DenyModal isOpen={isDenyModalOpen} onRequestClose={handleCloseDenyModal} handleDeny={handleDenyBooking} reasons={reasons}/>
                             </div>
                         ))
                     )}
