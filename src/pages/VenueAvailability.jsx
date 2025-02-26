@@ -177,7 +177,6 @@ function Venue() {
         return eventDate.getDate() === i && eventDate.getMonth() === currentMonth && eventDate.getFullYear() === currentYear;
       });
   
-      console.log(`Year ${currentYear} - Day ${i} Events:`, dayEvents); // Debugging
       days.push(<DayContainer key={i} day={i} events={dayEvents} userType={userType} />);
     }
   
