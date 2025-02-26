@@ -6,9 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/facify-white.png';
 import girlypops from '../assets/girlypops-pink.png';
 import Dropdown from '../components/Dropdown';
-import ConditionsModal from '../pages/modals/Condition';
-import HelpModal from '../pages/modals/Help';
-import PrivacyModal from '../pages/modals/Privacy';
+import ConditionsModal from '../components/modals/Condition';
+import HelpModal from '../components/modals/Help';
+import PrivacyModal from '../components/modals/Privacy';
 import './Login.css';
 
 const Login = ({ setIsLoggedIn }) => {
