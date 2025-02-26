@@ -145,7 +145,6 @@ function BookingInfo() {
         fetchLogs();
     };
 
-
     const handleOpenCancelModal = () => setIsCancelModalOpen(true);
     const handleCloseCancelModal = () => setIsCancelModalOpen(false);
     const handleOpenDenyModal = () => setIsDenyModalOpen(true);
@@ -171,6 +170,7 @@ function BookingInfo() {
             })));
 
             fetchLogs();
+            fetchBookingInfo();
         } catch (error) {
             console.error("Error updating status:", error);
         }
@@ -181,18 +181,18 @@ function BookingInfo() {
             alert("Please select a valid reason.");
             return;
         }
-
         setReasonID(reasonID);
         try {
             const response = await axios.post(
                 `/facify/booking-info/${bookingID}/deny`, 
                 { reasonID }  
             );
-    
+
             if (response.data.success) {
                 alert("Booking has been successfully denied.");
                 setCurrentStep(4);
                 updateBookingStatus("Denied");
+
             } else {
                 alert("Failed to deny the booking. Please try again.");
             }
