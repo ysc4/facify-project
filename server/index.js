@@ -649,7 +649,7 @@ app.post("/facify/booking-info/:bookingID/deny", async (req, res) => {
             return res.status(400).json({ success: false, message: "Booking ID and Reason ID are required" });
         }
 
-        // Insert the denial reason into the `denied_bookings` table
+        // Insert or update the denial reason in the `denied_booking` table
         const query = `
             INSERT INTO denied_booking (booking_id, reason_id, created_at) 
             VALUES (?, ?, NOW())
@@ -661,7 +661,26 @@ app.post("/facify/booking-info/:bookingID/deny", async (req, res) => {
                 return res.status(500).json({ success: false, message: "Database error while denying booking" });
             }
 
-            res.status(200).json({ success: true, message: "Booking denied successfully" });
+            const fetchReasonQuery = `SELECT reason, reason_description FROM denied_booking_reasons WHERE reason_id = ?`;
+            db.query(fetchReasonQuery, [reasonID], (err, reasonResult) => {
+                if (err) {
+                    console.error("Error fetching denied reason:", err);
+                    return res.status(500).json({ success: false, message: "Error fetching denied reason" });
+                }
+
+                if (reasonResult.length === 0) {
+                    return res.status(404).json({ success: false, message: "Denied reason not found" });
+                }
+
+                const deniedReason = reasonResult[0];
+
+                res.status(200).json({
+                    success: true,
+                    message: "Booking denied successfully",
+                    denied_reason: deniedReason.reason,
+                    denied_reason_description: deniedReason.reason_description
+                });
+            });
         });
 
     } catch (error) {
