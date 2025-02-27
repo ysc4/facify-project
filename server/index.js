@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
@@ -44,6 +45,8 @@ const handleError = (res, error, message = 'Database error', statusCode = 500) =
     res.status(statusCode).json({ success: false, message, error: error.message || error });
 };
 
+const saltRounds = 10;
+
 // Login Endpoint
 app.post('/facify/login/:type', (req, res) => {
     try {
@@ -59,10 +62,10 @@ app.post('/facify/login/:type', (req, res) => {
         }
 
         const query = type === 'Admin'
-            ? 'SELECT * FROM facility WHERE email = ? AND password = ?'
-            : 'SELECT * FROM user WHERE email = ? AND password = ?';
+            ? 'SELECT * FROM facility WHERE email = ?'  // Fetch only by email
+            : 'SELECT * FROM user WHERE email = ?';
 
-        db.query(query, [email, password], (err, result) => {
+        db.query(query, [email], async (err, result) => {
             if (err) return handleError(res, err, 'Database query error');
 
             if (result.length === 0) {
@@ -70,6 +73,11 @@ app.post('/facify/login/:type', (req, res) => {
             }
 
             const user = result[0];
+
+            const match = await bcrypt.compare(password, user.password);
+            if (!match) {
+                return res.status(401).json({ success: false, message: 'Invalid credentials' });
+            }
 
             let imageBase64 = null;
             if (user.org_image || user.admin_image) {
