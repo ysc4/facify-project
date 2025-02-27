@@ -59,7 +59,7 @@ const ConditionModal = ({ isOpen, onClose }) => {
                 <li>Activity Request Form</li>
                 <li>Event Proposal</li>
                 <li>Letter of Intent</li>
-                <li>Ingress Report</li>
+                <li>Ingress Report (optional)</li>
               </ul>
               <p>These documents must be uploaded to the "Submitted Requirements" section within the "Facility Reservation" tab menu.</p>
               </li>
