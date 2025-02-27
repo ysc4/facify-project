@@ -659,7 +659,6 @@ app.post("/facify/booking-info/:bookingID/deny", async (req, res) => {
             return res.status(400).json({ success: false, message: "Booking ID and Reason ID are required" });
         }
 
-        // Insert or update the denial reason in the `denied_booking` table
         const query = `
             INSERT INTO denied_booking (booking_id, reason_id, created_at) 
             VALUES (?, ?, NOW())
