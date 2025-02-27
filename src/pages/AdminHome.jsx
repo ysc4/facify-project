@@ -52,13 +52,15 @@ function AdminHome() {
       "Scheduled Today": 0
     };
 
-    const today = new Date().toLocaleDateString('en-CA');
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
 
     bookings.forEach((booking) => {
+      const eventDate = new Date(booking.event_date).toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+
       if (counts.hasOwnProperty(booking.status_name)) {
         counts[booking.status_name] += 1;
       }
-      if (booking.event_date === today) {
+      if (eventDate === today) {
         counts["Scheduled Today"] += 1;
       }
     });
