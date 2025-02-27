@@ -1,56 +1,49 @@
-import AccountIcon from '@mui/icons-material/AccountCircle';
-import logo from '../assets/facify-white.png';
-import '../styles/Navbar.css';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'; 
+import AccountIcon from '@mui/icons-material/AccountCircle';
 import Logout from '@mui/icons-material/LogoutOutlined';
+import logo from '../assets/facify-white.png';
+import '../styles/Navbar.css';
 
 function Navbar() {
   const [orgName, setOrgName] = useState('');
   const [adminName, setAdminName] = useState('');
   const [image, setImage] = useState(null);
-  const userType = localStorage.getItem('userType');
-  const [showDropdown, setShowDropdown] = useState(false);
   const [bookings, setBookings] = useState(0);
+  const [showDropdown, setShowDropdown] = useState(false);
 
+  const userType = localStorage.getItem('userType');
   const dropdownRef = useRef(null);
   const accountIconRef = useRef(null);
   const navigate = useNavigate(); 
 
-  useEffect(() => {
-    const storedOrgName = localStorage.getItem('orgName');
-    const storedAdminName = localStorage.getItem('adminName');
-    const storedImage = localStorage.getItem('image');
-
+  // Function to fetch updated booking count
+  const updateBookings = () => {
     if (userType === "Organization") { 
       setBookings(parseInt(localStorage.getItem('bookingsNum'), 10) || 0);
     } else {
       setBookings(parseInt(localStorage.getItem('handledBookings'), 10) || 0);    
     }
+  };
 
-    if (storedOrgName) setOrgName(storedOrgName);
-    if (storedAdminName) setAdminName(storedAdminName);
-    if (storedImage) setImage(storedImage);
+  useEffect(() => {
+    // Initial Load
+    setOrgName(localStorage.getItem('orgName') || '');
+    setAdminName(localStorage.getItem('adminName') || '');
+    setImage(localStorage.getItem('image') || null);
+    updateBookings();
 
-    const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current && !dropdownRef.current.contains(event.target) &&
-        accountIconRef.current && !accountIconRef.current.contains(event.target)
-      ) {
-        setShowDropdown(false); 
-      }
+    // Custom Event Listener for Booking Updates
+    const handleBookingUpdate = () => {
+      updateBookings();
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    window.addEventListener('bookingUpdated', handleBookingUpdate);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      window.removeEventListener('bookingUpdated', handleBookingUpdate);
     };
-
-    
   }, []);
-
-  const displayName = userType === "Organization" ? orgName : adminName;
 
   const handleDropdown = () => {
     setShowDropdown(!showDropdown);
@@ -65,7 +58,7 @@ function Navbar() {
     <header className="header">
       <img src={logo} alt="Logo" className="facify-logo"/>
       <div className="navbar">
-        <p>Hi, {displayName}!</p>
+        <p>Hi, {userType === "Organization" ? orgName : adminName}!</p>
         <AccountIcon
           className="account-icon"
           style={{ fontSize: 30 }}
@@ -79,7 +72,7 @@ function Navbar() {
           <div className="dropdown-arrow"></div>
           <div className="dropdown-content">
             <img src={image || 'https://via.placeholder.com/80'} alt="Profile" className="profile-image" width="80" height="80"/>
-            <p className="dropdown-org-name">{displayName}</p>
+            <p className="dropdown-org-name">{userType === "Organization" ? orgName : adminName}</p>
             <p className="dropdown-bookings-num">Bookings: {bookings}</p>
             <Logout className="logout-button" onClick={handleLogout} style={{ fontSize: 20 }}/>
           </div>

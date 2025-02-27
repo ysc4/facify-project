@@ -121,6 +121,10 @@ function VenueBooking() {
 
     const finalFormData = { ...formData, equipment: equipmentArray };
 
+    const newBookingCount = parseInt(localStorage.getItem('bookingsNum'), 10) + 1;
+    localStorage.setItem('bookingsNum', newBookingCount);
+    window.dispatchEvent(new Event('bookingUpdated'));
+
     console.log('Server response:', finalFormData);
 
     try {
